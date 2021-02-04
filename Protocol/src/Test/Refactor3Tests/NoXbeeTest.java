@@ -3,27 +3,14 @@ import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.AppReceiver;
 import ApplicationLayer.AppComponents.AppSender;
 import ApplicationLayer.LocalServices.PrintService;
-import ApplicationLayer.LocalServices.WebSocketService;
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Encryption.CryptoAdmin;
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Components.State;
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Initializer.ReceiverInitializer;
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Initializer.SenderInitializer;
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Messages.Message;
 import ApplicationLayer.LocalServices.WirelessService.WirelessReceiver;
 import ApplicationLayer.LocalServices.WirelessService.WirelessSender;
-import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Receiving.ReceiverAdmin;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Receiving.XbeeReceiver;
-import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Sending.SenderAdmin;
-import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Sending.XbeeSender;
 import ApplicationLayer.SensorReading.RandomReaders.RandomReader;
 import ApplicationLayer.SensorReading.SensorsReader;
 import ApplicationLayer.SensorReading.SequentialReaderExecutor;
-import ExcelToAppComponent.CSVToAppComponent;
-import com.digi.xbee.api.XBeeDevice;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +21,7 @@ public class NoXbeeTest {
     XbeeReceiver xbeeReceiver;
 
     void receiverSetup() throws Exception {
-        String dir = "src/ExcelToAppComponent/Eolian_fenix";
+        String dir = "src/ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
         List<AppReceiver> appReceivers = CSVToAppComponent.CSVs_to_AppReceivers(dir);
 
         // High Level Services
@@ -62,7 +49,7 @@ public class NoXbeeTest {
      * @throws Exception
      */
     void senderSetup() throws Exception {
-        String dir = "src/ExcelToAppComponent/Eolian_fenix";
+        String dir = "src/ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
         List<AppSender> appSenders = CSVToAppComponent.CSVs_to_AppSenders(dir);
         LinkedList<RandomReader> randomReaders = new LinkedList<>();
 

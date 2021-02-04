@@ -1,4 +1,4 @@
-package ExcelToAppComponent;
+package ApplicationLayer.AppComponents.ExcelToAppComponent;
 
 import ApplicationLayer.AppComponents.AppReceiver;
 import ApplicationLayer.AppComponents.AppSender;
@@ -65,9 +65,12 @@ public class CSVToAppComponent {
     }
 
 
-    public static List<AppSender> CSVs_to_AppSenders(String directory){
+    public static List<AppSender> CSVs_to_AppSenders(String directory) throws Exception{
         LinkedList<AppSender> list = new LinkedList<>();
         List<String> components = listFilesForFolder(directory);
+
+        if (components.size() == 0)
+            throw new Exception("CSVs_to_AppSenders: No se han leído componentes desde archivos CSV");
 
         for (String comp : components){
             List<List<String>> values = readCSV(directory + "/" + comp);
@@ -86,9 +89,12 @@ public class CSVToAppComponent {
         return list;
     }
 
-    public static List<AppReceiver> CSVs_to_AppReceivers(String directory){
+    public static List<AppReceiver> CSVs_to_AppReceivers(String directory) throws Exception{
         LinkedList<AppReceiver> list = new LinkedList<>();
         List<String> components = listFilesForFolder(directory);
+
+        if (components.size() == 0)
+            throw new Exception("CSVs_to_AppReceivers: No se han leído componentes desde archivos CSV");
 
         for (String comp : components){
             List<List<String>> values = readCSV(directory + "/" + comp);

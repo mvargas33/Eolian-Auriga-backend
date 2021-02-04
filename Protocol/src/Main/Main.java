@@ -3,7 +3,6 @@ package Main;
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.AppReceiver;
 import ApplicationLayer.AppComponents.AppSender;
-import ApplicationLayer.LocalServices.DatabaseService;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.WirelessService.WirelessReceiver;
 import ApplicationLayer.LocalServices.WirelessService.WirelessSender;
@@ -11,7 +10,7 @@ import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Receiving.Xbee
 import ApplicationLayer.SensorReading.RandomReaders.RandomReader;
 import ApplicationLayer.SensorReading.SensorsReader;
 import ApplicationLayer.SensorReading.SequentialReaderExecutor;
-import ExcelToAppComponent.CSVToAppComponent;
+import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +19,8 @@ import java.util.concurrent.Executors;
 
 public class Main {
 
-    public String dir = "Eolian-Telemetria-Auriga/Protocol/src/ExcelToAppComponent/Eolian_fenix";
+    //public String dir = "Eolian-Auriga-backend/Protocol/src/ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
+    public String dir = "src/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
 
     public XbeeReceiver xbeeReceiver;
     /**
@@ -36,7 +36,7 @@ public class Main {
 
     void receiverSetup() throws Exception {
         // ojo con este path!!
-        //String dir = "../ExcelToAppComponent/Eolian_fenix";
+        //String dir = "../ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
 
         List<AppReceiver> appReceivers = CSVToAppComponent.CSVs_to_AppReceivers(dir);
 
@@ -66,10 +66,11 @@ public class Main {
      */
     void senderSetup() throws Exception {
         // ojo con estos paths antes de correr el main!!
-        //String dir = "../ExcelToAppComponent/Eolian_fenix";
+        //String dir = "../ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
 
 
         List<AppSender> appSenders = CSVToAppComponent.CSVs_to_AppSenders(dir);
+
         LinkedList<RandomReader> randomReaders = new LinkedList<>();
 
         // Random reader

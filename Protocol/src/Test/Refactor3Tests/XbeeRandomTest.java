@@ -9,7 +9,7 @@ import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Receiving.Xbee
 import ApplicationLayer.SensorReading.RandomReaders.RandomReader;
 import ApplicationLayer.SensorReading.SensorsReader;
 import ApplicationLayer.SensorReading.SequentialReaderExecutor;
-import ExcelToAppComponent.CSVToAppComponent;
+import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class XbeeRandomTest {
     XbeeReceiver xbeeReceiver;
 
     void receiverSetup() throws Exception {
-        String dir = "src/ExcelToAppComponent/Eolian_fenix";
+        String dir = "src/ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
         List<AppReceiver> appReceivers = CSVToAppComponent.CSVs_to_AppReceivers(dir);
 
         // High Level Services
@@ -49,7 +49,7 @@ public class XbeeRandomTest {
      * @throws Exception
      */
     void senderSetup() throws Exception {
-        String dir = "src/ExcelToAppComponent/Eolian_fenix";
+        String dir = "src/ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
         List<AppSender> appSenders = CSVToAppComponent.CSVs_to_AppSenders(dir);
         LinkedList<RandomReader> randomReaders = new LinkedList<>();
 

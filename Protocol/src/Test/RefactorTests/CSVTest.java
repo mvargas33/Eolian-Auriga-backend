@@ -2,7 +2,7 @@ package Test.RefactorTests;
 
 import ApplicationLayer.AppComponents.AppReceiver;
 import ApplicationLayer.AppComponents.AppSender;
-import ExcelToAppComponent.CSVToAppComponent;
+import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,8 +11,8 @@ import java.util.List;
 public class CSVTest {
 
     @Test
-    public void staticTest(){
-        String dir = "src/ExcelToAppComponent/Eolian_fenix";
+    public void staticTest() throws Exception{
+        String dir = "src/ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
 
         /*List<String> files = CSVToAppComponent.listFilesForFolder(dir);
         for (String file: files

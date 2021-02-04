@@ -8,7 +8,7 @@
 //import ApplicationLayer.SensorReading.RandomReaders.RandomReader;
 //import ApplicationLayer.SensorReading.SensorsReader;
 //import ApplicationLayer.SensorReading.SequentialReaderExecutor;
-//import ExcelToAppComponent.CSVToAppComponent;
+//import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 //import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Encryption.CryptoAdmin;
 //import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Encryption.KeyAdmin;
 //import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Components.State;
@@ -118,7 +118,7 @@
 //        XbeeSender xbeeSender = new XbeeSender(XBEE_BAUD, XBEE_PORT, (int) MSG_RAW_SIZE_BYTES);
 //        SenderAdmin senderAdmin = new SenderAdmin(xbeeSender, cryptoAdmin);
 //
-//        String dir = "src/ExcelToAppComponent/Eolian_fenix";
+//        String dir = "src/ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
 //        List<AppSender> appSenders = CSVToAppComponent.CSVs_to_AppSenders(dir);
 //
 //        // Lista de estados de capa inferior para incializar mensajes-state
@@ -182,7 +182,7 @@
 //        XbeeReceiver xbeeReceiver = new XbeeReceiver(XBEE_BAUD, XBEE_PORT);
 //
 //
-//        String dir = "src/ExcelToAppComponent/Eolian_fenix";
+//        String dir = "src/ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
 //        List<AppReceiver> appReceivers = CSVToAppComponent.CSVs_to_AppReceivers(dir);
 //
 //        // Lista de estados de capa inferior para incializar mensajes-state
