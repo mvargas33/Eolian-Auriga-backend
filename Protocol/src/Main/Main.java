@@ -23,6 +23,16 @@ public class Main {
     public String dir = "src/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
 
     public XbeeReceiver xbeeReceiver;
+
+    public static AppSender findAppSender(List<AppSender> list, String componentID) throws Exception{
+        for (AppSender a: list
+             ) {
+            if (a.getID().equals(componentID))
+                return a;
+        }
+        throw new Exception("Component with ID " + componentID + " was not found in AppSender list.");
+    }
+
     /**
      * Se lanza esta funcion al iniciar la RPI.
      * @param args
