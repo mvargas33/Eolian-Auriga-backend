@@ -53,3 +53,24 @@ Front end:
 # Notes
 
 The project is under development. Basic data dynamics are already implemented. Front-end must be completed. Compatibility with Eolian Fenix (older solar car) is in progress.
+
+#  Testing Support
+
+From 18/02/2021 this project has testing support (still in development).
+
+For this to work several setup things were done:
+
+1. Setting un maven support (a pom.xml file) to build and test the project.
+2. Added surefire plugin to the pom, to execute tests.
+3. Added junit5 (jupiter) dependency, to write tests.
+
+# CI
+
+CI is in development (the project migration to complete CI is a WIP), but at the future it will be done by executing
+`mvn --batch-mode --update-snapshots verify`.
+
+--batch-mode = not interactive (don't ask for prompt values, use default instead)
+
+--update-snapshots = check dependencies (if outdated, redownload them)
+
+verify = builds and tests the project

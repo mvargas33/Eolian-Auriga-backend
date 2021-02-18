@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GPSTest {
-
+    /*
     public void parseGPRMC(String[] msg) throws Exception{
         // Check if data is valid
         if (msg[2].equals("V")){
@@ -109,4 +109,5 @@ public class GPSTest {
             e.printStackTrace();
         }
     }
+    */
 }
