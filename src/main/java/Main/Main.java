@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 public class Main {
 
     //public String dir = "Eolian-Auriga-backend/Protocol/src/ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
-    public String dir = "src/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
+    public String dir = "src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
 
     public XbeeReceiver xbeeReceiver;
     /**
