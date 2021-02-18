@@ -12,5 +12,5 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8.0.212
-      - name: Build with Maven
+      - name: Build and test with Maven
         run: mvn --batch-mode --update-snapshots verify
