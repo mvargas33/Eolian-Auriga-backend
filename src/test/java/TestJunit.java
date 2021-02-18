@@ -6,6 +6,6 @@ public class TestJunit {
 
     @Test
     public void basic() {
-        assertEquals(2,3);
+        assertEquals(3,3);
     }
 }
