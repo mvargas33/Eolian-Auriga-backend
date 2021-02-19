@@ -74,3 +74,10 @@ CI is in development (the project migration to complete CI is a WIP), but at the
 --update-snapshots = check dependencies (if outdated, redownload them)
 
 verify = builds and tests the project
+
+## Pending
+
+Previously all dependencies where handled offline (directly having the source code on the repo). 
+
+However just the necessary libraries (necessary enough to build the project) where transferred to the pom file.
+Therefore there are many libraries that were not imported to the pom file, to keep that in mind if some error arises because of that.
