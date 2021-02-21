@@ -2,9 +2,11 @@ package Test.UnitTests;
 
 import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Encryption.CryptoAdmin;
 import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Encryption.KeyAdmin;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@EnabledIf("false") //para aminorar el tiempo de build en development
 class CryptoTest {
     int MAC_SIG_BYTES = 6; // Estos valores son los más suceptibles a usar por el tamaño del mensaje de las Xbee
     int IV_SIG_BYTES = 12;
