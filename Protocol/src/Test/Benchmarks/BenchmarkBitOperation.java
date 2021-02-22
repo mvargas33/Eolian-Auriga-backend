@@ -10,6 +10,7 @@ public class BenchmarkBitOperation {
 
     // Results: Intel i59300H       avgt 20.696 +- 0.951 ns/op
     // Results: Intel i59300H(2)    avgt 10.284 +- 0.249 ns/op
+    // Results: Raspberry Pi 4b+    avgt 80.997 +- 0.390 ns/op
     // ponerValorEnArray se llama muchas veces en updateByteArrayFromValues
     // int -> byte[]
     @Benchmark
@@ -26,6 +27,7 @@ public class BenchmarkBitOperation {
 
     // Results: Intel i59300H       avgt 54.624 +- 2.081 ns/op
     // Results: Intel i59300H(2)    avgt 52.488 +- 1.873 ns/op
+    // Results: Raspberry Pi 4b+    avgt 347.640 +- 11.964 ns/op
     // int[] -> byte[]
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
@@ -44,6 +46,7 @@ public class BenchmarkBitOperation {
 
     // Results: Intel i59300H       avgt 10.656 +- 0.184 ns/op
     // Results: Intel i59300H(2)    avgt 10.742 +- 0.317 ns/op
+    // Results: Raspberry Pi 4b+    avgt 80.384 +- 1.155 ns/op
     // extraerBits se llama muchas veces en updateValuesFromByteArray
     // byte[] -> int
     @Benchmark
@@ -56,6 +59,7 @@ public class BenchmarkBitOperation {
 
     // Results: Intel i59300H       avgt 29.884 +- 0.456 ns/op
     // Results: Intel i59300H(2)    avgt 29.489 +- 0.074 ns/op
+    // Results: Raspberry Pi 4b+    avgt 257.827 +- 3.189 ns/op
     // byte[] -> int[]
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
@@ -73,6 +77,7 @@ public class BenchmarkBitOperation {
 
     // Results: Intel i59300H       avgt 7.022 +- 0.149 ns/op
     // Results: Intel i59300H(2)    avgt 6.432 +- 0.044 ns/op
+    // Results: Raspberry Pi 4b+    avgt 66.409 +- 0.554 ns/op
     // Se usa harto antes de enviar cada mensaje, para hacer clean de bytes en mensaje antes de insertar valores
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
