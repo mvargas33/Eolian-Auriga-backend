@@ -32,6 +32,10 @@ class SRVC implements Runnable{
         return this.myReaders.size();
     }
 
+    public void resetQueue(){
+        this.myReaders.clear();
+    }
+
     public int tick(){
         return this.processedReaders;
     }

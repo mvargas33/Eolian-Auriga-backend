@@ -14,34 +14,47 @@ public class MultiThreadSandbox {
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     @State(Scope.Thread)
     public static class MyState {
-        long readDelay = 0;
-        public SR sr1 = new SR("SR_01", readDelay);
-        public SR sr2 = new SR("SR_02", readDelay);
+        long readDelay = 160;
+        int SR_size = 10;
         public SRVC service1 = new SRVC("Printer");
         public List<SR> sr_list = new LinkedList<>();
-
         public long TIMEOUT = 10000;
+
+        public MyState(){
+            for (int i = 0; i< SR_size; i++){
+                sr_list.add(new SR("SR_" + Integer.toString(i),readDelay));
+            }
+            for (SR sr : sr_list
+                 ) {
+                sr.subscribe(service1);
+            }
+        }
     }
 
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public void linearExecution(MyState state) throws InterruptedException {
-        state.sr1.subscribe(state.service1);
-        state.sr2.subscribe(state.service1);
-        state.sr_list.add(state.sr1);
-        state.sr_list.add(state.sr2);
-
-        long init = System.currentTimeMillis();
-        long now = System.currentTimeMillis();
+        long last = System.currentTimeMillis();
+        long now;
 
 //        while (now - init < state.TIMEOUT) {
+        double diff;
+        double counter = 0;
         while(true){
             for (SR sr : state.sr_list
             ) {
                 sr.sequentialRun();
             }
-//            now = System.currentTimeMillis();
+            if( counter == 100){
+                now = System.currentTimeMillis();
+                diff = ((double) now - (double)last) / counter;
+
+                System.out.println("Avg delay per SR in last " + counter + " times: " + diff);
+                counter = 0;
+                last = now;
+            }
+            counter++;
         }
 
     }
@@ -50,16 +63,11 @@ public class MultiThreadSandbox {
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public void paralellExecution(MyState state) {
-        state.sr1.subscribe(state.service1);
-        state.sr2.subscribe(state.service1);
-        state.sr_list.add(state.sr1);
-        state.sr_list.add(state.sr2);
-
         // Execute threads
-        ExecutorService mainExecutor = Executors.newFixedThreadPool(3);
-
-        mainExecutor.submit(state.sr1);
-        mainExecutor.submit(state.sr2);
+        ExecutorService mainExecutor = Executors.newFixedThreadPool(state.SR_size + 1);
+        for (int i = 0; i < state.SR_size; i++) {
+            mainExecutor.submit(state.sr_list.get(i));
+        }
         mainExecutor.submit(state.service1);
         //mainExecutor.submit(new Ticker(state.service1));
 //        Ticker t = new Ticker(state.service1);
@@ -115,7 +123,6 @@ public class MultiThreadSandbox {
         ms.serviceTicker(myState.service1);
     }
 
-
     public static void main(String args[]) throws Exception {
         MultiThreadSandbox ms = new MultiThreadSandbox();
         ms.paralellTest();
@@ -124,29 +131,44 @@ public class MultiThreadSandbox {
 
     // Adjust delay of SR's readings to stop the growing of services Queues
     public void delayControl(SRVC service1, List<SR> sr_list) throws InterruptedException {
-        int READ_PERIOD = 100;
+        int READ_PERIOD = 160; // 1x delay
 
         int queueSizeAnterior = 0;
         int queueSizeActual = 0;
         int threshhold = 0;
         int confirmaciones = 0;
+        int estancado = 0;
+
         while (true) {
-            Thread.sleep(100);
+            Thread.sleep(160*3); // 3x Delay
             queueSizeActual = service1.queueSize();
+
             if (queueSizeActual > queueSizeAnterior) {
+                confirmaciones += 1;
                 if (confirmaciones == 5) { // 5 confirmaciones seguidas
-                    threshhold = READ_PERIOD;
-                    READ_PERIOD = READ_PERIOD * 10;
+                    threshhold = READ_PERIOD; // "Este read_period no me sirve" "debe ser mayor"
+                    READ_PERIOD = (int) ((double) READ_PERIOD * 1.5); // Sube exponencialmente para poder recorrer la cola
                     confirmaciones = 0;
-                } else {
-                    confirmaciones += 1;
+                    service1.resetQueue();
                 }
             } else {
                 confirmaciones = 0; // basta 1 vez que baje la cola para reiniciar el contador
-                if (READ_PERIOD - 10 > threshhold) {
-                    READ_PERIOD -= 10;
+                if (READ_PERIOD - 1 > threshhold) { // "Si bajo, estoy sobre el límite inferior?"
+                    READ_PERIOD -= 1; // Baja linealmente
                 }
             }
+
+            // Si se queda estancado, vaciar la Queue
+            if (queueSizeActual > 0 && (queueSizeActual == queueSizeAnterior | queueSizeActual + 1 == queueSizeAnterior | queueSizeActual - 1 == queueSizeAnterior)){
+                estancado = estancado + 1;
+                //System.out.println("ESTANCADO: " + estancado);
+                if(estancado == 10){
+                    //System.out.println("ESTANCADO 10");
+                    service1.resetQueue();
+                    estancado = 0;
+                }
+            }
+
             System.out.println("New period: " + READ_PERIOD + " Last queue size: " + queueSizeActual);
             for (SR sr : sr_list) {
                 sr.setReadDelay(READ_PERIOD);
@@ -162,7 +184,7 @@ public class MultiThreadSandbox {
         double last =0;
         while (true) {
             times++;
-            t = (double) service.tick();
+            t = service.tick();
             System.out.println(service.getName() + " Time [s]: " + Double.toString(times) + " SR processed: " + Double.toString(t) + " Diff: " + Double.toString(t-last) + " SR/s : " + Double.toString(t / times));
             last = t;
             Thread.sleep(sampleTime);
