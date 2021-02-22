@@ -51,7 +51,7 @@ public class BenchmarkBitOperation {
         int res = BitOperations.extraerBits(raw, 10, 8); // desde segundo indice en byte[]
     }
 
-    // Results: Intel i59300H avgt 0. +- 0. ns/op
+    // Results: Intel i59300H avgt 29.884 +- 0.456 ns/op
     // byte[] -> int[]
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
