@@ -32,9 +32,9 @@ public class BenchmarkCrypto {
                 keyAdmin = new KeyAdmin();
                 keyAdmin.genNewIV();
                 keyAdmin.genNewKey();
-                encryptedText = encryptor.encrypt(plainText.getBytes());
                 encryptor = new CryptoAdmin(keyAdmin.getKey(), keyAdmin.getIV(), MAC_SIG_BYTES, IV_SIG_BYTES, CONTENT_SIG_BYTES);
                 decryptor = new CryptoAdmin(keyAdmin.getKey(), keyAdmin.getIV(), MAC_SIG_BYTES, IV_SIG_BYTES, CONTENT_SIG_BYTES);
+                encryptedText = encryptor.encrypt(plainText.getBytes());
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -42,7 +42,7 @@ public class BenchmarkCrypto {
     }
 
     // One encryption - One decryption
-    // Results:
+    // Results: Intel i59300H avgt 1715.234 +- 20.260 ns/op
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -60,6 +60,7 @@ public class BenchmarkCrypto {
         // }
     }
 
+    // Results: Intel i59300H avgt 899.191 +- 3.859 ns/op
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -67,6 +68,7 @@ public class BenchmarkCrypto {
         state.encryptor.encrypt(state.plainText.getBytes());
     }
 
+    // Results: Intel i59300H avgt 784.049 +- 9.107 ns/op
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
