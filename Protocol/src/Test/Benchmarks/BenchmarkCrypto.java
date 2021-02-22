@@ -43,7 +43,7 @@ public class BenchmarkCrypto {
 
     // One encryption - One decryption
     // Results: Intel i59300H       avgt 1715.234 +- 20.260 ns/op
-    // Results: Raspberry Pi 4b+    avgt 16323.004 +- 161.551 ns/op
+    // Results: Raspberry Pi 4b+    avgt 16323.004 +- 161.551 ns/op (+951%)
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -62,7 +62,7 @@ public class BenchmarkCrypto {
     }
 
     // Results: Intel i59300H       avgt 899.191 +- 3.859 ns/op
-    // Results: Raspberry Pi 4b+    avgt 9099.071 +- 189.559 ns/op
+    // Results: Raspberry Pi 4b+    avgt 9099.071 +- 189.559 ns/op (+1011%)
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -71,7 +71,7 @@ public class BenchmarkCrypto {
     }
 
     // Results: Intel i59300H       avgt 784.049 +- 9.107 ns/op
-    // Results: Raspberry Pi 4b+    avgt 6814.786 +- 114.407 ns/op
+    // Results: Raspberry Pi 4b+    avgt 6814.786 +- 114.407 ns/op (+869%)
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
