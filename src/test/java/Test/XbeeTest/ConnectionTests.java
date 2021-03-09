@@ -1,6 +1,5 @@
 package Test.XbeeTest;
 
-import Test.Sandboxes.XbeeSandBox;
 import com.digi.xbee.api.RemoteXBeeDevice;
 import com.digi.xbee.api.XBeeDevice;
 import com.digi.xbee.api.XBeeNetwork;
@@ -8,10 +7,11 @@ import com.digi.xbee.api.exceptions.XBeeException;
 import com.digi.xbee.api.listeners.IDataReceiveListener;
 import com.digi.xbee.api.models.XBeeMessage;
 import com.digi.xbee.api.utils.HexUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
+@EnabledIf("false") //cambiar a true cuando haya una xbee conectada, podria cambiarse a algo como "OS==Raspbian"
 public class ConnectionTests {
     int BAUD_RATE;
     String PORT_RECEIVE;

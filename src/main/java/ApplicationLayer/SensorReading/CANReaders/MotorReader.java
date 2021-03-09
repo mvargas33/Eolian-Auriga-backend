@@ -1,7 +1,5 @@
 package ApplicationLayer.SensorReading.CANReaders;
 
-import ApplicationLayer.AppComponents.AppSender;
-
 /**
  * Clase específica para leer datos del motor por el Bus CAN
  */

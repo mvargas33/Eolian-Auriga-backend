@@ -1,19 +1,12 @@
 package ApplicationLayer.LocalServices.WirelessService;
 
-import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.AppReceiver;
-import ApplicationLayer.AppComponents.AppSender;
-import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Encryption.CryptoAdmin;
 import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Components.State;
 import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Components.StateReceiver;
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Components.StateSender;
 import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Initializer.ReceiverInitializer;
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Initializer.SenderInitializer;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Receiving.ReceiverAdmin;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Receiving.XbeeReceiver;
-import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Sending.SenderAdmin;
-import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Sending.XbeeSender;
 
 import java.util.LinkedList;
 import java.util.List;
