@@ -83,3 +83,9 @@ Previously all dependencies where handled offline (directly having the source co
 
 However just the necessary libraries (necessary enough to build the project) where transferred to the pom file.
 Therefore there are many libraries that were not imported to the pom file, to keep that in mind if some error arises because of that.
+
+## Build
+
+To build the project run:
+
+`mvn clean compile assembly:single`
