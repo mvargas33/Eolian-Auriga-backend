@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.nio.Buffer;
 import java.util.ArrayList;
 
+
 /**
  * GPSReader lee los datos del
  */
@@ -25,6 +26,27 @@ public class GPSReader extends SensorsReader {
         super(myComponent, readingDelayInMS);
     }
 
+    /**
+     * Simple checksum calculation for a NMEA message.
+     * @param msg The message to check.
+     * @return true if the coded message equals the checksum, false otherwise.
+     */
+    public static boolean checkSum(String msg) {
+        // se ignoran estos 2 caracteres
+        String newMsg = msg.replace("I", "");
+        newMsg = newMsg.replace("$", "");
+        // el 0 es el mensaje y el 1 es el codigo checksum
+        String[] msg_cs = newMsg.split("\\*");
+
+        int result = 0;
+        for(int i = 0; i < msg_cs[0].length(); i++) {
+            result ^= msg_cs[0].charAt(i);
+        }
+
+        int checksum = Integer.parseInt(msg_cs[1], 16);
+
+        return checksum == result;
+    }
 
     public static double[] RMCReader(String[] msg) {
         double[] values = new double[6];
@@ -100,30 +122,35 @@ public class GPSReader extends SensorsReader {
 
     void readMessage(String message) {
         // Revisar el checksum aca
-
-        //
-        String[] msg = message.split(",");
-        switch (msg[0]) {
-            // esto se podria hacer con una clase 'NMEAsentenceReader' implementada para cada tipo de mensaje, pero no se
-            // que tanto valga la pena, primero se planea implementar asi, luego evaluar si es mejor abstraerlo mas.
-            case "$GPRMC":
-                RMCReader(msg);
-                break;
-            case "$GPGGA":
-                GGAReader(msg);
-                break;
-            case "$GPGSV":
-                GSVReader(msg);
-                break;
-            case "$GPVTG":
-                VTGReader(msg);
-                break;
-            case "$GPGSA":
-                GSAReader(msg);
-                break;
-            default:
-                System.out.println("Mensaje, "+msg[0]+" no soportado para lectura");
-                break;
+        if(checkSum(message)) {
+            // leer el mensaje
+            String[] msg = message.split(",");
+            switch (msg[0]) {
+                // esto se podria hacer con una clase 'NMEAsentenceReader' implementada para cada tipo de mensaje, pero no se
+                // que tanto valga la pena, primero se planea implementar asi, luego evaluar si es mejor abstraerlo mas.
+                case "$GPRMC":
+                    RMCReader(msg);
+                    break;
+                case "$GPGGA":
+                    GGAReader(msg);
+                    break;
+                case "$GPGSV":
+                    GSVReader(msg);
+                    break;
+                case "$GPVTG":
+                    VTGReader(msg);
+                    break;
+                case "$GPGSA":
+                    GSAReader(msg);
+                    break;
+                default:
+                    System.out.println("Mensaje, "+msg[0]+" no soportado para lectura");
+                    break;
+            }
+        }
+        // si falla el checksum avisar (pero no terminar el programa)
+        else {
+            System.out.println("Checksum requirements were not met, message ignored.");
         }
     }
 
@@ -169,6 +196,7 @@ public class GPSReader extends SensorsReader {
     }
 
     public static void main(String[] argv) {
+        /* Pasar esto a tests unitarios "Test Reader"
         String[] RMCmsg = "$GPRMC,215829.000,A,3526.9451,S,07140.3300,W,0.32,349.15,030221,,,A*64".split(",");
         double RMCresult[] = RMCReader(RMCmsg);
         for (double num : RMCresult) {
@@ -183,6 +211,10 @@ public class GPSReader extends SensorsReader {
         for (double num : GGAresult) {
             System.out.print(num);
             System.out.print(' ');
-        }
+        } */
+
+        // pasar esto a test
+        String GGAmsg = "$GPGGA,215830.000,3526.9450,S,07140.3300,W,1,05,2.35,92.5,M,25.5,M,,*5B";
+        System.out.println(checkSum(GGAmsg));
     }
 }
