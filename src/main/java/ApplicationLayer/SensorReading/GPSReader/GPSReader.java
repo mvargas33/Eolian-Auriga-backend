@@ -17,8 +17,8 @@ public class GPSReader extends SensorsReader {
     //temporal, por ahora solo va a leer longitud y latitud
     // orden de values -> [decimales_latitud, angulo_latitud, orientacion_latitud, decimales_longitud, angulo_longitud, orientacion_longitud]
     // las orientaciones se reciben como N/E/S/W pero se trabajan usando la siguiente transformacion
-    // -1 == N (North), 1 == S (South)
-    // -1 == E (East), 1 == W (West)
+    // 1 == N (North), -1 == S (South)
+    // 1 == E (East), -1 == W (West)
 
     private double[] values = new double[6];
 
@@ -31,7 +31,8 @@ public class GPSReader extends SensorsReader {
      * @param msg The message to check.
      * @return true if the coded message equals the checksum, false otherwise.
      */
-    public static boolean checkSum(String msg) {
+
+    public boolean checkSum(String msg) {
         // se ignoran estos 2 caracteres
         String newMsg = msg.replace("I", "");
         newMsg = newMsg.replace("$", "");
@@ -48,16 +49,15 @@ public class GPSReader extends SensorsReader {
         return checksum == result;
     }
 
-    public static double[] RMCReader(String[] msg) {
-        double[] values = new double[6];
+    public void RMCReader(String[] msg) {
         values[0] = Double.parseDouble(msg[3].substring(0, 2));
         values[1] = Double.parseDouble(msg[3].substring(2));
         switch (msg[4]) {
             case "N":
-                values[2] = -1;
+                values[2] = 1;
                 break;
             case "S":
-                values[2] = 1;
+                values[2] = -1;
                 break;
             default:
                 System.out.println("ERROR: Valor "+msg[4]+" no identificado como direccion de latitud.");
@@ -66,28 +66,26 @@ public class GPSReader extends SensorsReader {
         values[4] = Double.parseDouble(msg[5].substring(3));
         switch (msg[6]) {
             case "E":
-                values[5] = -1;
+                values[5] = 1;
                 break;
             case "W":
-                values[5] = 1;
+                values[5] = -1;
                 break;
             default:
                 System.out.println("ERROR: Valor "+msg[6]+" no identificado como direccion de longitud.");
                 // todo: no se si un mensaje de aviso basta o es mejor tirar un error.
         }
-        return values;
     }
 
-    public static double[] GGAReader(String[] msg) {
-        double[] values = new double[6];
+    public void GGAReader(String[] msg) {
         values[0] = Double.parseDouble(msg[2].substring(0, 2));
         values[1] = Double.parseDouble(msg[2].substring(2));
         switch (msg[3]) {
             case "N":
-                values[2] = -1;
+                values[2] = 1;
                 break;
             case "S":
-                values[2] = 1;
+                values[2] = -1;
                 break;
             default:
                 System.out.println("ERROR: Valor "+msg[4]+" no identificado como direccion de latitud.");
@@ -96,16 +94,16 @@ public class GPSReader extends SensorsReader {
         values[4] = Double.parseDouble(msg[4].substring(3));
         switch (msg[5]) {
             case "E":
-                values[5] = -1;
+                values[5] = 1;
                 break;
             case "W":
-                values[5] = 1;
+                values[5] = -1;
                 break;
             default:
                 System.out.println("ERROR: Valor "+msg[5]+" no identificado como direccion de longitud.");
                 // todo: no se si un mensaje de aviso basta o es mejor tirar un error.
         }
-        return values;
+        this.values = values;
     }
 
     public void VTGReader(String[] msg) {
@@ -120,7 +118,7 @@ public class GPSReader extends SensorsReader {
         System.out.println("Mensaje GSA no requerido.");
     }
 
-    void readMessage(String message) {
+    public void readMessage(String message) {
         // Revisar el checksum aca
         if(checkSum(message)) {
             // leer el mensaje
@@ -190,8 +188,7 @@ public class GPSReader extends SensorsReader {
 
     @Override
     public double[] read() {
-        values[0] = 0;
-        values[1] = 0;
+        //pendiente aplicar la logica requerida (leer cada tantos ms)
         return values;
     }
 
@@ -214,7 +211,7 @@ public class GPSReader extends SensorsReader {
         } */
 
         // pasar esto a test
-        String GGAmsg = "$GPGGA,215830.000,3526.9450,S,07140.3300,W,1,05,2.35,92.5,M,25.5,M,,*5B";
-        System.out.println(checkSum(GGAmsg));
+        //String GGAmsg = "$GPGGA,215830.000,3526.9450,S,07140.3300,W,1,05,2.35,92.5,M,25.5,M,,*5B";
+        //System.out.println(checkSum(GGAmsg));
     }
 }
