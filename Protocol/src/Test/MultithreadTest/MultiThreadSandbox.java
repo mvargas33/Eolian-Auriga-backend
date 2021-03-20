@@ -18,7 +18,7 @@ public class MultiThreadSandbox {
         int SR_size = 10;
         public SRVC service1 = new SRVC("Printer");
         public List<SR> sr_list = new LinkedList<>();
-        public long TIMEOUT = 10000;
+        public long TIMEOUT = 1000;
 
         public MyState(){
             for (int i = 0; i< SR_size; i++){
@@ -37,24 +37,26 @@ public class MultiThreadSandbox {
     public void linearExecution(MyState state) throws InterruptedException {
         long last = System.currentTimeMillis();
         long now;
+        long init = System.currentTimeMillis();
 
-//        while (now - init < state.TIMEOUT) {
-        double diff;
-        double counter = 0;
-        while(true){
-            for (SR sr : state.sr_list
-            ) {
-                sr.sequentialRun();
-            }
-            if( counter == 100){
-                now = System.currentTimeMillis();
-                diff = ((double) now - (double)last) / counter;
+        while (System.currentTimeMillis() - init < state.TIMEOUT) {
+            double diff;
+            double counter = 0;
+            while (true) {
+                for (SR sr : state.sr_list
+                ) {
+                    sr.sequentialRun();
+                }
+                if (counter == 100) {
+                    now = System.currentTimeMillis();
+                    diff = ((double) now - (double) last) / counter;
 
-                System.out.println("Avg delay per SR in last " + counter + " times: " + diff);
-                counter = 0;
-                last = now;
+                    System.out.println("Avg delay per SR in last " + counter + " times: " + diff);
+                    counter = 0;
+                    last = now;
+                }
+                counter++;
             }
-            counter++;
         }
 
     }
@@ -125,8 +127,8 @@ public class MultiThreadSandbox {
 
     public static void main(String args[]) throws Exception {
         MultiThreadSandbox ms = new MultiThreadSandbox();
-        ms.paralellTest();
-        //ms.linearTest();
+        //ms.paralellTest();
+        ms.linearTest();
     }
 
     // Adjust delay of SR's readings to stop the growing of services Queues
