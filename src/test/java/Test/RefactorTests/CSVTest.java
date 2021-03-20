@@ -12,7 +12,7 @@ public class CSVTest {
 
     @Test
     public void staticTest() throws Exception{
-        String dir = "src/ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
+        String dir = "src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
 
         /*List<String> files = CSVToAppComponent.listFilesForFolder(dir);
         for (String file: files
