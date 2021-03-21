@@ -158,6 +158,7 @@ public class GPSReader extends SensorsReader {
         ProcessBuilder processBuilder = new ProcessBuilder();
         // NOTA: primero hay que iniciar el serial com en comando 'stty -F /dev/serial0 raw 9600 cs8 clocal -cstopb'
         // (9600 es el baud rate)
+        processBuilder.command("bash", "-c", "stty -F /dev/serial0 raw 9600 cs8 clocal -cstopb");
         processBuilder.command("bash", "-c", "cat /dev/serial0");
 
         try {

@@ -7,7 +7,7 @@ import ApplicationLayer.SensorReading.SensorsReader;
  * Clase que lee componentes del vehículo mediante interfaz CAN-Serial en el puerto USB
  */
 public abstract class CANReader extends SensorsReader {
-    private final CANReaderCoordinator myCoordinator;
+    public final CANReaderCoordinator myCoordinator;
     public double[] newvalues;
 
     public CANReader(AppSender myComponent, long readingDelayInMS, CANReaderCoordinator myCoordinator) {
@@ -21,10 +21,11 @@ public abstract class CANReader extends SensorsReader {
      * @return valores actualizados del componente asociado
      */
     public abstract double[] actualRead();
-
+//
 //    @Override
 //    public double[] read() {
 //        myCoordinator.enQueueForBUS(this);
+//
 //        while(newvalues == null){
 //            // TODO, EN VEZ DE BUSY WAITING, USAR ASYNC FUNCTIONS
 //        }
