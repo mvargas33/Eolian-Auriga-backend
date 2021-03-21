@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-@EnabledIf("false") //cambiar a true cuando haya una xbee conectada, podria cambiarse a algo como "OS==Raspbian"
+@EnabledIf("true") //cambiar a true cuando haya una xbee conectada, podria cambiarse a algo como "OS==Raspbian"
 public class ConnectionTests {
     int BAUD_RATE;
     String PORT_RECEIVE;
@@ -44,7 +44,7 @@ public class ConnectionTests {
     public void xbeeSetup(){
         BAUD_RATE = 230400;
         PORT_RECEIVE = "COM6";
-        PORT_SEND = "COM4";
+        PORT_SEND = "/dev/ttyUSB0";
         DATA_TO_SEND = "Hola! Probando ...";
         DATA_TO_SEND_BYTES = DATA_TO_SEND.getBytes();
         REMOTE_NODE_IDENTIFIER = "EOLIAN FENIX";
@@ -123,7 +123,12 @@ public class ConnectionTests {
      */
     @Test
     public void senderBroadcastTest() {
-        xbeeSenderBroadcastSetup(myDeviceS);
+        this.myDeviceS = new XBeeDevice(PORT_SEND,  BAUD_RATE);
+        try{
+            myDeviceS.open();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         System.out.format("Sending broadcast data ...");
 
         // Enviar 10 smensajes y parar

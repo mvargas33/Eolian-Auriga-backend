@@ -18,27 +18,30 @@ public class BMSReader extends SensorsReader {
 
     void readMessage(String message) {
         // Revisar el checksum aca
-
+        System.out.println(message);
         // leer el mensaje
-        String[] msg = message.split(" ");
-        switch (msg[0]) {
-
-            //case "$GPRMC":
-
-            default:
-                System.out.println(msg);
-                break;
-        }
+//        String[] msg = message.split(" ");
+//        switch (msg[0]) {
+//
+//            //case "$GPRMC":
+//
+//            default:
+//                System.out.println(msg);
+//                break;
+//        }
     }
 
     void startReading() {
         ProcessBuilder processBuilder = new ProcessBuilder();
         // NOTA: primero hay que iniciar el can com en comando 'stty -F /dev/serial0 raw 9600 cs8 clocal -cstopb'
         // (9600 es el baud rate)
-        processBuilder.command("bash", "-c", "sudo /sbin/ip link set can0 up type can bitrate 500000");
-        processBuilder.command("bash", "-c", "sudo /sbin/ip link set can1 up type can bitrate 500000");
-        processBuilder.command("bash", "-c", "gcc ./candump.c");
-        processBuilder.command("bash", "-c", "./candump any");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("sudo /sbin/ip link set can0 up type can bitrate 500000;");
+        stringBuilder.append("sudo /sbin/ip link set can1 up type can bitrate 500000;");
+        stringBuilder.append("cd ./src/main/java/ApplicationLayer/SensorReading/CANReaders/linux-can-utils;");
+        stringBuilder.append("gcc candump.c lib.c -o candump;");
+        stringBuilder.append("./candump any;");
+        processBuilder.command("bash", "-c", stringBuilder.toString());
 
         try {
             Process process = processBuilder.start();
@@ -46,6 +49,11 @@ public class BMSReader extends SensorsReader {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream())
             );
+            BufferedReader error_reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String error;
+            while ((error = error_reader.readLine()) != null) {
+                System.out.println(error);
+            }
 
             String line;
             while ((line = reader.readLine()) != null) {
