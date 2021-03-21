@@ -18,10 +18,19 @@ public class BMSReader extends SensorsReader {
 
     void readMessage(String message) {
         // Revisar el checksum aca
-        System.out.println(message);
+
+        //System.out.println(message);
         // leer el mensaje
-//        String[] msg = message.split(" ");
-//        switch (msg[0]) {
+        l
+        //System.out.println(msg.length);
+        if (msg.length != 16){
+            System.out.println(message);return;
+        }
+        System.out.print("ID: " + msg[2] + " MSG: ");
+        for(int i=8 ; i< 16; i++){
+            System.out.print(" " + msg[i]);
+//        switch (msg[0])
+        }System.out.println("");
 //
 //            //case "$GPRMC":
 //
@@ -33,6 +42,7 @@ public class BMSReader extends SensorsReader {
 
     void startReading() {
         ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.redirectErrorStream(true);
         // NOTA: primero hay que iniciar el can com en comando 'stty -F /dev/serial0 raw 9600 cs8 clocal -cstopb'
         // (9600 es el baud rate)
         StringBuilder stringBuilder = new StringBuilder();
@@ -49,31 +59,35 @@ public class BMSReader extends SensorsReader {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream())
             );
-            BufferedReader error_reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String error;
-            while ((error = error_reader.readLine()) != null) {
-                System.out.println(error);
+//            BufferedReader error_reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+//            String error;
+//            while ((error = error_reader.readLine()) != null) {
+//                System.out.println(error);
+//            }
+
+            String line = null;
+            while(true){
+                while ((line = reader.readLine()) != null) {
+                    //System.out.println(line);
+                    readMessage(line);
+                }
             }
 
-            String line;
-            while ((line = reader.readLine()) != null) {
-                readMessage(line);
-            }
-
-            //para ver si termino
-            int exitVal = process.waitFor();
-            if (exitVal == 0) {
-                System.out.println("Se cierra la lectura.");
-                System.exit(0);
-            } else {
-                //abnormal...
-            }
+//            //para ver si termino
+//            int exitVal = process.waitFor();
+//            if (exitVal == 0) {
+//                System.out.println("Se cierra la lectura.");
+//                System.exit(0);
+//            } else {
+//                //abnormal...
+//            }
 
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
+//        catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
