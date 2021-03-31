@@ -13,19 +13,19 @@ import java.io.InputStreamReader;
  */
 public class BMSReader extends SensorsReader {
     private byte[] data = new byte[8];
-    private double[] voltages = new double[256];
-    private double[] temp_all_the_time = new double[256];
-    private double[] temp_when_balacing_off = new double[256];
-    private double[] resistance = new double[256];
+    private double[] voltages = new double[28];
+    private double[] temp_all_the_time = new double[28];
+    private double[] temp_when_balacing_off = new double[28];
+    private double[] resistance = new double[28];
 
-    private double[] voltage_reading_ok = new double[256];
-    private double[] temperature_reading_ok = new double[256];
-    private double[] resistance_reading_ok = new double[256];
-    private double[] load_is_on = new double[256];
-    private double[] voltage_sensor_fault = new double[256];
-    private double[] temperature_sensor_fault = new double[256];
-    private double[] resistance_calculation_fault = new double[256];
-    private double[] load_fault = new double[256];
+    private double[] voltage_reading_ok = new double[28];
+    private double[] temperature_reading_ok = new double[28];
+    private double[] resistance_reading_ok = new double[28];
+    private double[] load_is_on = new double[28];
+    private double[] voltage_sensor_fault = new double[28];
+    private double[] temperature_sensor_fault = new double[28];
+    private double[] resistance_calculation_fault = new double[28];
+    private double[] load_fault = new double[28];
 
     public BMSReader(AppSender myComponent, long readingDelayInMS) {
         super(myComponent, readingDelayInMS);
@@ -146,15 +146,17 @@ public class BMSReader extends SensorsReader {
                 }
 
                 // Cell voltages
-                else if (id > BASE_DUMP_ID && id <= (BASE_DUMP_ID+32)){
+                else if (id > BASE_DUMP_ID && id <= (BASE_DUMP_ID+4)){ // +4 porque son hasta  28 módulos
                     this.voltages[((id-BASE_DUMP_ID-1)*8)  ] = (((int) data[0]) + 2.0)/100.0; // [10mV] [200, 455] -> [V] [2.00, 4.55]
                     this.voltages[((id-BASE_DUMP_ID-1)*8)+1] = (((int) data[1]) + 2.0)/100.0;
                     this.voltages[((id-BASE_DUMP_ID-1)*8)+2] = (((int) data[2]) + 2.0)/100.0;
                     this.voltages[((id-BASE_DUMP_ID-1)*8)+3] = (((int) data[3]) + 2.0)/100.0;
-                    this.voltages[((id-BASE_DUMP_ID-1)*8)+4] = (((int) data[4]) + 2.0)/100.0;
-                    this.voltages[((id-BASE_DUMP_ID-1)*8)+5] = (((int) data[5]) + 2.0)/100.0;
-                    this.voltages[((id-BASE_DUMP_ID-1)*8)+6] = (((int) data[6]) + 2.0)/100.0;
-                    this.voltages[((id-BASE_DUMP_ID-1)*8)+7] = (((int) data[7]) + 2.0)/100.0;
+                    if(id != BASE_DUMP_ID+4) {
+                        this.voltages[((id-BASE_DUMP_ID-1)*8)+4] = (((int) data[4]) + 2.0)/100.0;
+                        this.voltages[((id - BASE_DUMP_ID - 1) * 8) + 5] = (((int) data[5]) + 2.0) / 100.0;
+                        this.voltages[((id - BASE_DUMP_ID - 1) * 8) + 6] = (((int) data[6]) + 2.0) / 100.0;
+                        this.voltages[((id - BASE_DUMP_ID - 1) * 8) + 7] = (((int) data[7]) + 2.0) / 100.0;
+                    }
                 }
 
         }
