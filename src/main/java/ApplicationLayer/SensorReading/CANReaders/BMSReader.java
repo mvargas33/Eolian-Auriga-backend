@@ -44,7 +44,7 @@ public class BMSReader extends SensorsReader {
             data[i-8] = (byte) ((Character.digit(msg[i].charAt(0), 16) << 4) + (Character.digit(msg[i].charAt(1), 16)));
         }
 
-        switch (msg[2]){
+        switch (msg[5]){
             case "622":
                 // State of system
                 double fault_state  = (int) data[0] & 0b00000001;
@@ -126,7 +126,7 @@ public class BMSReader extends SensorsReader {
 
             default:
                 int BASE_DUMP_ID = 0;
-                int id = Integer.parseInt(msg[2]);
+                int id = Integer.parseInt(msg[5]);
 
                 // Individual cell details
                 if (id == BASE_DUMP_ID){
@@ -158,7 +158,7 @@ public class BMSReader extends SensorsReader {
                         this.voltages[((id - BASE_DUMP_ID - 1) * 8) + 7] = (((int) data[7]) + 2.0) / 100.0;
                     }
                 }else{
-                    System.out.print("ID: " + msg[2] + " MSG: ");
+                    System.out.print("ID: " + msg[5] + " MSG: ");
                     for(int i=8 ; i< 16; i++){
                         System.out.print(" " + msg[i]);
                     }System.out.println("");
