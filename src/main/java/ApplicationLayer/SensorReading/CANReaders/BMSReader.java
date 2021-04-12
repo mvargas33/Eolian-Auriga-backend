@@ -157,21 +157,13 @@ public class BMSReader extends SensorsReader {
                         this.voltages[((id - BASE_DUMP_ID - 1) * 8) + 6] = (((int) data[6]) + 2.0) / 100.0;
                         this.voltages[((id - BASE_DUMP_ID - 1) * 8) + 7] = (((int) data[7]) + 2.0) / 100.0;
                     }
+                }else{
+                    System.out.print("ID: " + msg[2] + " MSG: ");
+                    for(int i=8 ; i< 16; i++){
+                        System.out.print(" " + msg[i]);
+                    }System.out.println("");
                 }
-
         }
-        System.out.println("ID: " + msg[2] + " MSG: ");
-        for(int i=8 ; i< 16; i++){
-            System.out.print(" " + msg[i]);
-//        switch (msg[0])
-        }System.out.println("");
-//
-//            //case "$GPRMC":
-//
-//            default:
-//                System.out.println(msg);
-//                break;
-//        }
     }
 
     void startReading() {
