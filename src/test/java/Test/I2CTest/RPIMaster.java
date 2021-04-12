@@ -1,4 +1,4 @@
-package I2C;
+package Test.I2CTest;
 
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
