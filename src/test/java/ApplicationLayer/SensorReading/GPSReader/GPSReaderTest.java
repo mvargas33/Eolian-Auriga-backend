@@ -31,12 +31,12 @@ public class GPSReaderTest {
         // --> latitud = -35 26.9451, longitud = -71 40.3300
         gpsReader.readMessage(gps.getRMCMsg());
         // orden de parametros -> lat, lat_minutos, lat_ori, long, long_minutos, long_ori
-        assertEquals(gpsReader.read()[0], 35);
-        assertEquals(gpsReader.read()[1], 26.9451);
-        assertEquals(gpsReader.read()[2], -1);
-        assertEquals(gpsReader.read()[3], 71);
-        assertEquals(gpsReader.read()[4], 40.3300);
-        assertEquals(gpsReader.read()[5], -1);
+        assertEquals(gpsReader.values[0], 35);
+        assertEquals(gpsReader.values[1], 26.9451);
+        assertEquals(gpsReader.values[2], -1);
+        assertEquals(gpsReader.values[3], 71);
+        assertEquals(gpsReader.values[4], 40.3300);
+        assertEquals(gpsReader.values[5], -1);
     }
 
     @Test
@@ -45,12 +45,12 @@ public class GPSReaderTest {
         // --> latitud = -35 26.9450, longitud = -71 40.3300
         gpsReader.readMessage(gps.getGGAMsg());
         // orden de parametros -> lat, lat_minutos, lat_ori, long, long_minutos, long_ori
-        assertEquals(gpsReader.read()[0], 35);
-        assertEquals(gpsReader.read()[1], 26.9450);
-        assertEquals(gpsReader.read()[2], -1);
-        assertEquals(gpsReader.read()[3], 71);
-        assertEquals(gpsReader.read()[4], 40.3300);
-        assertEquals(gpsReader.read()[5], -1);
+        assertEquals(gpsReader.values[0], 35);
+        assertEquals(gpsReader.values[1], 26.9450);
+        assertEquals(gpsReader.values[2], -1);
+        assertEquals(gpsReader.values[3], 71);
+        assertEquals(gpsReader.values[4], 40.3300);
+        assertEquals(gpsReader.values[5], -1);
     }
 
 

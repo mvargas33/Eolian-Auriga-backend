@@ -7,12 +7,16 @@ import ApplicationLayer.SensorReading.Utils.Utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Clase específica para leer datos del BMS por el Bus CAN
  */
 public class BMSReader extends SensorsReader {
     private byte[] data = new byte[8];
+
+    // TODO: update en super.values directamente. Se pueden guardar indices de inicio aca
     private double[] voltages = new double[28];
     private double[] temp_all_the_time = new double[28];
     private double[] temp_when_balacing_off = new double[28];
@@ -31,7 +35,7 @@ public class BMSReader extends SensorsReader {
         super(myComponent, readingDelayInMS);
     }
 
-    void readMessage(String message) {
+    void parseMessage(String message) {
         String[] msg = Utils.split(message, " "); // Better performance split than String.split()
 
         if (msg.length != 16){ // If it isn't CAN-type message
@@ -164,9 +168,41 @@ public class BMSReader extends SensorsReader {
                     }System.out.println("");
                 }
         }
+
+        // TODO: Clean this mess
+        ArrayList<Double> fullValues = new ArrayList<Double>();
+        for(double element : voltages) fullValues.add(element);
+        for(double element : temp_all_the_time) fullValues.add(element);
+        for(double element : temp_when_balacing_off) fullValues.add(element);
+        for(double element : resistance) fullValues.add(element);
+        for(double element : voltage_reading_ok) fullValues.add(element);
+        for(double element : temperature_reading_ok) fullValues.add(element);
+        for(double element : resistance_reading_ok) fullValues.add(element);
+        for(double element : load_is_on) fullValues.add(element);
+        for(double element : voltage_sensor_fault) fullValues.add(element);
+        for(double element : temperature_sensor_fault) fullValues.add(element);
+        for(double element : resistance_calculation_fault) fullValues.add(element);
+        for(double element : load_fault) fullValues.add(element);
+
+        // Update array and inform to services
+        super.values = toPrimitive(fullValues);
+        super.updateAndInformServices();
     }
 
-    void startReading() {
+    public static double[] toPrimitive(ArrayList<Double> array) {
+        if (array == null) {
+            return null;
+        } else if (array.size() == 0) {
+            return new double[0];
+        }
+        final double[] result = new double[array.size()];
+        for (int i = 0; i < array.size(); i++) {
+            result[i] = array.get(i);
+        }
+        return result;
+    }
+
+    void startReading(long delayTime) {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.redirectErrorStream(true);
         // NOTA: primero hay que iniciar el can com en comando 'stty -F /dev/serial0 raw 9600 cs8 clocal -cstopb'
@@ -191,11 +227,19 @@ public class BMSReader extends SensorsReader {
 //                System.out.println(error);
 //            }
 
-            String line = null;
-            while(true){
-                while ((line = reader.readLine()) != null) {
-                    //System.out.println(line);
-                    readMessage(line);
+            String line;
+            if(delayTime > 0) {
+                while (true) {
+                    while ((line = reader.readLine()) != null) {
+                        parseMessage(line);
+                        Thread.sleep(delayTime);
+                    }
+                }
+            }else{
+                while (true) {
+                    while ((line = reader.readLine()) != null) {
+                        parseMessage(line);
+                    }
                 }
             }
 
@@ -208,7 +252,7 @@ public class BMSReader extends SensorsReader {
 //                //abnormal...
 //            }
 
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 //        catch (InterruptedException e) {
@@ -217,12 +261,12 @@ public class BMSReader extends SensorsReader {
     }
 
     @Override
-    public double[] read() {
-        return new double[0];
+    public void read(long delayTime) {
+        this.startReading(delayTime);
     }
 
     public static void main(String[] args) {
         BMSReader bmsReader = new BMSReader(null, 100);
-        bmsReader.startReading();
+        bmsReader.startReading(0);
     }
 }

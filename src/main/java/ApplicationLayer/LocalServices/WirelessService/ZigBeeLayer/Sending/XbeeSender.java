@@ -107,8 +107,12 @@ public class XbeeSender implements Runnable{
      * Para control de delay
      * @return tamaño de la cola
      */
-    public int getQueueSize(){
+    public int queueSize(){
         return this.bytesToSend.size();
+    }
+
+    public void resetQueue(){
+        this.bytesToSend.clear();
     }
 
     /**

@@ -91,8 +91,7 @@ public class ArduinoReader extends SensorsReader implements SerialPortEventListe
     // TODO: Refactor para nuevo modelo. No es prioridad aún
 
     @Override
-    public double[] read() {
-        return new double[0];
+    public void read(long delayTime) {
     }
 
     @Override

@@ -4,10 +4,8 @@ import ApplicationLayer.AppComponents.AppSender;
 
 public abstract class SensorsReader implements Runnable {
     public AppSender myComponent;  // Componente al cual le encolará valores nuevos
-    private long currentTime;               // Tiempos para verificar delay
-    private long lastTime;
     private long delayTime;
-    private double[] values;                // Por optimización de memoria
+    public double[] values;                // Por optimización de memoria
 
     /**
      * Constructor base. Todos los SensorReaders están linkeados a un sólo AppSender. No funcionan con receivers
@@ -16,21 +14,34 @@ public abstract class SensorsReader implements Runnable {
      */
     public SensorsReader(AppSender myComponent, long readingDelayInMS) {
         this.myComponent = myComponent;
-        this.lastTime = System.currentTimeMillis();
         this.delayTime = readingDelayInMS;
+        this.values = new double[this.myComponent.len]; // Create an array same size as AppComponent values[]
     }
 
     /**
      * Métodos que deben implementar todos los tipos de lectores.
      * @return array de valores double[] con los nuevos valores del componente
      */
-    public abstract double[] read();
+    public abstract void read(long delayTime);
+
+    /**
+     * Called by each SensorReader after they update the double[] values array.
+     * @throws Exception
+     */
+    public void updateAndInformServices(){
+        try {
+            this.myComponent.updateValues(this.values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.myComponent.informToServices();
+    }
 
     /**
      * Para control de delay
      * @param delayTimeMS
      */
-    public synchronized void setDelayTime(long delayTimeMS){
+    public synchronized void setReadDelay(long delayTimeMS){
         this.delayTime = delayTimeMS;
     }
 
@@ -46,35 +57,13 @@ public abstract class SensorsReader implements Runnable {
      */
     @Override
     public void run() {
-        while (true){
-            try{
-                currentTime = System.currentTimeMillis();
-                if(currentTime - lastTime >= this.delayTime){   // 0: Si ya pasó el tiempo de delay y me toca leer
-                    this.values = this.read();                  // 1: Leer nuevos valores
-                    //myComponent.enqueueNewValues(values);       // 2: Encola nuevos valores
-                    myComponent.sequentialRun(values);          // Ejecuta secuancialmente todas las acciones hasta dejar los valores byte[] en la cola del Xbee
-                    lastTime = currentTime;                     // 3: Actualiza tiempos de lectura
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
+        this.read(delayTime); // Each SensorReader has a specific while loop and optimization
     }
-
     /**
      * Same as run(), without while() statement. Used by Sensor<Type>Admin
      */
     public void sequentialRun() {
-        try{
-            currentTime = System.currentTimeMillis();
-            if(currentTime - lastTime >= this.delayTime){   // 0: Si ya pasó el tiempo de delay y me toca leer
-                this.values = this.read();                  // 1: Leer nuevos valores
-                myComponent.sequentialRun(values);          // Ejecuta secuancialmente todas las acciones hasta dejar los valores byte[] en la cola del Xbee
-                lastTime = currentTime;                     // 3: Actualiza tiempos de lectura
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        this.read(delayTime);                  // 1: Leer nuevos valores
+        myComponent.sequentialRun(values);          // Ejecuta secuancialmente todas las acciones hasta dejar los valores byte[] en la cola del Xbee
     }
-
 }
