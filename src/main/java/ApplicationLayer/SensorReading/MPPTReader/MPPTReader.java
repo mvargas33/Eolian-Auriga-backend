@@ -2,10 +2,15 @@ package ApplicationLayer.SensorReading.MPPTReader;
 
 import ApplicationLayer.AppComponents.AppSender;
 import ApplicationLayer.SensorReading.SensorsReader;
+import com.pi4j.io.i2c.I2CBus;
+import com.pi4j.io.i2c.I2CDevice;
+import com.pi4j.io.i2c.I2CFactory;
+import org.omg.PortableInterceptor.INACTIVE;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 public class MPPTReader extends SensorsReader {
 
@@ -41,7 +46,7 @@ public class MPPTReader extends SensorsReader {
     //Ejemplo
     // can0 771 [8] FF FF FF FF FF FF FF FF
     public void readMessage(String message) {
-        String[] msg = message.split("\\s+");
+        String[] msg = message.split("\\s+"); //sacar espacios y tabs
 
         // guardar el mensaje menos "[canal] [id] [bytes]"
         int[] bytes = new int[msg.length - 3];
@@ -75,7 +80,46 @@ public class MPPTReader extends SensorsReader {
         }
     }
 
-    void startReading() {
+    public static void readAndSendRawMessage(String message) {
+        String[] msg = message.split("\\s+"); //sacar espacios y tabs
+
+        //ver si esto sirve como int o hay que pasarlo a bytes
+        int[] bytes = new int[msg.length - 3];
+        for(int i = 3; i < msg.length; i++) {
+            System.out.println(msg[i]);
+            bytes[i-3] = Integer.parseInt(msg[i], 16);
+            System.out.println(bytes[i-3]);
+        }
+
+        try {
+            //printSystemInformation();
+            System.out.println("Creating I2C bus");
+            I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_1);
+            System.out.println("Creating I2C device");
+            I2CDevice device = bus.getDevice(0x04);
+
+            long waitTimeSent = 5000;
+            long waitTimeRead = 5000;
+            byte[] results = new byte[10];
+            while (true) {
+                //negative values don't work
+                System.out.println("Reading data via I2C");
+                device.read(results, 0, 10);
+                System.out.println("Read via I2C ... Message");
+                for(int i = 0; i < 8; i++) {
+                    System.out.println(results[i] & 0xFF);
+                }
+                System.out.println("Waiting 5 seconds");
+                Thread.sleep(waitTimeRead);
+            }
+        } catch (IOException | I2CFactory.UnsupportedBusNumberException ex) {
+            ex.printStackTrace();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void startReading() {
         ProcessBuilder processBuilder = new ProcessBuilder();
 
         //enviar mensaje para recibir los parametros, modificar los argumentos
@@ -90,7 +134,7 @@ public class MPPTReader extends SensorsReader {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                readMessage(line);
+                readAndSendRawMessage(line);
             }
 
             //para ver si termino
@@ -118,5 +162,7 @@ public class MPPTReader extends SensorsReader {
     public static void main(String[] argv) {
         //propuestas de tests
         //readMessage("can0 771 [8] FF FF FF FF 00 10 FF FF");
+        readAndSendRawMessage("can0 771 [8] FF FF FF FF 00 10 FF FF");
+        // esto deberia printear "255 255 255 255 0 16 255 225 separados por un \n"
     }
 }
