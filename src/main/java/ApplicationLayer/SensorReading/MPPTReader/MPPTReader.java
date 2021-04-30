@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Random;
+import ApplicationLayer.LocalServices.WirelessService.Utilities.BitOperations;
 
 public class MPPTReader extends SensorsReader {
 
@@ -96,18 +97,22 @@ public class MPPTReader extends SensorsReader {
             System.out.println("Creating I2C bus");
             I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_1);
             System.out.println("Creating I2C device");
-            I2CDevice device = bus.getDevice(0x04);
+            I2CDevice device = bus.getDevice(0x08);
 
             long waitTimeSent = 5000;
-            long waitTimeRead = 5000;
-            byte[] results = new byte[10];
+            long waitTimeRead = 1000;
+            int cnt = 0;
+            byte[] results = {(byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000};
             while (true) {
                 //negative values don't work
                 System.out.println("Reading data via I2C");
+                device.write((byte) ((cnt % 3)&0xFF));
+                cnt += 1;
                 device.read(results, 0, 10);
                 System.out.println("Read via I2C ... Message");
-                for(int i = 0; i < 8; i++) {
-                    System.out.println(results[i] & 0xFF);
+                for(int i = 0; i < 10; i++) {
+                    System.out.println(BitOperations.ArraytoString(results));
+                    //System.out.println(results[i] & 0x00FF);
                 }
                 System.out.println("Waiting 5 seconds");
                 Thread.sleep(waitTimeRead);
