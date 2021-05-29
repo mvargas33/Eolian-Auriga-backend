@@ -1,0 +1,22 @@
+$GPGSV,3,3,10,31,15,138,26,07,06,349,20*7D
+$GPRMC,215829.000,A,3526.9451,S,07140.3300,W,0.32,349.15,030221,,,A*64
+$GPVTG,349.15,T,,M,0.32,N,0.60,K,A*30
+$GPGGA,215830.000,3526.9450,S,07140.3300,W,1,05,2.35,92.5,M,25.5,M,,*5B
+$GPGSA,A,3,31,07,22,03,04,,,,,,,,2.80,2.35,1.53*09
+
+$GPGSV,3,3,10,31,15,138,26,07,06,349,20*7D
+
+Como calcular el checksum ejemplo
+$GPGSV,3,3,10,31,15,138,26,07,06,349,20*7D:
+Mensaje = GPGSV,3,3,10,31,15,138,26,07,06,349,20
+Checksum = 7D
+
+G    P    GSV,3,3,10,31,15,138,26,07,06,349,20
+0x47 0x50 ... ... ... 
+Esta tranformacion esta en la tabla ASCII hex Table (http://www.asciitable.com/), el formato es 0x[Valor en la columna Hx]
+
+GPGSV -> Informacion sobre los satelites consultados (id, grado, direccion)
+GPRMC -> Hora, latitud, longitud, angulo, velocidad
+GPVTG -> Velocidad y orientacion.
+GPGGA -> Hora, latitud, longitud, fix valido?, altura.
+GPGSA -> Informacion sobre los satelites consultados
