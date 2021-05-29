@@ -3,14 +3,13 @@ package ApplicationLayer.Channel;
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.LocalServices.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public abstract class Channel implements Runnable {
     protected HashMap<String, AppComponent> myComponentsMap; // To modify values with cost O(1) inside readingLoop()
-    private final List<AppComponent> myComponentList ; // List that Services will receive
-    private final List<Service> myServices; // List of services that need to know about myComponents updates
+    protected List<AppComponent> myComponentList ; // List that Services will receive
+    protected final List<Service> myServices; // List of services that need to know about myComponents updates
 
     /**
      * Each channel has predefined AppComponents
@@ -36,7 +35,7 @@ public abstract class Channel implements Runnable {
     /**
      * Any command that only needs to be executed once
      */
-    public abstract void init();
+    public abstract void setUp();
 
     /**
      * Method executed once the channel updates all his AppComponents.
@@ -55,7 +54,7 @@ public abstract class Channel implements Runnable {
     @Override
     public void run() {
         try{
-            this.init();
+            this.setUp();
             this.readingLoop();
         }catch(Exception e){
             e.printStackTrace();
