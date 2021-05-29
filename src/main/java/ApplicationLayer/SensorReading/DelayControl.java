@@ -16,7 +16,7 @@ public class DelayControl implements Runnable{
     // Adjust delay of SR's readings to stop the growing of services Queues
     @Override
     public void run() {
-        int READ_PERIOD = 160; // 1x delay
+        int READ_PERIOD = 100*1; // 1x delay
 
         int queueSizeAnterior = 0;
         int queueSizeActual = 0;
@@ -26,7 +26,7 @@ public class DelayControl implements Runnable{
 
         while (true) {
             try {
-                Thread.sleep(160*3); // 3x Delay
+                Thread.sleep(100*3); // 3x Delay
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

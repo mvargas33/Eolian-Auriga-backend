@@ -65,6 +65,7 @@ public class XbeeSender implements Runnable{
         while(!this.bytesToSend.isEmpty()){
             byte[] b = this.bytesToSend.poll(); // Get byte array from queue
             this.myReceiver.receiveByteOffline(b);
+            Thread.sleep(100);
         }
 
     }
