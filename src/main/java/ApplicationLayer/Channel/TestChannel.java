@@ -1,6 +1,7 @@
 package ApplicationLayer.Channel;
 
 import ApplicationLayer.AppComponents.AppComponent;
+import ApplicationLayer.AppComponents.AppSender;
 import ApplicationLayer.LocalServices.Service;
 
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class TestChannel extends Channel{
      *  @param myComponentList List of AppComponent that this Channel update values to
      * @param myServices Services to inform to whenever an AppComponents get updated
      */
-    public TestChannel(List<AppComponent> myComponentList, List<Service> myServices) {
+    public TestChannel(List<AppSender> myComponentList, List<Service> myServices) {
         super(myComponentList, myServices);
         this.r = new Random();
         this.valuesMap = new HashMap<>();

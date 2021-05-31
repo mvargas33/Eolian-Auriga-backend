@@ -1,6 +1,7 @@
 package ApplicationLayer.LocalServices;
 
 import ApplicationLayer.AppComponents.AppComponent;
+import ApplicationLayer.AppComponents.AppSender;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -27,7 +28,7 @@ public abstract class Service implements Runnable{
      * Puts a list of AppComponents un the list
      * @param c List of AppComponents to be reviewed
      */
-    public synchronized void putListOfComponentsInQueue(List<AppComponent> c){
+    public synchronized void putListOfComponentsInQueue(List<AppSender> c){
         for (AppComponent a: c
              ) {
             this.putComponentInQueue(a);

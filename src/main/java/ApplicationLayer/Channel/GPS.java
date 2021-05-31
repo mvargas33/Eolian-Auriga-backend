@@ -1,6 +1,7 @@
 package ApplicationLayer.Channel;
 
 import ApplicationLayer.AppComponents.AppComponent;
+import ApplicationLayer.AppComponents.AppSender;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.SensorReading.Utils.Utils;
 
@@ -20,7 +21,7 @@ public class GPS extends Channel {
      * @param myComponentList List of AppComponent that this Channel update values to
      * @param myServices Services to inform to whenever an AppComponents get updated
      */
-    public GPS(List<AppComponent> myComponentList, List<Service> myServices) {
+    public GPS(List<AppSender> myComponentList, List<Service> myServices) {
         super(myComponentList, myServices);
         // Check that a BMS AppComponent was supplied
         // With the exact amount of double[] values as the implementation here

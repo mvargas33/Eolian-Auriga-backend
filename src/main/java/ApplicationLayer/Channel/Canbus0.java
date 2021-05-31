@@ -1,6 +1,7 @@
 package ApplicationLayer.Channel;
 
 import ApplicationLayer.AppComponents.AppComponent;
+import ApplicationLayer.AppComponents.AppSender;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.SensorReading.Utils.Utils;
 
@@ -42,12 +43,12 @@ public class Canbus0 extends Channel {
      * @param myComponentList List of AppComponent that this Channel update values to
      * @param myServices Services to inform to whenever an AppComponents get updated
      */
-    public Canbus0(List<AppComponent> myComponentList, List<Service> myServices) {
+    public Canbus0(List<AppSender> myComponentList, List<Service> myServices) {
         super(myComponentList, myServices);
         // Check that a BMS AppComponent was supplied
         // With the exact amount of double[] values as the implementation here
         try{
-            this.bms = this.myComponentsMap.get("BMS"); // Must match name in .xlsx file
+            this.bms = this.myComponentsMap.get("bms"); // Must match name in .xlsx file
             if(bms != null){
                 int len = bms.len;
                 if(len != this.lenBMS){

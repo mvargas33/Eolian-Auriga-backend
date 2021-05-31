@@ -159,9 +159,9 @@ public class MPPTReader extends SensorsReader {
     }
 
     @Override
-    public double[] read() {
+    public void read(long time) {
         //pendiente aplicar la logica requerida (leer cada tantos ms)
-        return values;
+        //return values;
     }
 
     public static void main(String[] argv) {
