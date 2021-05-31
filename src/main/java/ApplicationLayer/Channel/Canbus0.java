@@ -78,6 +78,7 @@ public class Canbus0 extends Channel {
                 try{
                     while ((line = reader.readLine()) != null) {
                         parseMessage(line);
+                        super.informServices(); // Call this just after all AppComponent in myComponentList were updated
                     }
                 }catch (Exception exception){
                     exception.printStackTrace();

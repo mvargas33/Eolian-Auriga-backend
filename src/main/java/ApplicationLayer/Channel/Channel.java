@@ -14,6 +14,7 @@ public abstract class Channel implements Runnable {
     /**
      * Each channel has predefined AppComponents
      * @param myComponentList List of AppComponent that this Channel update values to
+     * @param myServices Services to inform to whenever an AppComponents get updated
      */
     public Channel(List<AppComponent> myComponentList, List<Service> myServices) {
         this.myServices = myServices;
