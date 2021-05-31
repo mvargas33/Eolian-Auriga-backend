@@ -1,7 +1,9 @@
 package ApplicationLayer.SensorReading.MPPTReader;
 
 import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.SensorReading.GPSReader.GPSReader;
 import ApplicationLayer.SensorReading.SensorsReader;
+import MockObjects.GPS;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
@@ -43,60 +45,42 @@ public class MPPTReader extends SensorsReader {
         super(myComponent, readingDelayInMS);
     }
 
-    //Ejemplo
-    // can0 771 [8] FF FF FF FF FF FF FF FF
-    public void readMessage(String message) {
-        String[] msg = message.split("\\s+"); //sacar espacios y tabs
-
-        // guardar el mensaje menos "[canal] [id] [bytes]"
-        int[] bytes = new int[msg.length - 3];
-        for(int i = 3; i < msg.length; i++) {
-            System.out.println(msg[i]);
-            bytes[i-3] = Integer.parseInt(msg[i], 16);
-            System.out.println(bytes[i-3]);
-        }
+    // recibe un byte[] de largo 10, el frame CAN "directo" (pasó por el arduino) del MPPT
+    public void readMessage(byte[] bytes) {
         //revisar los id
         //en este punto bytes es el "buff" de la version del fenix
-        if(msg[1] == "771") {
-            this.Uin_1 = ((bytes[0] & 0b00000011) << 6) | (bytes[1]); //preguntar esto
-            this.Iin_1 = ((bytes[2] & 0b00000011) << 6) | (bytes[3]); //preguntar esto
-            this.Uout_1 = ((bytes[4] & 0b00000011) << 6) | (bytes[5]); //preguntar esto
-            this.uout_umax_1 = bytes[0] & 0b10000000;
-            this.t_cooler_1 = bytes[0] & 0b01000000;
-            this.bateria_1 = bytes[0] & 0b00100000;
-            this.under_volt_1 = bytes[0] & 0b00010000;
-            this.temp_1 = bytes[6];
+        if(bytes[1] == 0x771) {
+            System.out.println("Actualizados los datos para el MPPT 0x771");
+            this.Uin_1 = ((bytes[2] & 0b00000011) << 6) | (bytes[3]); //preguntar esto
+            this.Iin_1 = ((bytes[4] & 0b00000011) << 6) | (bytes[5]); //preguntar esto
+            this.Uout_1 = ((bytes[6] & 0b00000011) << 6) | (bytes[7]); //preguntar esto
+            this.uout_umax_1 = bytes[2] & 0b10000000;
+            this.t_cooler_1 = bytes[2] & 0b01000000;
+            this.bateria_1 = bytes[2] & 0b00100000;
+            this.under_volt_1 = bytes[2] & 0b00010000;
+            this.temp_1 = bytes[8];
             //el ultimo byte no se usa para nada?
         }
-        else if (msg[1] == "772") {
-            this.Uin_2 = ((bytes[0] & 0b00000011) << 6) | (bytes[1]); //preguntar esto
-            this.Iin_2 = ((bytes[2] & 0b00000011) << 6) | (bytes[3]); //preguntar esto
-            this.Uout_2 = ((bytes[4] & 0b00000011) << 6) | (bytes[5]); //preguntar esto
-            this.uout_umax_2 = bytes[0] & 0b10000000;
-            this.t_cooler_2 = bytes[0] & 0b01000000;
-            this.bateria_2 = bytes[0] & 0b00100000;
-            this.under_volt_2 = bytes[0] & 0b00010000;
-            this.temp_2 = bytes[6];
+        else if (bytes[1] == 0x772) {
+            System.out.println("Actualizados los datos para el MPPT 0x772");
+            this.Uin_2 = ((bytes[2] & 0b00000011) << 6) | (bytes[3]); //preguntar esto
+            this.Iin_2 = ((bytes[4] & 0b00000011) << 6) | (bytes[5]); //preguntar esto
+            this.Uout_2 = ((bytes[6] & 0b00000011) << 6) | (bytes[7]); //preguntar esto
+            this.uout_umax_2 = bytes[2] & 0b10000000;
+            this.t_cooler_2 = bytes[2] & 0b01000000;
+            this.bateria_2 = bytes[2] & 0b00100000;
+            this.under_volt_2 = bytes[2] & 0b00010000;
+            this.temp_2 = bytes[8];
         }
     }
 
-    public static void readAndSendRawMessage(String message) {
-        String[] msg = message.split("\\s+"); //sacar espacios y tabs
-
-        //ver si esto sirve como int o hay que pasarlo a bytes
-        int[] bytes = new int[msg.length - 3];
-        for(int i = 3; i < msg.length; i++) {
-            System.out.println(msg[i]);
-            bytes[i-3] = Integer.parseInt(msg[i], 16);
-            System.out.println(bytes[i-3]);
-        }
-
+    // escucha continuamente a i2c y procesa lo que le llegue
+    public void readI2CMessage() {
         try {
-            //printSystemInformation();
             System.out.println("Creating I2C bus");
             I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_1);
             System.out.println("Creating I2C device");
-            I2CDevice device = bus.getDevice(0x04);
+            I2CDevice device = bus.getDevice(0x08);
 
             long waitTimeSent = 5000;
             long waitTimeRead = 5000;
@@ -109,6 +93,8 @@ public class MPPTReader extends SensorsReader {
                 for(int i = 0; i < 8; i++) {
                     System.out.println(results[i] & 0xFF);
                 }
+                System.out.println("Procesando los datos del arduino i2c...");
+                readMessage(results);
                 System.out.println("Waiting 5 seconds");
                 Thread.sleep(waitTimeRead);
             }
@@ -119,39 +105,7 @@ public class MPPTReader extends SensorsReader {
         }
     }
 
-    public static void startReading() {
-        ProcessBuilder processBuilder = new ProcessBuilder();
 
-        //enviar mensaje para recibir los parametros, modificar los argumentos
-        processBuilder.command("bash", "-c", "candump any");
-
-        try {
-            Process process = processBuilder.start();
-
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream())
-            );
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                readAndSendRawMessage(line);
-            }
-
-            //para ver si termino
-            int exitVal = process.waitFor();
-            if (exitVal == 0) {
-                System.out.println("Se cierra la lectura.");
-                System.exit(0);
-            } else {
-                //abnormal...
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public double[] read() {
@@ -160,9 +114,18 @@ public class MPPTReader extends SensorsReader {
     }
 
     public static void main(String[] argv) {
-        //propuestas de tests
-        //readMessage("can0 771 [8] FF FF FF FF 00 10 FF FF");
-        readAndSendRawMessage("can0 771 [8] FF FF FF FF 00 10 FF FF");
-        // esto deberia printear "255 255 255 255 0 16 255 225 separados por un \n"
+        // propuesta para tests
+
+        AppSender appSender = new AppSender("testing_AS",
+                new double[] {0}, // mins
+                new double[] {60}, //maxs
+                new String[] {"DUMMY"});
+        MPPTReader mpptReader = new MPPTReader(appSender, 3000);
+
+        // con esto deberia printear los mensajes
+        // "Actualizados los datos para el MPPT 0x771" o
+        // "Actualizados los datos para el MPPT 0x772"
+        mpptReader.readI2CMessage();
+
     }
 }
