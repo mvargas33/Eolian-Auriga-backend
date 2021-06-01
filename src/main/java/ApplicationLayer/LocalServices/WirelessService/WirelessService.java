@@ -4,15 +4,20 @@ import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Encryption.CryptoAdmin;
 import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Encryption.KeyAdmin;
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Components.State;
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Messages.Message;
+import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Initializer;
+import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.State;
+import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Message;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class WirelessService extends Service {
     HashMap<String, State> states;
     HashMap<Character, Message> map;
+    CryptoAdmin cryptoAdmin;
+    boolean encrypt;
 
     // Cryptography common parameters
     int MAC_SIG_BYTES = 6; // Estos valores son los más suceptibles a usar por el tamaño del mensaje de las Xbee
@@ -32,8 +37,23 @@ public class WirelessService extends Service {
     int MSG_SIZE_BITS = 8*(16*5);
     int FIRST_HEADER = 56;
 
-    public WirelessService() {
+    public WirelessService(List<AppComponent> components, boolean encrypt) throws Exception{
+        this.encrypt = encrypt;
         this.states = new HashMap<>();
+        // CryptoAdmin
+        cryptoAdmin = setupCryptoAdmin();
+
+        LinkedList<State> state_list = new LinkedList<>(); // Only for initializer
+
+        for (AppComponent c: components ) {
+            State newState = new State(c);
+            state_list.add(newState);
+            states.put(c.getID(), newState); // Local global map
+        }
+
+        // Initializer of States/Messages
+        Initializer initializer = new Initializer(state_list ,MSG_SIZE_BITS, FIRST_HEADER);
+        map = initializer.genMessages();
     }
 
     /**

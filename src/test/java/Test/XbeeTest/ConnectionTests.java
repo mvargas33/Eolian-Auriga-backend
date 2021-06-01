@@ -1,6 +1,5 @@
 package Test.XbeeTest;
 
-import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Sending.XbeeSender;
 import com.digi.xbee.api.RemoteXBeeDevice;
 import com.digi.xbee.api.XBeeDevice;
 import com.digi.xbee.api.XBeeNetwork;

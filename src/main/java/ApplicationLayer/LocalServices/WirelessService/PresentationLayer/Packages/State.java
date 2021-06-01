@@ -1,7 +1,10 @@
-package ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Components;
+package ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages;
 
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Messages.Message;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.LocalServices.WirelessService.Utilities.DoubleOperations;
+
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /*
     Los Componentes virtualizan los componentes del auto. Tienen un arreglo de valores int y un arreglo de bits significativos.
@@ -10,7 +13,7 @@ import ApplicationLayer.LocalServices.WirelessService.Utilities.DoubleOperations
     Sending:    Recive información directa del DataAdmin (lecturals locales). Luego avisa a sus mensajes que se actualicen.
                 Luego ellos se ponen en contacto con QueueAdmin para ser enviados.
  */
-public abstract class State {
+public class State {
 
     /* Estructura necesaria para guardar correlación mensage-state, guarda que intervalos de bits de un mensaje le conciernen a qué intervalos de bits en este componente */
     public class MessagesWithIndexes {
@@ -37,13 +40,19 @@ public abstract class State {
     public int[] delta;                     // Deducido. Se calcula una vez. Cantidad de valores a representar
     public int[] bitSignificativos;         // Deducido. Se calculauna vez.  Cantidad mínima de bits para representar 'delta' valores
 
+    public LinkedList<MessagesWithIndexes> listOfMyMessagesWithIndexes;    // SENDING : Para uso en for() y actualizar mensajes que me corresponden
+    public HashMap<Character, MessagesWithIndexes> hashOfMyMessagesWithIndexes;
+    public AppComponent myAppComponent;
 
     /**
      * Base State, encargado de lecturas directas de sensores y envío de datos por SenderAdmin
-     * @param ID : ID del Componente
      */
-    public State(String ID, double[] minimosConDecimal, double[] maximosConDecimal){
-        this.ID = ID;
+    public State(AppComponent myAppComponent){
+        double[] minimosConDecimal = myAppComponent.minimosConDecimal;
+        double[] maximosConDecimal = myAppComponent.maximosConDecimal;
+
+        this.myAppComponent = myAppComponent; // Necesario al recibir mensajes para actualizar double[]valoresRealesActuales
+        this.ID = myAppComponent.ID;
         this.len = minimosConDecimal.length;
         this.myValues = new int[len];
         this.decimales = new int[len];
@@ -60,6 +69,9 @@ public abstract class State {
             this.delta[i] = (int) Math.floor(1 + (maximosConDecimal[i] - minimosConDecimal[i]) * Math.pow(10, decimales[i]));
             this.bitSignificativos[i] = (int) Math.ceil(Math.log(delta[i]) / Math.log(2));
         }
+
+        this.hashOfMyMessagesWithIndexes = new HashMap<>();
+        this.listOfMyMessagesWithIndexes = new LinkedList<>();
     }
 
 
@@ -73,7 +85,10 @@ public abstract class State {
      * @param bitSigInicio Bit de inicio en componente
      * @param componentNumber : Numero del componente
      */
-    public abstract void addNewMessage(Message m, int raw_inicio, int raw_fin, int bitSigInicio, int componentNumber);
+    public void addNewMessage(Message m, int raw_inicio, int raw_fin, int bitSigInicio, int componentNumber){
+        this.hashOfMyMessagesWithIndexes.put(m.getHeader(), new MessagesWithIndexes(m,raw_inicio, raw_fin,bitSigInicio, componentNumber));
+        this.listOfMyMessagesWithIndexes.add(new MessagesWithIndexes(m,raw_inicio, raw_fin,bitSigInicio, componentNumber));
+    }
 
 
     /*--------------------------------------------------- RESOURCES ---------------------------------------------------*/
@@ -140,6 +155,24 @@ public abstract class State {
         sb.append("State ID       : ");sb.append(this.ID);sb.append("\n");
         sb.append("Valores            : ");sb.append(valuesToString());sb.append("\n");
         sb.append("Bits significativos: ");sb.append(bitSigToString());sb.append("\n");
+        return sb.toString();
+    }
+
+    /**
+     * Retorna la representación en String de los mensajes que tiene este componente
+     * @return : String de mensajes con indices del componente actual
+     */
+    public String printMessagesWithIndexes(){
+        StringBuilder sb = new StringBuilder();
+        Message m;
+        for (MessagesWithIndexes mi: listOfMyMessagesWithIndexes
+        ) {
+            m = mi.message;
+            sb.append("Message: ");sb.append(m.toString());
+            sb.append("BitSig_inicio: ");sb.append(mi.myBitSig_inicio);
+            sb.append(" | Raw_inicio: ");sb.append(mi.raw_inicio);
+            sb.append(" | Raw_fin:    ");sb.append(mi.raw_fin);sb.append("\n");
+        }
         return sb.toString();
     }
 

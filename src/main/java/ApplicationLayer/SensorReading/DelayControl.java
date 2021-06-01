@@ -1,6 +1,6 @@
 package ApplicationLayer.SensorReading;
 
-import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Sending.XbeeSender;
+import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeSender;
 
 import java.util.List;
 

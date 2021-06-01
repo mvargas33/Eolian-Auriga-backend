@@ -153,7 +153,7 @@ public class CryptoAdmin {
         System.arraycopy(this.fullMac, 0, this.macEnd, 0, this.MAC_SIG_BYTES);
 
         if (!Arrays.equals(this.macEndDecrypt, this.macEnd)){
-            throw new Exception("MAC NO COINCIDE!");
+            throw new Exception("MAC NO COINCIDE! Ignoring message");
         }
 
         // Update IV array.

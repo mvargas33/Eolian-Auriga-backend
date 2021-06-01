@@ -1,25 +1,32 @@
-package ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Initializer;
+package ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages;
 
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Components.State;
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Messages.Message;
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Messages.SentMessage;
+import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.State;
+import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Message;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class SenderInitializer extends Initializer{
+/**
+ * Clase que se encarga sólo de genrar los Menssages para cada Componente según los parámetros de la red
+ */
+public class Initializer {
+    final LinkedList<State> allStates;  // Lista de Sates actuales
+    final int msgLimitSize;             // Parámetro de red: Límite del tamaño del mensaje en bits
+    final int msgLimitSizeInBytes;      // Parámetro de red: Límite del tamaño del mensaje en bytes
+    final char baseHeader;              // Parámetro de red: Header de inicio de mensajes
 
-    /**
-     *
-     * @param allStates StateSenders ONLY
-     * @param msgLimitSizeBits Size in bits of messages
-     * @param baseHeader Base header value
-     */
-    public SenderInitializer(LinkedList<State> allStates, int msgLimitSizeBits, int baseHeader) {
-        super(allStates, msgLimitSizeBits, baseHeader);
+    public Initializer(LinkedList<State> allStates, int msgLimitSizeBits, int baseHeader){
+        this.allStates = allStates;
+        this.msgLimitSize = msgLimitSizeBits;
+        this.msgLimitSizeInBytes = (int) Math.ceil(msgLimitSize / 8.0);
+        this.baseHeader = (char) (baseHeader & 0x00FF);
     }
 
-    @Override
+    /**
+     * Genera los mensajes correspondientes para cada State, en realidad los MessagesWithIndexes para cada State
+     * @throws Exception : Por mala definición de Sates o parámetros de la red
+     * @return HashMap de caracter, Mensaje (SentMessage o ReceivedMessage)
+     */
     public HashMap<Character, Message> genMessages() throws Exception{
         if (allStates.size() == 0){
             throw new Exception("No hay componentes en la lista de todos los Componentes");
@@ -54,7 +61,7 @@ public class SenderInitializer extends Initializer{
 
         int componentNumber = 0;                                    // Para indicar el bit que se asigna a este componente para marcar 'ready' al enviar mensajes
 
-        SentMessage mensajeActual = new SentMessage(header, msgLimitSizeInBytes);  // Mensaje Actual
+        Message mensajeActual = new Message(header, msgLimitSizeInBytes);  // Mensaje Actual
         int tamanoMsgActual = 8;                                    // Cuenta de bits que ya llevamos en mensaje, 8 bits iniciales para header
 
         mensajeActual.addState(compActual);                      // Añadimos primer componente
@@ -118,7 +125,7 @@ public class SenderInitializer extends Initializer{
                 tamanoMsgActual = 8; // 8 bits header
                 raw_inicio = 8; // 8 bits header
                 header++;
-                mensajeActual = new SentMessage(header, msgLimitSizeInBytes);
+                mensajeActual = new Message(header, msgLimitSizeInBytes);
                 mensajeActual.addState(compActual); // Añado componente actual, [porque al menos tengo que poner otro valor, el que tengo en mano]
             }
         }

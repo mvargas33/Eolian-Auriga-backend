@@ -1,17 +1,20 @@
-package ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Messages;
+package ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages;
 
-import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Components.State;
+import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.State;
 import ApplicationLayer.LocalServices.WirelessService.Utilities.BitOperations;
+
+import java.util.LinkedList;
 
 /*
  *  Piezas de bits que se intercambian entre las Xbees para hacer funcionar el protocolo.
  *  Los mensajes tienen un identificador y un largo definido.
  *  Adem&aacute;s le pertenecen a uno o m&aacute;s componentes, ellos saben que bits le corresponen del mensaje.
 */
-public abstract class Message {
+public class Message {
     char header;
     int largoEnBytes;
     public byte[] bytes; // public to direct modify
+    public LinkedList<State> myStates; // States Linked to this Message
 
     // Para ver que todos los componentes actualizaron el mensaje, después se enva
     int allComponentsUpdated; // Entero que cambia cada vez
@@ -29,13 +32,41 @@ public abstract class Message {
         this.numOfComponents = 0; // Para designar bits en allComponentsUpdated, este es el bit asignado también
         this.initialValue = 0;
     }
-/*
-    public Message(char header, int largoEnBytes, LinkedList<State> components){
-        this.Message(header, largoEnBytes);
-        this.myStates = components;
+
+    public void addState(State state){
+        this.myStates.add(state);
+        this.numOfComponents++;
+        this.initialValue = ~ (((int) Math.pow(2,numOfComponents)) - 1); // Valor reset de allComponentsUpdated, al estilo 11111111.....11111100000, con 0's numOfComponents
+        this.allComponentsUpdated = this.initialValue;
     }
-*/
-    public abstract void addState(State state);
+
+    /* Sending */
+    /**
+     * Marca en allComponentsUpdated con el bit asignado, pasando de 111 ... 000 a 111 ... 010 si el bit asignado fue 1.
+     * Cuando todos los componentes hayan invocado este metodo, entonces allComponentsUpdated valdra -1 : 111 ... 111
+     * Se usa para que el mensaje sólo este 'listo' cuando todos los componentes invoquen este metodo
+     * @param bitAsignado : Bit asignado del componente que invoca este método
+     */
+    public void marcarActualizacionDeComponente(int bitAsignado){
+        int mask = 1 << bitAsignado;
+        allComponentsUpdated |= mask; // Se hace OR con el bit señalado, que representa el componente bit-ésimo del mensaje
+    }
+
+
+    /**
+     * Retorna true si todos los componentes han actualizado su parte en este mensaje.
+     * Si falta un componente por actualizarse, entonces el mensaje no está listo para enviarse
+     * Además resetea el valor de allComponentsUpdated al estar en true
+     * @return true si todos los componentes actualziaron su bit en allComponentsUpdated, diciendo que estan listos
+     */
+    public boolean isReadyToSend(){
+        if(allComponentsUpdated == -1){ // 111111111111 ... 1111111111111111)
+            allComponentsUpdated = initialValue; // Reset
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     /*--------------------------------------------------- RESOURCES ---------------------------------------------------*/
 
