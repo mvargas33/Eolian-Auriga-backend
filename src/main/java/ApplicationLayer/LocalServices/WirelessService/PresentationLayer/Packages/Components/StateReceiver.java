@@ -7,10 +7,10 @@ import ApplicationLayer.LocalServices.WirelessService.Utilities.BitOperations;
 import java.util.HashMap;
 
 public class StateReceiver extends State{
-    private HashMap<Character, MessagesWithIndexes> hashOfMyMessagesWithIndexes;             // RECEIVING : Para extracción en O(1) y actualizar mis valores
-    private AppReceiver myAppReceiver;
+    public HashMap<Character, MessagesWithIndexes> hashOfMyMessagesWithIndexes;             // RECEIVING : Para extracción en O(1) y actualizar mis valores
+    public AppReceiver myAppReceiver;
 
-    private double[] valoresRealesActuales; // Para optimizar memoria
+    public double[] valoresRealesActuales; // Para optimizar memoria
 
     /**
      * Base State, encargado de lecturas directas de sensores y envío de datos por SenderAdmin

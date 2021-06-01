@@ -1,5 +1,6 @@
 package Test.ChannelTests;
 
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.AppSender;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.Canbus0;
@@ -29,7 +30,7 @@ public class Canbus0ChannelTest {
             throw new Exception("AppSender for 'bms' not found after CSVs_to_AppSenders() function");
         }
 
-        List<AppSender> appSenders = new ArrayList<>();
+        List<AppComponent> appSenders = new ArrayList<>();
         appSenders.add(bms);
 
         List<Service> services = new ArrayList<>();

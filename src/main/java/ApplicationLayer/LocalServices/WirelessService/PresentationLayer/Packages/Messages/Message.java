@@ -11,7 +11,7 @@ import ApplicationLayer.LocalServices.WirelessService.Utilities.BitOperations;
 public abstract class Message {
     char header;
     int largoEnBytes;
-    byte[] bytes;
+    public byte[] bytes; // public to direct modify
 
     // Para ver que todos los componentes actualizaron el mensaje, después se enva
     int allComponentsUpdated; // Entero que cambia cada vez

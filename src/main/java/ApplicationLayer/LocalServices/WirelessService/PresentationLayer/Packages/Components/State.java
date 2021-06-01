@@ -14,11 +14,11 @@ public abstract class State {
 
     /* Estructura necesaria para guardar correlación mensage-state, guarda que intervalos de bits de un mensaje le conciernen a qué intervalos de bits en este componente */
     public class MessagesWithIndexes {
-        Message message;        // RAW bits
-        int raw_inicio;         // De donde este componente inicia sus bits en mensaje
-        int raw_fin;            // Donde este componente termina sus bits en mensaje
-        int myBitSig_inicio;    // Desde que bit en mi array tengo que poner en mensaje
-        int componentNumber;    // Para indicar el bit que se asigna en mensaje para marcar el 'ready'
+        public Message message;        // RAW bits
+        public int raw_inicio;         // De donde este componente inicia sus bits en mensaje
+        public int raw_fin;            // Donde este componente termina sus bits en mensaje
+        public int myBitSig_inicio;    // Desde que bit en mi array tengo que poner en mensaje
+        public int componentNumber;    // Para indicar el bit que se asigna en mensaje para marcar el 'ready'
 
         MessagesWithIndexes(Message m, int raw_inicio, int raw_fin, int myBitSig_inicio, int componentNumber) {
             this.message = m;

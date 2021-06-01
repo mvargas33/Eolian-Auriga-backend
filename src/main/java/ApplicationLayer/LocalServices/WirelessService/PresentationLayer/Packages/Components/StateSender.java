@@ -8,7 +8,7 @@ import java.util.LinkedList;
 
 public class StateSender extends State{
     private SenderAdmin mySenderAdmin;
-    private LinkedList<MessagesWithIndexes> listOfMyMessagesWithIndexes;    // SENDING : Para uso en for() y actualizar mensajes que me corresponden
+    public LinkedList<MessagesWithIndexes> listOfMyMessagesWithIndexes;    // SENDING : Para uso en for() y actualizar mensajes que me corresponden
 
     /**
      * Sender State, encargado de lecturas directas de sensores y envío de datos por SenderAdmin
@@ -70,7 +70,7 @@ public class StateSender extends State{
         // al usar OR como operando intermedio, i.e. los valores anterior preservan y hacen OR con nuevos, causando update erróneo
         // Header se preserva
         BitOperations.resetToZeroBitRange(bytes, m.raw_inicio, m.raw_fin);
-        BitOperations.updateByteArrayFromValues(myValues, bytes, bitSignificativos, m.myBitSig_inicio,  m.raw_inicio, m.raw_fin); // Update Messsage con lo que me corresponde
+        BitOperations.updateByteArrayFromValues(myValues, bitSignificativos, bytes, m.myBitSig_inicio,  m.raw_inicio, m.raw_fin); // Update Messsage con lo que me corresponde
         //m.message.updateRawBytes(bytes); // TODO: Ver si esta linea es necesaria | Reemplazo directo de bytes de mensaje
         //m.message.bytes = bytes; // Update myself
         /*SentMessage mm = (SentMessage) m.message;

@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public abstract class Channel implements Runnable {
-    protected HashMap<String, AppSender> myComponentsMap; // To modify values with cost O(1) inside readingLoop()
-    protected List<AppSender> myComponentList ; // List that Services will receive
+    protected HashMap<String, AppComponent> myComponentsMap; // To modify values with cost O(1) inside readingLoop()
+    protected List<AppComponent> myComponentList ; // List that Services will receive
     protected final List<Service> myServices; // List of services that need to know about myComponents updates
 
     /**
@@ -17,11 +17,11 @@ public abstract class Channel implements Runnable {
      * @param myComponentList List of AppComponent that this Channel update values to
      * @param myServices Services to inform to whenever an AppComponents get updated
      */
-    public Channel(List<AppSender> myComponentList, List<Service> myServices) {
+    public Channel(List<AppComponent> myComponentList, List<Service> myServices) {
         this.myServices = myServices;
         this.myComponentList = myComponentList;
         this.myComponentsMap = new HashMap<>();
-        for (AppSender a: myComponentList
+        for (AppComponent a: myComponentList
              ) {
             this.myComponentsMap.put(a.ID, a);
         }

@@ -28,7 +28,7 @@ public abstract class Service implements Runnable{
      * Puts a list of AppComponents un the list
      * @param c List of AppComponents to be reviewed
      */
-    public synchronized void putListOfComponentsInQueue(List<AppSender> c){
+    public synchronized void putListOfComponentsInQueue(List<AppComponent> c){
         for (AppComponent a: c
              ) {
             this.putComponentInQueue(a);

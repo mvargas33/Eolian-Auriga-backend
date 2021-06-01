@@ -6,7 +6,7 @@ import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages
 import java.util.LinkedList;
 
 public class ReceivedMessage extends Message{
-    private LinkedList<StateReceiver> myStates;
+    public LinkedList<StateReceiver> myStates;
 
     public ReceivedMessage(char header, int largoEnBytes) {
         super(header, largoEnBytes);

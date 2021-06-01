@@ -4,6 +4,7 @@ import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Receiving.Xbee
 import com.digi.xbee.api.XBeeDevice;
 import com.digi.xbee.api.exceptions.XBeeException;
 
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -54,6 +55,22 @@ public class XbeeSender implements Runnable{
      */
     public void putByteInQueue(byte[] bytes){
        this.bytesToSend.add(bytes);
+    }
+
+    /**
+     * Sends a batch of bytes all at once
+     * @param batch
+     */
+    public void sendBatch(ArrayList<byte[]> batch){
+        try {
+            for (byte[] b: batch) {
+                myDevice.sendBroadcastData(b);
+            }
+        } catch (XBeeException e) {
+            System.out.println("Error al enviar mensaje a Xbee Destino");
+            e.printStackTrace();
+            //System.exit(1);
+        }
     }
 
     /**
