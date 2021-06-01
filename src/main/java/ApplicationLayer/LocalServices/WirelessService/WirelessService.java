@@ -41,7 +41,9 @@ public class WirelessService extends Service {
         this.encrypt = encrypt;
         this.states = new HashMap<>();
         // CryptoAdmin
-        cryptoAdmin = setupCryptoAdmin();
+        if(encrypt){
+            cryptoAdmin = setupCryptoAdmin();
+        }
 
         LinkedList<State> state_list = new LinkedList<>(); // Only for initializer
 

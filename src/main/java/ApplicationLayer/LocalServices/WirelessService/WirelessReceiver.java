@@ -60,10 +60,11 @@ public class WirelessReceiver extends WirelessService{
      */
     @Override
     public void run() {
-        // Dispatch Xbee & xbeeReceiver threads
+        // 0. Dispatch xbeeReceiver thread
         ExecutorService executorService = Executors.newFixedThreadPool(1);
         executorService.submit(xbeeReceiver);
 
+        // 1. Get the messages, parse them, and inform otherServices about AppComponent updates.
         while(true) {
             for (int i= 0; i < this.xbeeReceiver.sizeOfQueue(); i++) {      // Saca de una pasada tantos byte[] como habían en cola hasta evaluar la condición
                 try {
