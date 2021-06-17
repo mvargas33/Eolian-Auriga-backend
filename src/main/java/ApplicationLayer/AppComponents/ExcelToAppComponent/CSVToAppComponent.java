@@ -1,7 +1,6 @@
 package ApplicationLayer.AppComponents.ExcelToAppComponent;
 
-import ApplicationLayer.AppComponents.AppReceiver;
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Clase que toma los CSV desde un directorio y los transforma en lista de AppComponents dependiendo si son AppSenders
+ * Clase que toma los CSV desde un directorio y los transforma en lista de AppComponents dependiendo si son AppComponents
  * o AppReceivers. Los CSV deben seguir el formato correcto indicado en el README.md. La idea es que esta clase se use
  * desde los métodos de inicialización, para siempre inicilizar los AppComponents desde los últimos CSVs.
  */
@@ -65,12 +64,12 @@ public class CSVToAppComponent {
     }
 
 
-    public static List<AppSender> CSVs_to_AppSenders(String directory) throws Exception{
-        LinkedList<AppSender> list = new LinkedList<>();
+    public static List<AppComponent> CSVs_to_AppComponents(String directory) throws Exception{
+        LinkedList<AppComponent> list = new LinkedList<>();
         List<String> components = listFilesForFolder(directory);
 
         if (components.size() == 0)
-            throw new Exception("CSVs_to_AppSenders: No se han leído componentes desde archivos CSV");
+            throw new Exception("CSVs_to_AppComponents: No se han leído componentes desde archivos CSV");
 
         for (String comp : components){
             List<List<String>> values = readCSV(directory + "/" + comp);
@@ -83,32 +82,7 @@ public class CSVToAppComponent {
                 min[i] = Double.parseDouble(min_str[i]);
                 max[i] = Double.parseDouble(max_str[i]);
             }
-            list.add(new AppSender(comp.split("\\.")[0], min, max, params));
-        }
-
-        return list;
-    }
-
-    public static List<AppReceiver> CSVs_to_AppReceivers(String directory) throws Exception{
-        LinkedList<AppReceiver> list = new LinkedList<>();
-        List<String> components = listFilesForFolder(directory);
-
-        if (components.size() == 0)
-            throw new Exception("CSVs_to_AppReceivers: No se han leído componentes desde archivos CSV");
-
-        for (String comp : components){
-            List<List<String>> values = readCSV(directory + "/" + comp);
-
-            String[] params = Arrays.copyOf(values.get(0).toArray(), values.get(0).toArray().length, String[].class);
-            String[] min_str = Arrays.copyOf(values.get(1).toArray(), values.get(1).toArray().length, String[].class);
-            String[] max_str = Arrays.copyOf(values.get(2).toArray(), values.get(2).toArray().length, String[].class);
-            double[] min = new double[min_str.length];
-            double[] max = new double[max_str.length];
-            for (int i = 0; i < min_str.length; i++) {
-                min[i] = Double.parseDouble(min_str[i]);
-                max[i] = Double.parseDouble(max_str[i]);
-            }
-            list.add(new AppReceiver(comp.split("\\.")[0] + "_R", min, max, params));
+            list.add(new AppComponent(comp.split("\\.")[0], min, max, params));
         }
 
         return list;

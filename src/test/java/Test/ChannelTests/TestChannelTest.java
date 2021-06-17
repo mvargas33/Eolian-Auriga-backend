@@ -1,7 +1,7 @@
 package Test.ChannelTests;
 
 import ApplicationLayer.AppComponents.AppComponent;
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.TestChannel;
 import ApplicationLayer.LocalServices.PrintService;
@@ -17,12 +17,12 @@ public class TestChannelTest {
 
     void readingTest() throws Exception {
         String dir = "src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_auriga";
-        List<AppSender> appSenders = CSVToAppComponent.CSVs_to_AppSenders(dir);
+        List<AppComponent> appComponents = CSVToAppComponent.CSVs_to_AppComponents(dir);
         List<Service> services = new ArrayList<>();
         PrintService printService = new PrintService();
         services.add(printService);
 
-        TestChannel testChannel = new TestChannel(appSenders, services);
+        TestChannel testChannel = new TestChannel(appComponents, services);
 
         // Execute threads
         ExecutorService mainExecutor = Executors.newFixedThreadPool(2);

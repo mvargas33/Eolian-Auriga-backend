@@ -1,6 +1,6 @@
 package Test.ChannelTests;
 
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.GPS;
 import ApplicationLayer.Channel.TestChannel;
@@ -16,9 +16,9 @@ public class GPSChannelTest {
 
     void readingTest() throws Exception {
         String dir = "src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_auriga";
-        List<AppSender> allAppSenders = CSVToAppComponent.CSVs_to_AppSenders(dir);
-        AppSender gps = null;
-        for (AppSender a: allAppSenders
+        List<AppComponent> allAppComponents = CSVToAppComponent.CSVs_to_AppComponents(dir);
+        AppComponent gps = null;
+        for (AppComponent a: allAppComponents
              ) {
             if(a.ID.equals("gps")){ // Must match xlsx name
                 gps = a;
@@ -26,10 +26,10 @@ public class GPSChannelTest {
             }
         }
         if(gps == null){
-            throw new Exception("AppSender for 'gps' not found after CSVs_to_AppSenders() function");
+            throw new Exception("AppComponent for 'gps' not found after CSVs_to_AppComponents() function");
         }
 
-        List<AppSender> appSenders = new ArrayList<>();
+        List<AppComponent> appSenders = new ArrayList<>();
         appSenders.add(gps);
 
         List<Service> services = new ArrayList<>();

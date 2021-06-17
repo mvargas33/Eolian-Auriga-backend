@@ -1,5 +1,5 @@
 package ApplicationLayer.SensorReading.GPSReader;
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.SensorReading.SensorsReader;
 
 import java.io.BufferedReader;
@@ -23,7 +23,7 @@ public class GPSReader extends SensorsReader {
     private double[] data = new double[6];
     private double[] allValues = new double[super.myComponent.len]; // TODO: Update en super.values directamente
 
-    public GPSReader(AppSender myComponent, long readingDelayInMS) {
+    public GPSReader(AppComponent myComponent, long readingDelayInMS) {
         super(myComponent, readingDelayInMS);
     }
 

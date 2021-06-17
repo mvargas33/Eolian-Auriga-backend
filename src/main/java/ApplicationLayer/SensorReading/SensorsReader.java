@@ -1,18 +1,18 @@
 package ApplicationLayer.SensorReading;
 
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 
 public abstract class SensorsReader implements Runnable {
-    public AppSender myComponent;  // Componente al cual le encolará valores nuevos
+    public AppComponent myComponent;  // Componente al cual le encolará valores nuevos
     private long delayTime;
     public double[] values;                // Por optimización de memoria
 
     /**
-     * Constructor base. Todos los SensorReaders están linkeados a un sólo AppSender. No funcionan con receivers
+     * Constructor base. Todos los SensorReaders están linkeados a un sólo AppComponent. No funcionan con receivers
      * @param myComponent AppComponent linkeado
      * @param readingDelayInMS Frecuencia de muestre
      */
-    public SensorsReader(AppSender myComponent, long readingDelayInMS) {
+    public SensorsReader(AppComponent myComponent, long readingDelayInMS) {
         this.myComponent = myComponent;
         this.delayTime = readingDelayInMS;
         this.values = new double[this.myComponent.len]; // Create an array same size as AppComponent values[]
@@ -45,14 +45,14 @@ public abstract class SensorsReader implements Runnable {
         this.delayTime = delayTimeMS;
     }
 
-    public synchronized AppSender getMyComponent(){
+    public synchronized AppComponent getMyComponent(){
         return this.myComponent;
     }
 
     /**
      * 0: Verifica que haya pasado tiempo suficiente para volver a leer.
      * 1: Lee nuevos valores.
-     * 2: Los encola en el AppSender correspondiente.
+     * 2: Los encola en el AppComponent correspondiente.
      * 3: Actualiza tiempos de lectura
      */
     @Override
@@ -62,8 +62,4 @@ public abstract class SensorsReader implements Runnable {
     /**
      * Same as run(), without while() statement. Used by Sensor<Type>Admin
      */
-    public void sequentialRun() {
-        this.read(delayTime);                  // 1: Leer nuevos valores
-        myComponent.sequentialRun(values);          // Ejecuta secuancialmente todas las acciones hasta dejar los valores byte[] en la cola del Xbee
-    }
 }

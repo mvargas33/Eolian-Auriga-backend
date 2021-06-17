@@ -1,7 +1,6 @@
 package ApplicationLayer.SensorReading.GPSReader;
 
-import ApplicationLayer.AppComponents.AppSender;
-import ApplicationLayer.SensorReading.GPSReader.GPSReader;
+import ApplicationLayer.AppComponents.AppComponent;
 import MockObjects.GPS;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,14 +10,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GPSReaderTest {
 
-    private AppSender appSender;
+    private AppComponent appSender;
     private GPS gps;
     private GPSReader gpsReader;
 
     @BeforeEach
     public void setUp() {
         gps = new GPS();
-        appSender = new AppSender("testing_AS",
+        appSender = new AppComponent("testing_AS",
                 new double[] {0, 0, -1, 0, 0, -1}, // mins
                 new double[] {60, 90, 1, 60, 180, 1}, //maxs
                 new String[] {"latitude", "latitude_degree", "latitude_orientation", "longitude", "longitude_degree", "longitude_orientation"});

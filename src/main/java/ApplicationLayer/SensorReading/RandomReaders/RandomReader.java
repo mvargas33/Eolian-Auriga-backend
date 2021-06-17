@@ -1,6 +1,6 @@
 package ApplicationLayer.SensorReading.RandomReaders;
 
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.SensorReading.SensorsReader;
 
 import java.util.Random;
@@ -12,12 +12,12 @@ public class RandomReader extends SensorsReader{
     private final Random r;
 
     /**
-     * Constructor base. Todos los SensorReaders están linkeados a un sólo AppSender. No funcionan con receivers
+     * Constructor base. Todos los SensorReaders están linkeados a un sólo AppComponent. No funcionan con receivers
      *
      * @param myComponent      AppComponent linkeado
      * @param readingDelayInMS Frecuencia de muestre
      */
-    public RandomReader(AppSender myComponent, long readingDelayInMS) {
+    public RandomReader(AppComponent myComponent, long readingDelayInMS) {
         super(myComponent, readingDelayInMS);
         this.r = new Random();
     }

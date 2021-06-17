@@ -6,21 +6,10 @@
 package Main;
 
 import ApplicationLayer.AppComponents.AppComponent;
-import ApplicationLayer.AppComponents.AppReceiver;
-import ApplicationLayer.AppComponents.AppSender;
-import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
-import ApplicationLayer.LocalServices.PrintService;
-import ApplicationLayer.LocalServices.WirelessService.WirelessReceiver;
-import ApplicationLayer.LocalServices.WirelessService.WirelessSender;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeReceiver;
-import ApplicationLayer.SensorReading.SensorsReader;
-import ApplicationLayer.SensorReading.SequentialReaderExecutor;
-import ApplicationLayer.SensorReading.RandomReaders.RandomReader;
+
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Main {
     public String dir = "/Github/Eolian-Auriga-backend/src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
@@ -29,16 +18,16 @@ public class Main {
     public Main() {
     }
 
-    public static AppSender findAppSender(List<AppSender> list, String componentID) throws Exception {
+    public static AppComponent findAppComponent(List<AppComponent> list, String componentID) throws Exception {
         Iterator var2 = list.iterator();
 
-        AppSender a;
+        AppComponent a;
         do {
             if (!var2.hasNext()) {
-                throw new Exception("Component with ID " + componentID + " was not found in AppSender list.");
+                throw new Exception("Component with ID " + componentID + " was not found in AppComponent list.");
             }
 
-            a = (AppSender)var2.next();
+            a = (AppComponent)var2.next();
         } while(!a.getID().equals(componentID));
 
         return a;
@@ -70,12 +59,12 @@ public class Main {
     }
 
     void senderSetup() throws Exception {
-//        List<AppSender> appSenders = CSVToAppComponent.CSVs_to_AppSenders(this.dir);
+//        List<AppComponent> appSenders = CSVToAppComponent.CSVs_to_AppComponents(this.dir);
 //        LinkedList<RandomReader> randomReaders = new LinkedList();
 //        Iterator var3 = appSenders.iterator();
 //
 //        while(var3.hasNext()) {
-//            AppSender as = (AppSender)var3.next();
+//            AppComponent as = (AppComponent)var3.next();
 //            randomReaders.add(new RandomReader(as, 1000L));
 //        }
 //

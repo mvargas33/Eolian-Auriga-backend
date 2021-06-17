@@ -1,7 +1,7 @@
 package Test.RefactorTests;
 
-import ApplicationLayer.AppComponents.AppReceiver;
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import org.junit.jupiter.api.Test;
 
@@ -21,14 +21,14 @@ public class CSVTest {
         }*/
 
 
-        List<AppSender> appSenders = CSVToAppComponent.CSVs_to_AppSenders(dir);
+        List<AppComponent> appSenders = CSVToAppComponent.CSVs_to_AppComponents(dir);
 
-        for (AppSender appSender: appSenders
+        for (AppComponent appSender: appSenders
              ) {
             System.out.println(appSender.toString());
         }
 
-        List<AppReceiver> appReceivers = CSVToAppComponent.CSVs_to_AppReceivers(dir);
+        List<AppComponent> appComponents = CSVToAppComponent.CSVs_to_AppComponents(dir);
     }
 
 

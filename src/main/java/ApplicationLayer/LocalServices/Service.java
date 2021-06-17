@@ -1,7 +1,6 @@
 package ApplicationLayer.LocalServices;
 
 import ApplicationLayer.AppComponents.AppComponent;
-import ApplicationLayer.AppComponents.AppSender;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;

@@ -1,6 +1,6 @@
 package ApplicationLayer.SensorReading.FenixArduinoReader;
 
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.SensorReading.SensorsReader;
 import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.State;
 import gnu.io.CommPortIdentifier;
@@ -26,7 +26,7 @@ public class ArduinoReader extends SensorsReader implements SerialPortEventListe
     private String header; // Lectura del primer split
     private State actualStateInRead; // Espacio para guardar el componente actual
 
-    public ArduinoReader(AppSender myComponent, long readingDelayInMS, String PORT, int BAUD_RATE, int TIME_OUT) {
+    public ArduinoReader(AppComponent myComponent, long readingDelayInMS, String PORT, int BAUD_RATE, int TIME_OUT) {
         super(myComponent, readingDelayInMS);
         this.PORT_NAMES = new String[]{
                 "/dev/tty.usbserial-A9007UX1", // Mac OS X

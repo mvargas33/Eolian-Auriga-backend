@@ -1,7 +1,6 @@
 package ApplicationLayer.Channel;
 
 import ApplicationLayer.AppComponents.AppComponent;
-import ApplicationLayer.AppComponents.AppSender;
 import ApplicationLayer.LocalServices.Service;
 
 import java.util.HashMap;

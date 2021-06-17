@@ -1,7 +1,7 @@
 package Test.ChannelTests;
 
 import ApplicationLayer.AppComponents.AppComponent;
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.Canbus0;
 import ApplicationLayer.Channel.GPS;
@@ -17,9 +17,9 @@ public class Canbus0ChannelTest {
 
     void readingTest() throws Exception {
         String dir = "src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_auriga";
-        List<AppSender> allAppSenders = CSVToAppComponent.CSVs_to_AppSenders(dir);
-        AppSender bms = null;
-        for (AppSender a: allAppSenders
+        List<AppComponent> allAppComponents = CSVToAppComponent.CSVs_to_AppComponents(dir);
+        AppComponent bms = null;
+        for (AppComponent a: allAppComponents
         ) {
             if(a.ID.equals("bms")){ // Must match xlsx name
                 bms = a;
@@ -27,7 +27,7 @@ public class Canbus0ChannelTest {
             }
         }
         if(bms == null){
-            throw new Exception("AppSender for 'bms' not found after CSVs_to_AppSenders() function");
+            throw new Exception("AppComponent for 'bms' not found after CSVs_to_AppComponents() function");
         }
 
         List<AppComponent> appSenders = new ArrayList<>();

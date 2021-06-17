@@ -1,6 +1,6 @@
 package ApplicationLayer.SensorReading.MPPTReader;
 
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.SensorReading.SensorsReader;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
@@ -40,7 +40,7 @@ public class MPPTReader extends SensorsReader {
 
     private double[] values = new double[6];
 
-    public MPPTReader(AppSender myComponent, long readingDelayInMS) {
+    public MPPTReader(AppComponent myComponent, long readingDelayInMS) {
         super(myComponent, readingDelayInMS);
     }
 

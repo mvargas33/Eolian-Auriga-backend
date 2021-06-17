@@ -1,6 +1,6 @@
 package ApplicationLayer.SensorReading.CANReaders;
 
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.SensorReading.SensorsReader;
 import ApplicationLayer.SensorReading.Utils.Utils;
 
@@ -31,7 +31,7 @@ public class BMSReader extends SensorsReader {
     private double[] resistance_calculation_fault = new double[28];
     private double[] load_fault = new double[28];
 
-    public BMSReader(AppSender myComponent, long readingDelayInMS) {
+    public BMSReader(AppComponent myComponent, long readingDelayInMS) {
         super(myComponent, readingDelayInMS);
     }
 

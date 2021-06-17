@@ -1,14 +1,12 @@
 package ApplicationLayer.Channel;
 
 import ApplicationLayer.AppComponents.AppComponent;
-import ApplicationLayer.AppComponents.AppSender;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.SensorReading.Utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Canbus0 extends Channel {
