@@ -17,8 +17,6 @@ public class WirelessSender extends WirelessService{
     ArrayList<byte []> bytesToSendNow;
 
     XbeeSender xbeeSender;
-    CryptoAdmin cryptoAdmin;
-    boolean encrypt;
 
     public WirelessSender(List<AppComponent> components, String XBEE_PORT, boolean encrypt) throws Exception{
         super(components, encrypt);

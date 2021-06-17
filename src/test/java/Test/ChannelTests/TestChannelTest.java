@@ -18,6 +18,7 @@ public class TestChannelTest {
     void readingTest() throws Exception {
         String dir = "src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_auriga";
         List<AppComponent> appComponents = CSVToAppComponent.CSVs_to_AppComponents(dir);
+
         List<Service> services = new ArrayList<>();
         PrintService printService = new PrintService();
         services.add(printService);

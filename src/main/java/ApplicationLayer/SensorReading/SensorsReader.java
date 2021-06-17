@@ -62,4 +62,8 @@ public abstract class SensorsReader implements Runnable {
     /**
      * Same as run(), without while() statement. Used by Sensor<Type>Admin
      */
+    public void sequentialRun() {
+        this.read(delayTime);                  // 1: Leer nuevos valores
+//        myComponent.sequentialRun(values);          // Ejecuta secuancialmente todas las acciones hasta dejar los valores byte[] en la cola del Xbee
+    }
 }

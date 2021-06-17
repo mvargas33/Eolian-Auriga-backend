@@ -34,7 +34,7 @@ public class WirelessService extends Service {
     String XBEE_PORT;
 
     // Protocol paramseters
-    int MSG_SIZE_BITS = 8*(16*5);
+    int MSG_SIZE_BITS = 8*(16*5) + 8*15;
     int FIRST_HEADER = 56;
 
     public WirelessService(List<AppComponent> components, boolean encrypt) throws Exception{
@@ -43,6 +43,8 @@ public class WirelessService extends Service {
         // CryptoAdmin
         if(encrypt){
             cryptoAdmin = setupCryptoAdmin();
+        }else{
+            this.MSG_SIZE_BITS = this.MSG_SIZE_BITS + 1 + this.MAC_SIG_BYTES + this.IV_SIG_BYTES;
         }
 
         LinkedList<State> state_list = new LinkedList<>(); // Only for initializer

@@ -70,8 +70,12 @@ public class XbeeReceiver implements Runnable{
      * @param b : arreglo de bytes
      * @throws Exception Por poner en Queue
      */
-    public void receiveByteOffline(byte[] b) throws Exception{
-        bytesReceived.put(b);
+    public void receiveByteOffline(byte[] b){
+        try {
+            bytesReceived.put(b);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 

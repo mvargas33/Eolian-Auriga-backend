@@ -31,6 +31,7 @@ public class Message {
         this.allComponentsUpdated = 0; // Flag de salida del mensaje, si quedan componentes que no han actualizado mensaje, este no sale
         this.numOfComponents = 0; // Para designar bits en allComponentsUpdated, este es el bit asignado también
         this.initialValue = 0;
+        this.myStates = new LinkedList<>();
     }
 
     public void addState(State state){

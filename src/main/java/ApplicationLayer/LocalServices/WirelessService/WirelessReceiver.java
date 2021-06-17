@@ -61,8 +61,8 @@ public class WirelessReceiver extends WirelessService{
     @Override
     public void run() {
         // 0. Dispatch xbeeReceiver thread
-        ExecutorService executorService = Executors.newFixedThreadPool(1);
-        executorService.submit(xbeeReceiver);
+//        ExecutorService executorService = Executors.newFixedThreadPool(1);
+//        executorService.submit(xbeeReceiver);
 
         // 1. Get the messages, parse them, and inform otherServices about AppComponent updates.
         while(true) {
@@ -88,7 +88,7 @@ public class WirelessReceiver extends WirelessService{
 
                         // 3.2 Update double[] valoresReales (directo) actuales con data de int[] myValues
                         for (int j = 0; j < s.len; j++) {
-                            s.myAppComponent.valoresRealesActuales[i] = (s.myValues[i] - s.offset[i]) * Math.pow(10, -s.decimales[i]);
+                            s.myAppComponent.valoresRealesActuales[j] = (s.myValues[j] - s.offset[j]) * Math.pow(10, - s.decimales[j]);
                         }
 
                         // 3.3 Add to list of AppComponents updated

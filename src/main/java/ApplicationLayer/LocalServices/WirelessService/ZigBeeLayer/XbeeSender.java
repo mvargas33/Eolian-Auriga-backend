@@ -62,6 +62,12 @@ public class XbeeSender implements Runnable{
      * @param batch
      */
     public void sendBatch(ArrayList<byte[]> batch){
+        if(myReceiver != null){
+            for (byte[] b: batch) {
+                this.myReceiver.receiveByteOffline(b);
+            }
+            return;
+        }
         try {
             for (byte[] b: batch) {
                 myDevice.sendBroadcastData(b);
@@ -78,11 +84,10 @@ public class XbeeSender implements Runnable{
      * Toma un byte[] array de la Queue y lo envía a través de las Xbees
      * @throws Exception : Ecepcion de ejecucion
      */
-    public void sendByteOffline() throws Exception{
+    public void sendByteOffline() {
         while(!this.bytesToSend.isEmpty()){
             byte[] b = this.bytesToSend.poll(); // Get byte array from queue
             this.myReceiver.receiveByteOffline(b);
-            Thread.sleep(100);
         }
 
     }
