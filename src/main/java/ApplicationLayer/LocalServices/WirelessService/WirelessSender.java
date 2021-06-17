@@ -40,7 +40,7 @@ public class WirelessSender extends WirelessService{
     }
 
     @Override
-    protected void serve(AppComponent c) {
+    public void serve(AppComponent c) {
         // 1. Get 1:1 associated State, that holds info about wich Messages this Component is associated to
         actState = this.states.get(c.getID());
 

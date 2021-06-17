@@ -19,11 +19,37 @@ public class TestChannel extends Channel{
      */
     public TestChannel(List<AppComponent> myComponentList, List<Service> myServices) {
         super(myComponentList, myServices);
-        this.r = new Random();
+        this.r = new Random(12345);
         this.valuesMap = new HashMap<>();
         for (AppComponent a : myComponentList
              ) {
             valuesMap.put(a, new double[a.len]);
+        }
+    }
+
+    /**
+     * Moved separately to test correctly.
+     * Generates random values in allowed range for each value for each Component
+     */
+    public void randomValuesInRangeForAllComponents(){
+        try{
+            for (AppComponent a : myComponentList
+            ) {
+                // Update values directly. Without the call of updateValues() inside AppComponent
+                for (int i = 0; i < a.len; i++) {
+                    double old = a.valoresRealesActuales[i]; // Test purpose
+
+                    a.valoresRealesActuales[i] = a.minimosConDecimal[i] + (a.maximosConDecimal[i] - a.minimosConDecimal[i]) * this.r.nextDouble(); // Random value in adequate range
+
+                    if(a.valoresRealesActuales[i] < a.minimosConDecimal[i] | a.valoresRealesActuales[i] > a.maximosConDecimal[i]){
+                        System.out.println(a.getID() + " | Actual " + old + " | Min " + a.minimosConDecimal[i] + " | Max " + a.maximosConDecimal[i] + " | New " + a.valoresRealesActuales[i]);
+                        throw new Exception("Test Channel failure: Created random value outside range for " + a.getID());
+                    }
+                }
+            }
+            super.informServices(); // Call this just after all AppComponent in myComponentList were updated
+        }catch (Exception exception){
+            exception.printStackTrace();
         }
     }
 
@@ -35,18 +61,7 @@ public class TestChannel extends Channel{
     @Override
     public void readingLoop() {
         while(true){
-            try{
-                for (AppComponent a : myComponentList
-                     ) {
-                    // Update values directly. Without the call of updateValues() inside AppComponent
-                    for (int i = 0; i < a.len; i++) {
-                        a.valoresRealesActuales[i] = a.minimosConDecimal[i] + (a.maximosConDecimal[i] - a.minimosConDecimal[i]) * this.r.nextDouble(); // Random value in adequate range
-                    }
-                }
-                super.informServices(); // Call this just after all AppComponent in myComponentList were updated
-            }catch (Exception exception){
-                exception.printStackTrace();
-            }
+            this.randomValuesInRangeForAllComponents();
         }
     }
 

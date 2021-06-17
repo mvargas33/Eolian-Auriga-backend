@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class WirelessService extends Service {
-    HashMap<String, State> states;
+    public HashMap<String, State> states;
     HashMap<Character, Message> map;
     CryptoAdmin cryptoAdmin;
     boolean encrypt;

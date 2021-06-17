@@ -72,7 +72,9 @@ public class XbeeReceiver implements Runnable{
      */
     public void receiveByteOffline(byte[] b){
         try {
-            bytesReceived.put(b);
+            byte[] b_copy = new byte[b.length];
+            System.arraycopy(b, 0, b_copy, 0, b.length);
+            bytesReceived.put(b_copy);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

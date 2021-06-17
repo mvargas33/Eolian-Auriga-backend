@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public abstract class Channel implements Runnable {
-    protected HashMap<String, AppComponent> myComponentsMap; // To modify values with cost O(1) inside readingLoop()
-    protected List<AppComponent> myComponentList ; // List that Services will receive
+    public HashMap<String, AppComponent> myComponentsMap; // To modify values with cost O(1) inside readingLoop()
+    public List<AppComponent> myComponentList ; // List that Services will receive
     protected final List<Service> myServices; // List of services that need to know about myComponents updates
 
     /**
