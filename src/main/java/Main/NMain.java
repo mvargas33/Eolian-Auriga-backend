@@ -1,6 +1,8 @@
 package Main;
 
 import ApplicationLayer.AppComponents.AppComponent;
+import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
+import ApplicationLayer.Channel.Canbus0;
 import ApplicationLayer.Channel.TestChannel;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
@@ -12,28 +14,22 @@ import java.util.concurrent.ExecutorService;
 
 public class NMain {
 
-    public static void main(String[] argv) {
+    public static String dir = "C:/Users/Dante/Desktop/Eolian/Eolian-Auriga-backend/src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
+
+    public static void main(String[] argv) throws Exception {
         // segun entiendo, ahora deberia iniciar todos los channels
         // con sus appcomponents definidos y lanzarlos a correr en paralelo
         // con el mismo executor del main antiguo
 
         // usar servicio print service
-        List<Service> serviceList = new ArrayList<Service>();
+        List<Service> serviceList = new ArrayList<>();
         PrintService printService = new PrintService();
         serviceList.add(printService);
 
-        // crear componentes dummy
-        //String id, double[] minimosConDecimal, double[] maximosConDecimal, String[] nombreParametros
-        AppComponent ac1 = new AppComponent("AC1", new double[] {0}, new double[] {1}, new String[] {"D1"});
-        AppComponent ac2 = new AppComponent("AC2", new double[] {0}, new double[] {1}, new String[] {"D2"});
-        AppComponent ac3 = new AppComponent("AC3", new double[] {0}, new double[] {1}, new String[] {"D3"});
-        List<AppComponent> acList = new ArrayList<AppComponent>();
-        acList.add(ac1);
-        acList.add(ac2);
-        acList.add(ac3);
+        List<AppComponent> ACList = CSVToAppComponent.CSVs_toAppComponents(dir);
 
         // voy a partir haciendo uno para testchannel
-        TestChannel tc = new TestChannel(acList, serviceList);
+        TestChannel tc = new TestChannel(ACList, serviceList, new String[] {"BMS", "MPPT"});
 
         // con esto solo quedaria iniciar los channels con sus respectivos app components + el print service
         // y luego lanzar cada uno a un thread en el executer + el printService
@@ -43,10 +39,18 @@ public class NMain {
         mainExecutor.shutdown();
         // init canbus0
 
-        //init gps
+        // duda: Si usamos la conversion de csv/excel -> AppComponent como dice la linea abajo,
+        // como se distingue que app component pertenece a cada channel?
+        // Idea: Se podria agregar como un "channel index" a los excel/csv o un campo dentro de los channels
+        // que guarde los ids (en el excel/csv) que tienen que guardar
+        // Componentes: MPPT (desde el arduino?), BMS
 
-        //init i2c
 
+        // init gps
+        // Componentes: GPS
+
+        // init i2c
+        // Componentes: Arduino con los datos del MPPT
 
     }
 }

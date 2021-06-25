@@ -22,7 +22,7 @@ public class GPS extends Channel {
      * @param myServices Services to inform to whenever an AppComponents get updated
      */
     public GPS(List<AppComponent> myComponentList, List<Service> myServices) {
-        super(myComponentList, myServices);
+        super(myComponentList, myServices, new String[] {"GPS"});
         // Check that a BMS AppComponent was supplied
         // With the exact amount of double[] values as the implementation here
         try{

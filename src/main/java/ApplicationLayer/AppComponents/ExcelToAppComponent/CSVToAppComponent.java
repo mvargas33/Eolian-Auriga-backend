@@ -1,5 +1,6 @@
 package ApplicationLayer.AppComponents.ExcelToAppComponent;
 
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.AppReceiver;
 import ApplicationLayer.AppComponents.AppSender;
 
@@ -24,10 +25,10 @@ public class CSVToAppComponent {
      * @return Lista de nombre de archivos .csv
      */
     public static List<String> listFilesForFolder(String directory) {
-        System.out.println(directory);
+        //System.out.println(directory);
         List<String> filenames = new LinkedList<String>();
         File folder = new File(directory);
-        System.out.println(folder.getAbsolutePath());
+        //System.out.println(folder.getAbsolutePath());
 
         File[] list = folder.listFiles();
         if (list != null) {
@@ -84,6 +85,32 @@ public class CSVToAppComponent {
                 max[i] = Double.parseDouble(max_str[i]);
             }
             list.add(new AppSender(comp.split("\\.")[0], min, max, params));
+        }
+
+        return list;
+    }
+
+    public static List<AppComponent> CSVs_toAppComponents(String directory) throws Exception {
+        LinkedList<AppComponent> list = new LinkedList<>();
+        List<String> components = listFilesForFolder(directory);
+        //System.out.println(directory);
+
+        if (components.size() == 0)
+            throw new Exception("CSVs_to_AppComponents: No se han leído componentes desde archivos CSV");
+
+        for (String comp : components){
+            List<List<String>> values = readCSV(directory + "/" + comp);
+
+            String[] params = Arrays.copyOf(values.get(0).toArray(), values.get(0).toArray().length, String[].class);
+            String[] min_str = Arrays.copyOf(values.get(1).toArray(), values.get(1).toArray().length, String[].class);
+            String[] max_str = Arrays.copyOf(values.get(2).toArray(), values.get(2).toArray().length, String[].class);
+            double[] min = new double[min_str.length];
+            double[] max = new double[max_str.length];
+            for (int i = 0; i < min_str.length; i++) {
+                min[i] = Double.parseDouble(min_str[i]);
+                max[i] = Double.parseDouble(max_str[i]);
+            }
+            list.add(new AppComponent(comp.split("\\.")[0] + "_R", min, max, params));
         }
 
         return list;

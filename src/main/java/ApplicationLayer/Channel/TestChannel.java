@@ -17,12 +17,27 @@ public class TestChannel extends Channel{
      *  @param myComponentList List of AppComponent that this Channel update values to
      * @param myServices Services to inform to whenever an AppComponents get updated
      */
-    public TestChannel(List<AppSender> myComponentList, List<Service> myServices) {
+    public TestChannel(List<AppComponent> myComponentList, List<Service> myServices) {
         super(myComponentList, myServices);
         this.r = new Random();
         this.valuesMap = new HashMap<>();
         for (AppComponent a : myComponentList
              ) {
+            valuesMap.put(a, new double[a.len]);
+        }
+    }
+
+    /**
+     * Each channel has predefined AppComponents
+     *  @param myComponentList List of AppComponent that this Channel update values to
+     * @param myServices Services to inform to whenever an AppComponents get updated
+     */
+    public TestChannel(List<AppComponent> myComponentList, List<Service> myServices, String[] componentsIds) {
+        super(myComponentList, myServices, componentsIds);
+        this.r = new Random();
+        this.valuesMap = new HashMap<>();
+        for (AppComponent a : myComponentList
+        ) {
             valuesMap.put(a, new double[a.len]);
         }
     }
