@@ -4,6 +4,7 @@ Server\ API/node_modules
 VueJS\ front\ end/node_modules
 QuasarFrontEnd/node_modules
 Eolian-Telemetria-Auriga.iml
+src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/venv
 
 # CI
 target/
