@@ -1,3 +1,7 @@
+// DEBUG
+#define serial_print // Usar para ver que los mppt se están leyendo bien
+
+// CANBUS
 #include <Serial_CAN_Module.h>
 #include <SoftwareSerial.h>
 Serial_CAN can;
@@ -7,6 +11,7 @@ unsigned long id = 0;
 unsigned long id_aux = 0;// Just to fix a bug with print
 unsigned char buff[7];
 
+// Data
 int switch_mppt = 0;
 byte MPPT1[7];
 byte MPPT2[7];
@@ -14,11 +19,53 @@ byte MPPT3[7];
 byte MPPT4[7];
 byte MPPT5[7];
 
-#define serial_print // Usar para ver que los mppt se están leyendo bien
+// I2C
+#include <Wire.h>
+byte I2C_RequestCommand = 0;
+
+// When 0x08 is called, we store the request command
+// Executed when a slave device receives a transmission from a master. (a.k.a Master wirtes on slave)
+void processWriteEvent(int numBytes){ 
+  while (Wire.available ()){
+    byte I2C_command = Wire.read(); // receive byte as a character
+    if (I2C_command > 0) { // Check that its a valid command
+      I2C_RequestCommand = I2C_command; // Store globally
+    }
+  }
+}
+
+// Handler given the stored command
+// Executed when a master requests data from this slave device. (a.k.a Master request from slave)
+void processRequestEvent(void){
+  switch (I2C_RequestCommand){
+    case 0x01:
+      Wire.write( MPPT1, 7);
+      break;
+    case 0x02:
+      Wire.write( MPPT2, 7);
+      break;
+    case 0x03:
+      Wire.write( MPPT3, 7);
+      break;
+    case 0x04:
+      Wire.write( MPPT4, 7);
+      break;
+    case 0x05:
+      Wire.write( MPPT5, 7);
+      break;
+    default:
+      break;
+  }
+}
+
 
 /*///////////////////// SET UP /////////////////////*/
 void setup() {
   can.begin(can_tx, can_rx, 57600); // CANBUS baudrate is set to 125 KB
+  Wire.begin(0x8); // Join I2C bus as slave with address 8
+  Wire.setClock(400000); // Set Hz to max RP4 Hz allowed
+  Wire.onReceive(processWriteEvent);  
+  Wire.onRequest(processRequestEvent);
   
   #ifdef serial_print
     Serial.begin(9600);
