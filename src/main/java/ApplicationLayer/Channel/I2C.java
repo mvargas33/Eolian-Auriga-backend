@@ -57,13 +57,13 @@ public class I2C extends Channel{
     }
 
     void parseMessage(byte[] data){
-        double BVLR = data[0] & 0b10000000;
-        double OVT  = data[0] & 0b01000000;
-        double NOC  = data[0] & 0b00100000;
-        double UNDV = data[0] & 0b00010000;
-        double Uin  = (((data[0] & 0b00000011) << 8) | (data[1]))*0.15049;
-        double Iin  = (((data[2] & 0b00000011) << 8) | (data[3]))*0.00872;
-        double Uout = (((data[4] & 0b00000011) << 8) | (data[5]))*0.20879;
+        double BVLR = (data[0] & 0b10000000) >> 7;
+        double OVT  = (data[0] & 0b01000000) >> 6;
+        double NOC  = (data[0] & 0b00100000) >> 5;
+        double UNDV = (data[0] & 0b00010000) >> 4;
+        double Uin  = ((int)((int)((data[0] & 0b00000011) << 8) | (int) (data[1])))*0.15049;
+        double Iin  = ((int)((int)((data[2] & 0b00000011) << 8) | (int)(data[3])))*0.00872;
+        double Uout = ((int)((int)((data[4] & 0b00000011) << 8) | (int)(data[5])))*0.20879;
         double temp = data[6];
         System.out.print("ID________________________________________________");System.out.println("0x77" + (currentMPPT + 1));
         System.out.print("BVLR (1: Uout = Umax, 0: Uout < Umax)_____________");System.out.println(BVLR);
