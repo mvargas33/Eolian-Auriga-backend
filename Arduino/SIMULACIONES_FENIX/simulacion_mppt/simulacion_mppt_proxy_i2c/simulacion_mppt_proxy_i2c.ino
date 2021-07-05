@@ -1,6 +1,6 @@
 // DEBUG
 //#define serial_print // Usar para ver que los mppt se están leyendo bien
-#define debug_i2c
+//#define debug_i2c
 // CANBUS
 #include <Serial_CAN_Module.h>
 #include <SoftwareSerial.h>
