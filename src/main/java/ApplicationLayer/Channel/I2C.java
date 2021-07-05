@@ -61,9 +61,9 @@ public class I2C extends Channel{
         double OVT  = (data[0] & 0b01000000) >> 6;
         double NOC  = (data[0] & 0b00100000) >> 5;
         double UNDV = (data[0] & 0b00010000) >> 4;
-        double Uin  = ((int)((int)((data[0] & 0b00000011) << 8) | (int) (data[1])))*0.15049;
-        double Iin  = ((int)((int)((data[2] & 0b00000011) << 8) | (int)(data[3])))*0.00872;
-        double Uout = ((int)((int)((data[4] & 0b00000011) << 8) | (int)(data[5])))*0.20879;
+        double Uin  = ((int)((int)((data[0] & 0b00000011) << 8) | (int) (data[1] & 0x00FF)))*0.15049;
+        double Iin  = ((int)((int)((data[2] & 0b00000011) << 8) | (int) (data[3] & 0x00FF)))*0.00872;
+        double Uout = ((int)((int)((data[4] & 0b00000011) << 8) | (int) (data[5] & 0x00FF)))*0.20879;
         double temp = data[6];
         System.out.print("ID________________________________________________");System.out.println("0x77" + (currentMPPT + 1));
         System.out.print("BVLR (1: Uout = Umax, 0: Uout < Umax)_____________");System.out.println(BVLR);
