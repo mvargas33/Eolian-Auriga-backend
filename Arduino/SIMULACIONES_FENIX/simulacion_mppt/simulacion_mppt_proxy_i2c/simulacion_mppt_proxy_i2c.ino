@@ -1,5 +1,5 @@
 // DEBUG
-#define serial_print // Usar para ver que los mppt se están leyendo bien
+//#define serial_print // Usar para ver que los mppt se están leyendo bien
 
 // CANBUS
 #include <Serial_CAN_Module.h>
@@ -120,15 +120,15 @@ void loop() {
     #endif
 
     if (id == 0x771){
-      for(int i=0;i<7;i++){buff[i] = MPPT1[i];};
+      for(int i=0;i<7;i++){MPPT1[i] = buff[i];};
     }else if (id == 0x772){
-      for(int i=0;i<7;i++){buff[i] = MPPT2[i];};
+      for(int i=0;i<7;i++){MPPT2[i] = buff[i];};
     } else if (id == 0x773){
-      for(int i=0;i<7;i++){buff[i] = MPPT3[i];};
+      for(int i=0;i<7;i++){MPPT3[i] = buff[i];};
     } else if (id == 0x774){
-      for(int i=0;i<7;i++){buff[i] = MPPT4[i];};
+      for(int i=0;i<7;i++){MPPT4[i] = buff[i];};
     }else if (id == 0x775){
-      for(int i=0;i<7;i++){buff[i] = MPPT5[i];};
+      for(int i=0;i<7;i++){MPPT5[i] = buff[i];};
     }
     
   }// FIn Check Receive()

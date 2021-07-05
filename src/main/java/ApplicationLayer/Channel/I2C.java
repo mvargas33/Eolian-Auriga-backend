@@ -31,9 +31,11 @@ public class I2C extends Channel{
         while (true) {
             try {
                 arduino0.write((byte) ((currentMPPT + 1) & 0xFF));
-                Thread.sleep(10);
-                arduino0.read(currentMPPTData, 0, 7);
-                parseMessage(currentMPPTData);
+                Thread.sleep(1000);
+                byte[] data = {(byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000};
+                arduino0.read(data, 0, 7);
+                System.out.println(BitOperations.ArraytoString(data));
+                parseMessage(data);
                 Thread.sleep(1000);
                 currentMPPT = (currentMPPT + 1) % 5; // Ask for next MPPT
             } catch (IOException | InterruptedException e) {
