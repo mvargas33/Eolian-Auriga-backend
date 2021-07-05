@@ -1,6 +1,6 @@
 // DEBUG
 //#define serial_print // Usar para ver que los mppt se están leyendo bien
-
+#define debug_i2c
 // CANBUS
 #include <Serial_CAN_Module.h>
 #include <SoftwareSerial.h>
@@ -13,11 +13,11 @@ unsigned char buff[7];
 
 // Data
 int switch_mppt = 0;
-byte MPPT1[7];
-byte MPPT2[7];
-byte MPPT3[7];
-byte MPPT4[7];
-byte MPPT5[7];
+unsigned char MPPT1[7];
+unsigned char MPPT2[7];
+unsigned char MPPT3[7];
+unsigned char MPPT4[7];
+unsigned char MPPT5[7];
 
 // I2C
 #include <Wire.h>
@@ -25,11 +25,15 @@ byte I2C_RequestCommand = 0;
 
 // When 0x08 is called, we store the request command
 // Executed when a slave device receives a transmission from a master. (a.k.a Master wirtes on slave)
-void processWriteEvent(int numBytes){ 
+void processWriteEvent(int numBytes){
+  
   while (Wire.available ()){
     byte I2C_command = Wire.read(); // receive byte as a character
     if (I2C_command > 0) { // Check that its a valid command
       I2C_RequestCommand = I2C_command; // Store globally
+      #ifdef debug_i2c
+        Serial.print("Write from master: ");Serial.println(I2C_RequestCommand, HEX);
+      #endif
     }
   }
 }
@@ -37,21 +41,39 @@ void processWriteEvent(int numBytes){
 // Handler given the stored command
 // Executed when a master requests data from this slave device. (a.k.a Master request from slave)
 void processRequestEvent(void){
+  #ifdef debug_i2c
+    Serial.print("Request command: ");Serial.println(I2C_RequestCommand, HEX);
+  #endif
   switch (I2C_RequestCommand){
     case 0x01:
       Wire.write( MPPT1, 7);
+      #ifdef debug_i2c
+        Serial.println("0x01 -> Sending MPPT1: ");for(int i = 0; i<7; i++){Serial.println(MPPT1[i]);};Serial.println("");
+      #endif
       break;
     case 0x02:
       Wire.write( MPPT2, 7);
+      #ifdef debug_i2c
+        Serial.println("0x02 -> Sending MPPT2: ");for(int i = 0; i<7; i++){Serial.println(MPPT2[i]);};Serial.println("");
+      #endif
       break;
     case 0x03:
       Wire.write( MPPT3, 7);
+      #ifdef debug_i2c
+        Serial.println("0x03 -> Sending MPPT3: ");for(int i = 0; i<7; i++){Serial.println(MPPT3[i]);};Serial.println("");
+      #endif
       break;
     case 0x04:
       Wire.write( MPPT4, 7);
+      #ifdef debug_i2c
+        Serial.println("0x04 -> Sending MPPT4: ");for(int i = 0; i<7; i++){Serial.println(MPPT4[i]);};Serial.println("");
+      #endif
       break;
     case 0x05:
       Wire.write( MPPT5, 7);
+      #ifdef debug_i2c
+        Serial.println("0x05 -> Sending MPPT5: ");for(int i = 0; i<7; i++){Serial.println(MPPT5[i]);};Serial.println("");
+      #endif
       break;
     default:
       break;
@@ -71,11 +93,15 @@ void setup() {
     Serial.begin(9600);
     Serial.println("Comienza programa de lectura directa de MPPT.");
   #endif
+  #ifdef debug_i2c
+    Serial.begin(9600);
+    Serial.println("Comienza programa de debug I2C.");
+  #endif
 }
 
 /*///////////////////// LOOP /////////////////////*/
 void loop() {
-
+  delay(4); // Delay empírico. Si no está, algo le pasa al canbus y se traba, no actualiza ningún MPPT.
   #ifdef serial_print
     delay(1000);
     Serial.print("Sending Request to 0x71");Serial.println(switch_mppt+1);
@@ -119,21 +145,39 @@ void loop() {
       Serial.println("");
     #endif
 
-    if (id == 0x771){
+    if (id_aux == 0x771){
       for(int i=0;i<7;i++){MPPT1[i] = buff[i];};
-    }else if (id == 0x772){
+      #ifdef serial_print
+        Serial.println("MPPT1 updated");
+      #endif
+    }else if (id_aux == 0x772){
       for(int i=0;i<7;i++){MPPT2[i] = buff[i];};
-    } else if (id == 0x773){
+      #ifdef serial_print
+        Serial.println("MPPT2 updated");
+      #endif
+    } else if (id_aux == 0x773){
       for(int i=0;i<7;i++){MPPT3[i] = buff[i];};
-    } else if (id == 0x774){
+      #ifdef serial_print
+        Serial.println("MPPT3 updated");
+      #endif
+    } else if (id_aux == 0x774){
       for(int i=0;i<7;i++){MPPT4[i] = buff[i];};
-    }else if (id == 0x775){
+      #ifdef serial_print
+        Serial.println("MPPT4 updated");
+      #endif
+    }else if (id_aux == 0x775){
       for(int i=0;i<7;i++){MPPT5[i] = buff[i];};
+      #ifdef serial_print
+        Serial.println("MPPT5 updated");
+      #endif
     }
     
   }// FIn Check Receive()
 
   #ifdef serial_print
+    Serial.flush();
+  #endif
+  #ifdef debug_i2c
     Serial.flush();
   #endif
 }
