@@ -13,8 +13,8 @@ import java.util.Random;
 public class I2C extends Channel{
     private I2CBus bus;
     private I2CDevice arduino0;
-    private int currentMPPT;
-    private byte[] currentMPPTData;
+    private int currentRegister;
+    private byte[] currentRegisterData;
 
     /**
      * Each channel has predefined AppComponents
@@ -30,14 +30,37 @@ public class I2C extends Channel{
     public void readingLoop() {
         while (true) {
             try {
-                arduino0.write((byte) ((currentMPPT + 1) & 0xFF));
+                arduino0.write((byte) ((currentRegister + 1) & 0xFF));
                 Thread.sleep(1000);
-                byte[] data = {(byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000};
-                arduino0.read(data, 0, 7);
+                byte[] data = {(byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000};
+                arduino0.read(data, 0, 8);
                 System.out.println(BitOperations.ArraytoString(data));
-                parseMessage(data);
+//                switch (currentRegister + 1){
+//                    case 1:
+//                        parseMessage100(data);
+//                        break;
+//                    case 2:
+//                        parseMessage101(data);
+//                        break;
+//                    case 3:
+//                        parseMessage102(data);
+//                        break;
+//                    case 4:
+//                        parseMessage081(data);
+//                        break;
+//                    case 5:
+//                        parseMessage082(data);
+//                        break;
+//                    case 6:
+//                        parseMessage036(data);
+//                        break;
+//                    default:
+//                        System.out.println(BitOperations.ArraytoString(data));
+//                }
+
+                //parseMessageMPPT(data);
                 Thread.sleep(1000);
-                currentMPPT = (currentMPPT + 1) % 5; // Ask for next MPPT
+                currentRegister = (currentRegister + 1) % 6; // Ask for next BMS message
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -49,14 +72,14 @@ public class I2C extends Channel{
         try {
             bus = I2CFactory.getInstance(I2CBus.BUS_1);
             arduino0 = bus.getDevice(0x08);
-            currentMPPT = 0;
-            currentMPPTData = new byte[7];
+            currentRegister = 0;
+            currentRegisterData = new byte[7];
         } catch (I2CFactory.UnsupportedBusNumberException | IOException e) {
             e.printStackTrace();
         }
     }
 
-    void parseMessage(byte[] data){
+    void parseMessageMPPT(byte[] data){
         double BVLR = (data[0] & 0b10000000) >> 7;
         double OVT  = (data[0] & 0b01000000) >> 6;
         double NOC  = (data[0] & 0b00100000) >> 5;
@@ -65,7 +88,7 @@ public class I2C extends Channel{
         double Iin  = ((int)((int)((data[2] & 0b00000011) << 8) | (int) (data[3] & 0x00FF)))*0.00872;
         double Uout = ((int)((int)((data[4] & 0b00000011) << 8) | (int) (data[5] & 0x00FF)))*0.20879;
         double temp = data[6];
-        System.out.print("ID________________________________________________");System.out.println("0x77" + (currentMPPT + 1));
+        System.out.print("ID________________________________________________");System.out.println("0x77" + (currentRegister + 1));
         System.out.print("BVLR (1: Uout = Umax, 0: Uout < Umax)_____________");System.out.println(BVLR);
         System.out.print("OVT  (1: T>95°C, 0:T<95°C)________________________");System.out.println(OVT);
         System.out.print("NOC  (1: Batt. desconectada, 0: Batt. conectada)__");System.out.println(NOC);
@@ -75,5 +98,57 @@ public class I2C extends Channel{
         System.out.print("Potencia generada_________________________________");System.out.print(Uin*Iin);System.out.println("\t[W]");
         System.out.print("Uout (Voltage OUT)________________________________");System.out.print(Uout);System.out.println("[V]");
         System.out.print("Temperature_______________________________________");System.out.print(temp);System.out.println("\t[°C]");
+    }
+
+    void parseMessage100(byte[] data){
+        double packSOC         = (data[0] & 0x00FF)/2.0;
+        double packCurrent     = ((data[1] & 0x00FF)<<8)|(data[2] & 0x00FF);
+        int packInstVolt    = ((data[3]& 0x00FF)<<8)|(data[4]& 0x00FF);
+        int packOpenVolt    = ((data[5]& 0x00FF)<<8)|(data[6]& 0x00FF);
+        System.out.print("PACK_SOC:_______");System.out.println(packSOC);
+        System.out.print("PACK_CURRENT:___");System.out.println(packCurrent);
+        System.out.print("PACK_INST_VTG:__");System.out.println(packInstVolt);
+        System.out.print("PACK_OPEN_VTG:__");System.out.println(packOpenVolt);
+    }
+    void parseMessage101(byte[] data){
+        int packAbsCurrent  = ((data[0] & 0x00FF)<<8)|(data[1] & 0x00FF);
+        int maximumPackVolt = ((data[2] & 0x00FF)<<8)|(data[3] & 0x00FF);
+        int minimumPackVolt = ((data[4] & 0x00FF)<<8)|(data[5] & 0x00FF);
+        System.out.print("PACK_ABSCURRENT:");System.out.println(packAbsCurrent);
+        System.out.print("MAXIM_PACK_VTG:_");System.out.println(maximumPackVolt);
+        System.out.print("MINIM_PACK_VTG:_");System.out.println(minimumPackVolt);
+    }
+    void parseMessage102(byte[] data){
+        int highTemperature   = data[0] & 0x00FF;
+        int highThermistorID  = data[1] & 0x00FF;
+        int lowTemperature    = data[2] & 0x00FF;
+        int lowThermistorID   = data[3] & 0x00FF;
+        int avgTemp           = data[4] & 0x00FF;
+        int internalTemp      = data[5] & 0x00FF;
+        int max_volt_id       = data[6] & 0x00FF;
+        int min_volt_id       = data[7] & 0x00FF;
+        System.out.print("HIGH_TEMP,");System.out.println(highTemperature);
+        System.out.print("LOW_TEMP,");System.out.println(lowTemperature);
+        System.out.print("HIGH_TID,");System.out.println(highThermistorID);
+        System.out.print("LOW_TID,");System.out.println(lowThermistorID);
+        System.out.print("AVG_TEMP,");System.out.println(avgTemp);
+        System.out.print("INT_TEMP,");System.out.println(internalTemp);
+        System.out.print("MAX_VOLT_ID,");System.out.println(max_volt_id);
+        System.out.print("MIN_VOLT_ID,");System.out.println(min_volt_id);
+    }
+    void parseMessage081(byte[] data){
+        int thermistorID = data[0] & 0x00FF;
+        int temperature = data[1] & 0x00FF;
+        System.out.print("Temperatura Nro ");System.out.print(thermistorID);System.out.print(": ");System.out.println(temperature);
+    }
+    void parseMessage082(byte[] data){
+        int thermistorID = data[1] & 0x00FF;
+        int temperature = data[2] & 0x00FF;
+        System.out.print("Temperatura Nro ");System.out.print(thermistorID);System.out.print(": ");System.out.println(temperature);
+    }
+    void parseMessage036(byte[] data){
+        int cellID = (data[0] & 0x00FF);
+        int voltage = ((data[1] & 0x00FF)<<8)|(data[2] & 0x00FF);
+        System.out.print("Voltaje Nro ");System.out.print(cellID);System.out.print(": ");System.out.println(voltage);
     }
 }
