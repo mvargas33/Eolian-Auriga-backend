@@ -59,7 +59,8 @@ public class WirelessReceiver extends WirelessService{
      * Separated from loop, for testing purposes
      */
     public void processMsg(){
-        for (int i= 0; i < this.xbeeReceiver.sizeOfQueue(); i++) {      // Saca de una pasada tantos byte[] como habían en cola hasta evaluar la condición
+        int sizeOfQueue = this.xbeeReceiver.sizeOfQueue();
+        for (int i= 0; i < sizeOfQueue; i++) {      // Saca de una pasada tantos byte[] como habían en cola hasta evaluar la condición
             try {
                 // 0. Extract bytes from Xbee and encrypt if needed
                 byte[] bytes = this.xbeeReceiver.consumeByteFromQueue(); // Extraer bytes RAW
