@@ -1,12 +1,14 @@
 // DEBUG
-#define serial_print // Usar para ver que los mppt se están leyendo bien
-//#define debug_i2c
+
+//#define serial_print // Usar para ver que los mppt se están leyendo bien
+
+#define debug_i2c
 // CANBUS
 #include <Serial_CAN_Module.h>
 #include <SoftwareSerial.h>
 Serial_CAN can;
-#define can_tx  2           // tx of serial can module connect to D2
-#define can_rx  3           // rx of serial can module connect to D3
+#define can_tx  1           // tx of serial can module connect to D2
+#define can_rx  0           // rx of serial can module connect to D3
 unsigned long id = 0;
 unsigned long id_aux = 0;// Just to fix a bug with print
 unsigned char buff[8];
@@ -90,15 +92,17 @@ void processRequestEvent(void){
 /*///////////////////// SET UP /////////////////////*/
 void setup() {
   // Config canbus baudrate to 1000KBS for bms
+  //Serial.begin(57600);
   can.begin(can_tx, can_rx, 57600); // CANBUS baudrate is set to 125 KB
   Wire.begin(0x8); // Join I2C bus as slave with address 8
   Wire.setClock(400000); // Set Hz to max RP4 Hz allowed
   Wire.onReceive(processWriteEvent);  
   Wire.onRequest(processRequestEvent);
   
+  
   #ifdef serial_print
     Serial.begin(9600);
-    Serial.println("Comienza programa de lectura directa de MPPT.");
+    Serial.println("Comienza programa de lectura directa de BMS.");
   #endif
   #ifdef debug_i2c
     Serial.begin(9600);
@@ -108,9 +112,9 @@ void setup() {
 
 /*///////////////////// LOOP /////////////////////*/
 void loop() {
-  delay(4); // Delay empírico. Si no está, algo le pasa al canbus y se traba, no actualiza ningún MPPT.
+  //delay(4); // Delay empírico. Si no está, algo le pasa al canbus y se traba, no actualiza ningún MPPT.
   #ifdef serial_print
-    delay(1000);
+    //delay(1000);
   #endif
 
   if(can.recv(&id, buff)){

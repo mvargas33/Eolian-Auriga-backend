@@ -16,7 +16,7 @@
  
 void setup() {
   // Join I2C bus as slave with address 8
-  Wire.begin(0x8);
+  Wire.begin(0x04);
   
   Wire.onReceive(processI2CEvent);  
   Wire.onRequest(processRequestEvent);
@@ -28,29 +28,6 @@ void setup() {
   //digitalWrite(ledPin, LOW);
 }
  
-// Function that executes whenever data is received from master
-void receiveEvent(int howMany) {
-   //while (Wire.available()) { // loop through all but the last
-    //  char c = Wire.read(); // receive byte as a character
-    //  Serial.println(c, HEX);
-//      digitalWrite(ledPin, c);
-    //}
-    byte buffer[10];
-    buffer[0] = 0x01;
-    buffer[1] = 0x02;
-    buffer[2] = 0x03;
-    buffer[3] = 0x04;
-    buffer[4] = 0x05;
-    buffer[5] = 0x06;
-    buffer[6] = 0x07;
-    buffer[7] = 0x08;
-    buffer[8] = 0x09;
-    buffer[9] = 0x0a;
-    Wire.write( buffer, 10);
-    
- 
-}
-
 void processI2CEvent(int howMany){ 
   byte I2C_command = 0;
 

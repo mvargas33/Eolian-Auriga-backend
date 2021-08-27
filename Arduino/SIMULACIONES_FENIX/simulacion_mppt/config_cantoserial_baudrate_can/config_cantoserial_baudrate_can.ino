@@ -35,7 +35,7 @@ void setup()
     while(!Serial);
     can.begin(can_tx, can_rx, 57600);      // tx, rx
 
-    if(can.canRate(CAN_RATE_125))
+    if(can.canRate(CAN_RATE_1000))
     {
         Serial.println("set can rate ok");
     }
