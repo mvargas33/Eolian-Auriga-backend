@@ -14,17 +14,19 @@
     </properties>
 
     <dependencies>
+		
+		
+        <dependency>
+            <groupId>com.digi.xbee</groupId>
+            <artifactId>xbee-java-library</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.4.0</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.digi.xbee</groupId>
-            <artifactId>xbee-java-library</artifactId>
-            <version>1.3.0</version>
         </dependency>
 
         <dependency>

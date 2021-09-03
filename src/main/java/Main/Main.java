@@ -35,8 +35,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         Main main_program = new Main();
-        main_program.receiverSetup();
-        main_program.senderSetup();
+        System.out.println("Main desde eclipse");
     }
 
     void receiverSetup() throws Exception {

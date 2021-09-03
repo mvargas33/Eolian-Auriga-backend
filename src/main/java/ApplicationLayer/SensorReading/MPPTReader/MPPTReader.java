@@ -5,7 +5,6 @@ import ApplicationLayer.SensorReading.SensorsReader;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
-import org.omg.PortableInterceptor.INACTIVE;
 
 import java.io.BufferedReader;
 import java.io.IOException;

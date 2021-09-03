@@ -13,15 +13,18 @@ byte bms_082[8]= {0x82, 0b00001101, 0b00001110, 0b10001111, 0b10010000};
 byte bms_036[8]= {0x36, 0b00010001, 0b00010010, 0b10010011, 0b10010100};
 
 void setup() {
-  can.begin(can_tx, can_rx, 57600);      // tx, rx
+  Serial.begin(9600);
+  Serial.println("begin sending");
+  can.begin(can_tx, can_rx, 9600);      // tx, rx
 }
 
 void loop() {
+  Serial.println("Sent message");
   can.send(0x100, 0, 0, 8, bms_100);
   can.send(0x101, 0, 0, 8, bms_101);
   can.send(0x102, 0, 0, 8, bms_101);
   can.send(0x081, 0, 0, 8, bms_081);
   can.send(0x082, 0, 0, 8, bms_082);
   can.send(0x036, 0, 0, 8, bms_036);
-  delay(1000);
+  delay(100);
 }
