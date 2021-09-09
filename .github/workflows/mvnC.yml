@@ -1,3 +1,7 @@
+name: MVN build with mirrors
+
+on: [push]
+
 jobs:
   build:
     runs-on: ubuntu-latest
