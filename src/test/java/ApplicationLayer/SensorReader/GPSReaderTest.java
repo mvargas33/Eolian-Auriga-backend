@@ -1,6 +1,7 @@
-package ApplicationLayer.SensorReading.GPSReader;
+package ApplicationLayer.SensorReader;
 
 import ApplicationLayer.AppComponents.AppComponent;
+import ApplicationLayer.SensorReading.GPSReader.GPSReader;
 import MockObjects.GPS;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,7 +70,4 @@ public class GPSReaderTest {
         String msg = "$GPGGA,215830.000,3526.9450,N,07140.3300,W,1,05,2.35,92.5,M,25.5,M,,*5B";
         assertEquals(gpsReader.checkSum(msg), false);
     }
-
-
-
 }
