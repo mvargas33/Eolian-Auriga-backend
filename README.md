@@ -1,6 +1,6 @@
 Shield: [![CC BY-SA 4.0][cc-by-sa-shield]][cc-by-sa]
 
-![Build and Test status:](https://github.com/mvargas33/Eolian-Auriga-backend/actions/workflows/javaCI.yml/badge.svg)
+![Build and Test status:](https://github.com/mvargas33/Eolian-Auriga-backend/actions/workflows/mvnCI.yml/badge.svg)
 
 This work is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License][cc-by-sa]. 
 
