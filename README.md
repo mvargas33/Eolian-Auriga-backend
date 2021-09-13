@@ -111,6 +111,7 @@ and so on...
 
 General list:
 
+* Check java version 1.8.0.212.
 * Check if all the devices are connected properly.
 
   * Raspberry Pi 4B+.

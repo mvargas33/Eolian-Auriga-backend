@@ -6,13 +6,18 @@
 package Main;
 
 import ApplicationLayer.AppComponents.AppComponent;
+import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
+import ApplicationLayer.Channel.I2C;
+import ApplicationLayer.LocalServices.PrintService;
+import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeReceiver;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class Main {
-    public String dir = "/Github/Eolian-Auriga-backend/src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
+    public static String dir = "C:/Users/Dante/Desktop/Eolian/Eolian-Auriga-backend/src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
     public XbeeReceiver xbeeReceiver;
 
     public Main() {
@@ -34,8 +39,18 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        Main main_program = new Main();
-        System.out.println("Main desde eclipse");
+        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(dir);
+        List<Service> ls = new ArrayList<>();
+        PrintService ps = new PrintService();
+        ls.add(ps);
+
+        I2C i2c = new I2C(lac, ls);
+        Thread t1 = new Thread(i2c);
+        Thread t2 = new Thread(ps);
+        t1.start();
+        t2.start();
+        
+
     }
 
     void receiverSetup() throws Exception {

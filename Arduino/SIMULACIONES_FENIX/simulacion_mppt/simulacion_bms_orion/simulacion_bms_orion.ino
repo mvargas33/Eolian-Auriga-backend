@@ -21,10 +21,15 @@ void setup() {
 void loop() {
   Serial.println("Sent message");
   can.send(0x100, 0, 0, 8, bms_100);
+  delay(1000);
   can.send(0x101, 0, 0, 8, bms_101);
+  delay(1000);
   can.send(0x102, 0, 0, 8, bms_101);
+  delay(1000);
   can.send(0x081, 0, 0, 8, bms_081);
+  delay(1000);
   can.send(0x082, 0, 0, 8, bms_082);
+  delay(1000);
   can.send(0x036, 0, 0, 8, bms_036);
-  delay(100);
+  delay(1000);
 }
