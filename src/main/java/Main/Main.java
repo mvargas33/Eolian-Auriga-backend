@@ -8,9 +8,12 @@ package Main;
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.I2C;
+import ApplicationLayer.Channel.TestChannel;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
+import ApplicationLayer.LocalServices.WebSocketService;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeReceiver;
+import io.socket.engineio.client.transports.WebSocket;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,13 +45,18 @@ public class Main {
         List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(dir);
         List<Service> ls = new ArrayList<>();
         PrintService ps = new PrintService();
+        WebSocketService wss = new WebSocketService();
         ls.add(ps);
+        ls.add(wss);
 
-        I2C i2c = new I2C(lac, ls);
-        Thread t1 = new Thread(i2c);
+        TestChannel tc = new TestChannel(lac, ls);
+        Thread t1 = new Thread(tc);
         Thread t2 = new Thread(ps);
+        Thread t3 = new Thread(wss);
         t1.start();
         t2.start();
+        t3.start();
+        Thread.sleep(10000);
         
 
     }

@@ -61,8 +61,14 @@ public class WebSocketService extends Service{
                 server.getBroadcastOperations().sendEvent(c.getID(), map.get(c.getID())); // Enviar evento a WebSocket del componente específico
                 //System.out.println("Bradcast de: " + c.getID());
             }else{
-                map.put(c.getID(), new JSONObject());
-                map.put(c.getID(), (JSONObject) map.get(c.getID()).put("data", c.getValoresRealesActuales()));
+                JSONObject obj = new JSONObject();
+                map.put(c.getID(), obj);
+                for(int i = 0; i < c.getValoresRealesActuales().length; i++) {
+                    obj.put(c.nombreParametros[i], c.valoresRealesActuales[i]);
+                }
+                JSONObject g_obj = new JSONObject();
+                g_obj.put("data", obj);
+                map.put(c.getID(), g_obj);
                 server.getBroadcastOperations().sendEvent(c.getID(), map.get(c.getID())); // Enviar evento a WebSocket del componente específico
                 //System.out.println("Bradcast de: " + c.getID());
             }
