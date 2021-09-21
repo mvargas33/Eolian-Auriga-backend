@@ -1,6 +1,6 @@
 import pandas as pd
 
-directory = 'Eolian_fenix'
+directory = 'Example'
 
 excel_file = directory + '\components.xlsx'
 all_sheets = pd.read_excel(excel_file, sheet_name=None)

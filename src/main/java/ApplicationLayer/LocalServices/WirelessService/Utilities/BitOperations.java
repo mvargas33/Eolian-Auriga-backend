@@ -28,7 +28,11 @@ public class BitOperations {
      * @param rawBytes_inicio : bit de inicio en array destino
      * @param rawBytes_fin : bit de fin en array destino
      */
-    public static void updateByteArrayFromValues(int[] source, byte[] rawBytes, int[] bitSig, int bitSig_inicio, int rawBytes_inicio, int rawBytes_fin) {
+    public static void updateByteArrayFromValues(int[] source, int[] bitSig, byte[] rawBytes, int bitSig_inicio, int rawBytes_inicio, int rawBytes_fin) {
+        // Resetear a 0 los valores, porque si continuamos con antiguos, hacen conflicto con 'updateByteArrayFromValues'
+        // al usar OR como operando intermedio, i.e. los valores anterior preservan y hacen OR con nuevos, causando update erróneo
+        // Header se preserva
+        BitOperations.resetToZeroBitRange(rawBytes, rawBytes_inicio, rawBytes_fin);
         // Indice en arreglo bitSig y dest.
         int indiceBitSigYSource = 0;
         int count = 0;
@@ -101,7 +105,7 @@ public class BitOperations {
      * @param rawBytes_inicio : Indice de inicio de extracción de bits, de 'rawBytes'
      * @param rawBytes_fin : Indice de fin de extracción de bits, de 'rawBytes'
      */
-    public static void updateValuesFromByteArray(int[] destino, byte[] rawBytes, int[] bitSig, int bitSig_inicio, int rawBytes_inicio, int rawBytes_fin){
+    public static void updateValuesFromByteArray(int[] destino, int[] bitSig, byte[] rawBytes, int bitSig_inicio, int rawBytes_inicio, int rawBytes_fin){
         // Indice en arreglo bitSig y dest.
         int indiceBitSigYDest = 0;
         int count = 0;

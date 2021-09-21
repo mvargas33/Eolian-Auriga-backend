@@ -1,6 +1,6 @@
 package ApplicationLayer.SensorReading.RandomReaders;
 
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.SensorReading.SensorsReader;
 
 import java.util.Random;
@@ -8,29 +8,37 @@ import java.util.Random;
 /**
  * Clase que se encarga de generar datos al azar para simular componentes
  */
-public class RandomReader extends SensorsReader implements Runnable{
+public class RandomReader extends SensorsReader{
     private final Random r;
 
     /**
-     * Constructor base. Todos los SensorReaders están linkeados a un sólo AppSender. No funcionan con receivers
+     * Constructor base. Todos los SensorReaders están linkeados a un sólo AppComponent. No funcionan con receivers
      *
      * @param myComponent      AppComponent linkeado
      * @param readingDelayInMS Frecuencia de muestre
      */
-    public RandomReader(AppSender myComponent, long readingDelayInMS) {
+    public RandomReader(AppComponent myComponent, long readingDelayInMS) {
         super(myComponent, readingDelayInMS);
         this.r = new Random();
     }
 
-    @Override
-    public double[] read() {
-        double[] max = this.myComponent.maximosConDecimal;
-        double[] min = this.myComponent.minimosConDecimal;
-        double[] random = new double[this.myComponent.len];
+    public void actualRead(){
         for (int i = 0; i < this.myComponent.len; i++) {
-            random[i] = min[i] + (max[i] - min[i]) * this.r.nextDouble(); // Generar valor random en el rango adecuado
+            super.values[i] = myComponent.minimosConDecimal[i] + (myComponent.maximosConDecimal[i] - myComponent.minimosConDecimal[i]) * this.r.nextDouble(); // Generar valor random en el rango adecuado
         }
-        return random;
+        super.updateAndInformServices();
+    }
+
+    @Override
+    public void read(long delayTime) {
+        while(true) {
+            actualRead();
+            try {
+                Thread.sleep(delayTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

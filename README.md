@@ -1,6 +1,6 @@
 Shield: [![CC BY-SA 4.0][cc-by-sa-shield]][cc-by-sa]
 
-![Build and Test status:](https://github.com/mvargas33/Eolian-Auriga-backend/actions/workflows/javaCI.yml/badge.svg)
+![Build and Test status:](https://github.com/mvargas33/Eolian-Auriga-backend/actions/workflows/mvnCI.yml/badge.svg?branch=fixingci)
 
 This work is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License][cc-by-sa]. 
 
@@ -89,3 +89,48 @@ Therefore there are many libraries that were not imported to the pom file, to ke
 To build the project run:
 
 `mvn clean compile assembly:single`
+
+## Tests structure
+
+There are many tests intended for the following purposes:
+
+### Common code
+
+All the base code of the repository.
+
+### Special implementations
+
+This will depend of your own architecture and the things that you want to test of your architecture.
+
+For example, in our project we tests things such as:
+* Check if the RPI i2c bus is available.
+* Check if the i2c channel is working properly.
+* Check if the wireless sender is sending the correct data.
+
+and so on...
+
+General list:
+
+* Check java version 1.8.0.212.
+* Check if all the devices are connected properly.
+
+  * Raspberry Pi 4B+.
+  * Arduino nano (MPPT). 
+  * Arduino nano (Kelly | BMS).
+  * Serial to can (MPPT). 
+  * Serial to can (Kelly | BMS).
+  * XBee.
+  * XBee antenna.
+  * GPS.
+  * GPS antenna.
+  * Gyroscope.
+  * LCD 11" screen.
+  * LCD 7" screen.
+
+* Check if all the interfaces are working.
+  * i2c. Between the RPI and both arduinos.
+  * canbus MPPT. Between the arduino nano and the serial to can (MPPT).
+  * canbus KELLY | BMS. Between the arduino nano and the serial to can (KELLY | BMS).
+
+* Check if all of the channels work properly.
+* Check if all of the services work properly.

@@ -1,5 +1,5 @@
 package ApplicationLayer.SensorReading.GPSReader;
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.SensorReading.SensorsReader;
 
 import java.io.BufferedReader;
@@ -15,14 +15,15 @@ import java.util.ArrayList;
 
 public class GPSReader extends SensorsReader {
     //temporal, por ahora solo va a leer longitud y latitud
-    // orden de values -> [decimales_latitud, angulo_latitud, orientacion_latitud, decimales_longitud, angulo_longitud, orientacion_longitud]
+    // orden de data -> [decimales_latitud, angulo_latitud, orientacion_latitud, decimales_longitud, angulo_longitud, orientacion_longitud]
     // las orientaciones se reciben como N/E/S/W pero se trabajan usando la siguiente transformacion
     // 1 == N (North), -1 == S (South)
     // 1 == E (East), -1 == W (West)
 
-    private double[] values = new double[6];
+    private double[] data = new double[6];
+    private double[] allValues = new double[super.myComponent.len]; // TODO: Update en super.values directamente
 
-    public GPSReader(AppSender myComponent, long readingDelayInMS) {
+    public GPSReader(AppComponent myComponent, long readingDelayInMS) {
         super(myComponent, readingDelayInMS);
     }
 
@@ -50,26 +51,26 @@ public class GPSReader extends SensorsReader {
     }
 
     public void RMCReader(String[] msg) {
-        values[0] = Double.parseDouble(msg[3].substring(0, 2));
-        values[1] = Double.parseDouble(msg[3].substring(2));
+        data[0] = Double.parseDouble(msg[3].substring(0, 2));
+        data[1] = Double.parseDouble(msg[3].substring(2));
         switch (msg[4]) {
             case "N":
-                values[2] = 1;
+                data[2] = 1;
                 break;
             case "S":
-                values[2] = -1;
+                data[2] = -1;
                 break;
             default:
                 System.out.println("ERROR: Valor "+msg[4]+" no identificado como direccion de latitud.");
         }
-        values[3] = Double.parseDouble(msg[5].substring(0, 3));
-        values[4] = Double.parseDouble(msg[5].substring(3));
+        data[3] = Double.parseDouble(msg[5].substring(0, 3));
+        data[4] = Double.parseDouble(msg[5].substring(3));
         switch (msg[6]) {
             case "E":
-                values[5] = 1;
+                data[5] = 1;
                 break;
             case "W":
-                values[5] = -1;
+                data[5] = -1;
                 break;
             default:
                 System.out.println("ERROR: Valor "+msg[6]+" no identificado como direccion de longitud.");
@@ -78,32 +79,31 @@ public class GPSReader extends SensorsReader {
     }
 
     public void GGAReader(String[] msg) {
-        values[0] = Double.parseDouble(msg[2].substring(0, 2));
-        values[1] = Double.parseDouble(msg[2].substring(2));
+        data[0] = Double.parseDouble(msg[2].substring(0, 2));
+        data[1] = Double.parseDouble(msg[2].substring(2));
         switch (msg[3]) {
             case "N":
-                values[2] = 1;
+                data[2] = 1;
                 break;
             case "S":
-                values[2] = -1;
+                data[2] = -1;
                 break;
             default:
                 System.out.println("ERROR: Valor "+msg[4]+" no identificado como direccion de latitud.");
         }
-        values[3] = Double.parseDouble(msg[4].substring(0, 3));
-        values[4] = Double.parseDouble(msg[4].substring(3));
+        data[3] = Double.parseDouble(msg[4].substring(0, 3));
+        data[4] = Double.parseDouble(msg[4].substring(3));
         switch (msg[5]) {
             case "E":
-                values[5] = 1;
+                data[5] = 1;
                 break;
             case "W":
-                values[5] = -1;
+                data[5] = -1;
                 break;
             default:
                 System.out.println("ERROR: Valor "+msg[5]+" no identificado como direccion de longitud.");
                 // todo: no se si un mensaje de aviso basta o es mejor tirar un error.
         }
-        this.values = values;
     }
 
     public void VTGReader(String[] msg) {
@@ -150,9 +150,11 @@ public class GPSReader extends SensorsReader {
         else {
             System.out.println("Checksum requirements were not met, message ignored.");
         }
+        super.values = allValues;
+        super.updateAndInformServices();
     }
 
-    void startReading() {
+    void startReading(long delayTime) {
         ProcessBuilder processBuilder = new ProcessBuilder();
         // NOTA: primero hay que iniciar el serial com en comando 'stty -F /dev/serial0 raw 9600 cs8 clocal -cstopb'
         // (9600 es el baud rate)
@@ -167,30 +169,37 @@ public class GPSReader extends SensorsReader {
             );
 
             String line;
-            while ((line = reader.readLine()) != null) {
-                readMessage(line);
+            if(delayTime > 0) {
+                while(true) {
+                    while ((line = reader.readLine()) != null) {
+                        readMessage(line);
+                    }
+                }
+            }else{
+                while(true) {
+                    while ((line = reader.readLine()) != null) {
+                        readMessage(line);
+                        Thread.sleep(delayTime);
+                    }
+                }
             }
-
             //para ver si termino
-            int exitVal = process.waitFor();
-            if (exitVal == 0) {
-                System.out.println("Se cierra la lectura.");
-                System.exit(0);
-            } else {
-                //abnormal...
-            }
+//            int exitVal = process.waitFor();
+//            if (exitVal == 0) {
+//                System.out.println("Se cierra la lectura.");
+//                System.exit(0);
+//            } else {
+//                //abnormal...
+//            }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public double[] read() {
-        //pendiente aplicar la logica requerida (leer cada tantos ms)
-        return values;
+    public void read(long delayTime) {
+        startReading(delayTime);
     }
 
     public static void main(String[] argv) {

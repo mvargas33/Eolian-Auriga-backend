@@ -1,0 +1,22 @@
+name: Compile project into jar (with dependencies)
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    name: mvn clean compile including jars
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 1.8.0.212
+
+      - uses: s4u/maven-settings-action@v2.4.1
+        with:
+          mirrors: '[{"id": "digi-repo", "name": "digi-repo", "mirrorOf": "external:http:*", "url": "http://ftp1.digi.com/support/m-repo/"}]'
+
+      - run: mvn clean compile assembly:single

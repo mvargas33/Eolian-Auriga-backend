@@ -2,6 +2,7 @@ package ApplicationLayer.LocalServices;
 
 import ApplicationLayer.AppComponents.AppComponent;
 
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -20,6 +21,17 @@ public abstract class Service implements Runnable{
      */
     public Service(){
         this.componentsToBeChecked = new LinkedBlockingDeque<>();
+    }
+
+    /**
+     * Puts a list of AppComponents un the list
+     * @param c List of AppComponents to be reviewed
+     */
+    public synchronized void putListOfComponentsInQueue(List<AppComponent> c){
+        for (AppComponent a: c
+             ) {
+            this.putComponentInQueue(a);
+        }
     }
 
     /**

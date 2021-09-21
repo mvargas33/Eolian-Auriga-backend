@@ -1,9 +1,9 @@
 //package Main;
 //
-//import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Components.State;
-//import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Initializer.Initializer;
+//import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.State;
+//import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.Initializer;
 //import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Sending.SenderAdmin;
-//import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.Sending.XbeeSender;
+//import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeSender;
 //import ApplicationLayer.SensorReading.RandomReaders.RandomReader;
 //
 //import java.util.HashMap;

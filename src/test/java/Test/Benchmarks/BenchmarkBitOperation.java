@@ -41,7 +41,7 @@ public class BenchmarkBitOperation {
         int rawBytes_inicio = 0; // Del 0
         int rawBytes_fin = 51; // Al 51 hay 52 bits
 
-        BitOperations.updateByteArrayFromValues(source, rawBytes, bitSig, bitSigInicio, rawBytes_inicio, rawBytes_fin);
+        BitOperations.updateByteArrayFromValues(source, bitSig, rawBytes, bitSigInicio, rawBytes_inicio, rawBytes_fin);
     }
 
     // Results: Intel i59300H       avgt 10.656 +- 0.184 ns/op
@@ -72,7 +72,7 @@ public class BenchmarkBitOperation {
         int rawBytes_inicio = 0;
         int rawBytes_fin = 8*4 - 1;
 
-        BitOperations.updateValuesFromByteArray(destino, rawBytes, bitSig, bitSigInicio, rawBytes_inicio, rawBytes_fin);
+        BitOperations.updateValuesFromByteArray(destino, bitSig, rawBytes, bitSigInicio, rawBytes_inicio, rawBytes_fin);
     }
 
     // Results: Intel i59300H       avgt 7.022 +- 0.149 ns/op

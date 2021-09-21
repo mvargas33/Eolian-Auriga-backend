@@ -36,7 +36,7 @@ class BitOperationsTest {
         int bitSigInicio = 0;
         int rawBytes_inicio = 0; // Del 0
         int rawBytes_fin = 51; // Al 51 hay 52 bits
-        BitOperations.updateByteArrayFromValues(source, rawBytes, bitSig, bitSigInicio, rawBytes_inicio, rawBytes_fin);
+        BitOperations.updateByteArrayFromValues(source, bitSig, rawBytes, bitSigInicio, rawBytes_inicio, rawBytes_fin);
 
         //                (11101) (111 | 1111 1111          | 1111 1111      | 1111 1111        | 1111 1)(111       | 0000) (1111       | 1111) 0000
         byte[] res = {(byte) 0b11101111, (byte) 0b11111111, (byte) 0b11111111, (byte) 0b11111111, (byte) 0b11111111, (byte) 0b00001111, (byte) 0b11110000};
@@ -58,7 +58,7 @@ class BitOperationsTest {
         int rawBytes_fin = 8*4 - 1;
 
         int[] res = {0b0000000000110011, 0b0000000010101010, 0b0000000000001111, 0b0000000000100010};
-        BitOperations.updateValuesFromByteArray(destino, rawBytes, bitSig, bitSigInicio, rawBytes_inicio, rawBytes_fin);
+        BitOperations.updateValuesFromByteArray(destino, bitSig, rawBytes, bitSigInicio, rawBytes_inicio, rawBytes_fin);
         assertArrayEquals(res, destino);
     }
 

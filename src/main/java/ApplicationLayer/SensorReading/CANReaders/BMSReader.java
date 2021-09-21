@@ -1,37 +1,41 @@
 package ApplicationLayer.SensorReading.CANReaders;
 
-import ApplicationLayer.AppComponents.AppSender;
+import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.SensorReading.SensorsReader;
 import ApplicationLayer.SensorReading.Utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Clase específica para leer datos del BMS por el Bus CAN
  */
 public class BMSReader extends SensorsReader {
     private byte[] data = new byte[8];
-    private double[] voltages = new double[256];
-    private double[] temp_all_the_time = new double[256];
-    private double[] temp_when_balacing_off = new double[256];
-    private double[] resistance = new double[256];
 
-    private double[] voltage_reading_ok = new double[256];
-    private double[] temperature_reading_ok = new double[256];
-    private double[] resistance_reading_ok = new double[256];
-    private double[] load_is_on = new double[256];
-    private double[] voltage_sensor_fault = new double[256];
-    private double[] temperature_sensor_fault = new double[256];
-    private double[] resistance_calculation_fault = new double[256];
-    private double[] load_fault = new double[256];
+    // TODO: update en super.values directamente. Se pueden guardar indices de inicio aca
+    private double[] voltages = new double[28];
+    private double[] temp_all_the_time = new double[28];
+    private double[] temp_when_balacing_off = new double[28];
+    private double[] resistance = new double[28];
 
-    public BMSReader(AppSender myComponent, long readingDelayInMS) {
+    private double[] voltage_reading_ok = new double[28];
+    private double[] temperature_reading_ok = new double[28];
+    private double[] resistance_reading_ok = new double[28];
+    private double[] load_is_on = new double[28];
+    private double[] voltage_sensor_fault = new double[28];
+    private double[] temperature_sensor_fault = new double[28];
+    private double[] resistance_calculation_fault = new double[28];
+    private double[] load_fault = new double[28];
+
+    public BMSReader(AppComponent myComponent, long readingDelayInMS) {
         super(myComponent, readingDelayInMS);
     }
 
-    void readMessage(String message) {
+    void parseMessage(String message) {
         String[] msg = Utils.split(message, " "); // Better performance split than String.split()
 
         if (msg.length != 16){ // If it isn't CAN-type message
@@ -44,7 +48,7 @@ public class BMSReader extends SensorsReader {
             data[i-8] = (byte) ((Character.digit(msg[i].charAt(0), 16) << 4) + (Character.digit(msg[i].charAt(1), 16)));
         }
 
-        switch (msg[2]){
+        switch (msg[5]){
             case "622":
                 // State of system
                 double fault_state  = (int) data[0] & 0b00000001;
@@ -126,7 +130,7 @@ public class BMSReader extends SensorsReader {
 
             default:
                 int BASE_DUMP_ID = 0;
-                int id = Integer.parseInt(msg[2]);
+                int id = Integer.parseInt(msg[5]);
 
                 // Individual cell details
                 if (id == BASE_DUMP_ID){
@@ -146,33 +150,59 @@ public class BMSReader extends SensorsReader {
                 }
 
                 // Cell voltages
-                else if (id > BASE_DUMP_ID && id <= (BASE_DUMP_ID+32)){
+                else if (id > BASE_DUMP_ID && id <= (BASE_DUMP_ID+4)){ // +4 porque son hasta  28 módulos
                     this.voltages[((id-BASE_DUMP_ID-1)*8)  ] = (((int) data[0]) + 2.0)/100.0; // [10mV] [200, 455] -> [V] [2.00, 4.55]
                     this.voltages[((id-BASE_DUMP_ID-1)*8)+1] = (((int) data[1]) + 2.0)/100.0;
                     this.voltages[((id-BASE_DUMP_ID-1)*8)+2] = (((int) data[2]) + 2.0)/100.0;
                     this.voltages[((id-BASE_DUMP_ID-1)*8)+3] = (((int) data[3]) + 2.0)/100.0;
-                    this.voltages[((id-BASE_DUMP_ID-1)*8)+4] = (((int) data[4]) + 2.0)/100.0;
-                    this.voltages[((id-BASE_DUMP_ID-1)*8)+5] = (((int) data[5]) + 2.0)/100.0;
-                    this.voltages[((id-BASE_DUMP_ID-1)*8)+6] = (((int) data[6]) + 2.0)/100.0;
-                    this.voltages[((id-BASE_DUMP_ID-1)*8)+7] = (((int) data[7]) + 2.0)/100.0;
+                    if(id != BASE_DUMP_ID+4) {
+                        this.voltages[((id-BASE_DUMP_ID-1)*8)+4] = (((int) data[4]) + 2.0)/100.0;
+                        this.voltages[((id - BASE_DUMP_ID - 1) * 8) + 5] = (((int) data[5]) + 2.0) / 100.0;
+                        this.voltages[((id - BASE_DUMP_ID - 1) * 8) + 6] = (((int) data[6]) + 2.0) / 100.0;
+                        this.voltages[((id - BASE_DUMP_ID - 1) * 8) + 7] = (((int) data[7]) + 2.0) / 100.0;
+                    }
+                }else{
+                    System.out.print("ID: " + msg[5] + " MSG: ");
+                    for(int i=8 ; i< 16; i++){
+                        System.out.print(" " + msg[i]);
+                    }System.out.println("");
                 }
-
         }
-        System.out.println("ID: " + msg[2] + " MSG: ");
-        for(int i=8 ; i< 16; i++){
-            System.out.print(" " + msg[i]);
-//        switch (msg[0])
-        }System.out.println("");
-//
-//            //case "$GPRMC":
-//
-//            default:
-//                System.out.println(msg);
-//                break;
-//        }
+
+        // TODO: Clean this mess
+        ArrayList<Double> fullValues = new ArrayList<Double>();
+        for(double element : voltages) fullValues.add(element);
+        for(double element : temp_all_the_time) fullValues.add(element);
+        for(double element : temp_when_balacing_off) fullValues.add(element);
+        for(double element : resistance) fullValues.add(element);
+        for(double element : voltage_reading_ok) fullValues.add(element);
+        for(double element : temperature_reading_ok) fullValues.add(element);
+        for(double element : resistance_reading_ok) fullValues.add(element);
+        for(double element : load_is_on) fullValues.add(element);
+        for(double element : voltage_sensor_fault) fullValues.add(element);
+        for(double element : temperature_sensor_fault) fullValues.add(element);
+        for(double element : resistance_calculation_fault) fullValues.add(element);
+        for(double element : load_fault) fullValues.add(element);
+
+        // Update array and inform to services
+        super.values = toPrimitive(fullValues);
+        super.updateAndInformServices();
     }
 
-    void startReading() {
+    public static double[] toPrimitive(ArrayList<Double> array) {
+        if (array == null) {
+            return null;
+        } else if (array.size() == 0) {
+            return new double[0];
+        }
+        final double[] result = new double[array.size()];
+        for (int i = 0; i < array.size(); i++) {
+            result[i] = array.get(i);
+        }
+        return result;
+    }
+
+    void startReading(long delayTime) {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.redirectErrorStream(true);
         // NOTA: primero hay que iniciar el can com en comando 'stty -F /dev/serial0 raw 9600 cs8 clocal -cstopb'
@@ -197,11 +227,19 @@ public class BMSReader extends SensorsReader {
 //                System.out.println(error);
 //            }
 
-            String line = null;
-            while(true){
-                while ((line = reader.readLine()) != null) {
-                    //System.out.println(line);
-                    readMessage(line);
+            String line;
+            if(delayTime > 0) {
+                while (true) {
+                    while ((line = reader.readLine()) != null) {
+                        parseMessage(line);
+                        Thread.sleep(delayTime);
+                    }
+                }
+            }else{
+                while (true) {
+                    while ((line = reader.readLine()) != null) {
+                        parseMessage(line);
+                    }
                 }
             }
 
@@ -214,7 +252,7 @@ public class BMSReader extends SensorsReader {
 //                //abnormal...
 //            }
 
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 //        catch (InterruptedException e) {
@@ -223,12 +261,12 @@ public class BMSReader extends SensorsReader {
     }
 
     @Override
-    public double[] read() {
-        return new double[0];
+    public void read(long delayTime) {
+        this.startReading(delayTime);
     }
 
     public static void main(String[] args) {
         BMSReader bmsReader = new BMSReader(null, 100);
-        bmsReader.startReading();
+        bmsReader.startReading(0);
     }
 }
