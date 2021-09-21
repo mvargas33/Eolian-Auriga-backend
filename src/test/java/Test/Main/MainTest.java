@@ -28,33 +28,31 @@ public class MainTest {
 
     }
 
+    /**
+     * For now a virtual channel tests means JUST testing the parsing methods of a given channel.
+     * Therefore the general structure consists of initializing their components, parsing some messages from
+     * a mock object (each channel/interface should have a mock) and then checking that the components were
+     * updated correctly, the correctness of a component will have to be checed given the instructions of
+     * its respective mock object (for now this part will be hardcoded into the implementation of the mock object).
+     * @param ch
+     */
     @Test
     public void channelTest(Channel ch) {
-        List<AppComponent> ch_lac = new ArrayList<>();
-        // crear los ac para el chanel (ie. bms, etc...)
-
-        // usar los mocks para entregarles datos
-        // pasarle los mocks a los channels
-        // lanzar el read
-        // confirmar las lecturas con algo como 
-        //   assertEquals(bms.valores[i] == al que entrego el mock)
-        //   ... para cada valor del componente ...
-
-        
+        // Init components
+        // Init channel
+        // Init Mock object
+        // Parse messages from mock object.
+        // Check results
     }
 
+    /**
+     * Example of a test for i2c channel (pseudo code for now)
+     */
     @Test
     public void channelTestEjemplo() {
-        //List<AppComponent> lac = {"bms", "bms_volt", "bms_temp", "kelly_der", "kelly_izq", "mppt1", "mppt2", "mppt3", "mppt4"};
-        //List<Service> ls = new ArrayList<>();
-        //I2C ch = new I2C(lac, ls);
-        //I2CMock mock = new I2CMock();
-        
-        //ch.setUp();
-        //ch.readingLoop();
-        //assertEquals(mock.getExpected(loop = 1), ch.bms.valoresRealesActuales[0]);
-        //assertEquals(mock.getExpected(loop = 1), ch.bms.valoresRealesActuales[1]);
-        //assertEquals(mock.getExpected(loop = 1), ch.bms.valoresRealesActuales[2]);
-        //assertEquals(mock.getExpected(loop = 1), ch.bms.valoresRealesActuales[3]);
+        /*
+        List<AppComponent> = ArrayList<>(bms, bms_volt, bms_temp, kelly_der, kelly_izq)''
+
+        */
     }
 }
