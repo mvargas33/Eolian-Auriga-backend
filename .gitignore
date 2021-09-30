@@ -90,3 +90,4 @@ fabric.properties
 !.vscode/extensions.json
 *.code-workspace
 /bin/
+/components

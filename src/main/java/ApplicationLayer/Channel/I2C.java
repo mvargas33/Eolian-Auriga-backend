@@ -9,8 +9,11 @@ import com.pi4j.io.i2c.I2CFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class I2C extends Channel{
+    private ReentrantLock lock;
+    private boolean sync = false;
     private I2CBus bus;
     private I2CDevice arduino0;
     public AppComponent arduino1;
@@ -69,11 +72,16 @@ public class I2C extends Channel{
             }
         }
     }
+    public void sync(ReentrantLock lock) {
+        sync = true;
+        this.lock = lock;
+    }
 
     @Override
     public void readingLoop() {
         while (true) {
             try {
+                if(sync) { lock.lock(); }
                 arduino0.write((byte) ((currentRegister + 1) & 0xFF));
                 Thread.sleep(1000);
                 byte[] data = {(byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000};
@@ -105,6 +113,8 @@ public class I2C extends Channel{
                 //parseMessageMPPT(data);
                 Thread.sleep(1000);
                 currentRegister = (currentRegister + 1) % 6; // Ask for next BMS message
+                this.informServices();
+                if(sync) { lock.unlock(); }
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -123,7 +133,7 @@ public class I2C extends Channel{
         }
     }
 
-    void parseMessageMPPT(byte[] data){
+    public void parseMessageMPPT(byte[] data){
         double BVLR = (data[0] & 0b10000000) >> 7;
         double OVT  = (data[0] & 0b01000000) >> 6;
         double NOC  = (data[0] & 0b00100000) >> 5;
@@ -144,7 +154,7 @@ public class I2C extends Channel{
         System.out.print("Temperature_______________________________________");System.out.print(temp);System.out.println("\t[°C]");
     }
 
-    void parseMessage100(byte[] data){
+    public void parseMessage100(byte[] data){
         double packSOC         = (data[0] & 0x00FF)/2.0;
         double packCurrent     = ((data[1] & 0x00FF)<<8)|(data[2] & 0x00FF);
         int packInstVolt    = ((data[3]& 0x00FF)<<8)|(data[4]& 0x00FF);
@@ -158,7 +168,7 @@ public class I2C extends Channel{
         bms.valoresRealesActuales[2] = packInstVolt;
         bms.valoresRealesActuales[3] = packOpenVolt;
     }
-    void parseMessage101(byte[] data){
+    public void parseMessage101(byte[] data){
         int packAbsCurrent  = ((data[0] & 0x00FF)<<8)|(data[1] & 0x00FF);
         int maximumPackVolt = ((data[2] & 0x00FF)<<8)|(data[3] & 0x00FF);
         int minimumPackVolt = ((data[4] & 0x00FF)<<8)|(data[5] & 0x00FF);
@@ -169,7 +179,7 @@ public class I2C extends Channel{
         bms.valoresRealesActuales[5] = maximumPackVolt;
         bms.valoresRealesActuales[6] = minimumPackVolt;
     }
-    void parseMessage102(byte[] data){
+    public void parseMessage102(byte[] data){
         int highTemperature   = data[0] & 0x00FF;
         int highThermistorID  = data[1] & 0x00FF;
         int lowTemperature    = data[2] & 0x00FF;
@@ -195,20 +205,20 @@ public class I2C extends Channel{
         bms.valoresRealesActuales[13] = max_volt_id;
         bms.valoresRealesActuales[14] = min_volt_id;
     }
-    void parseMessage081(byte[] data){
+    public void parseMessage081(byte[] data){
         int thermistorID = data[0] & 0x00FF;
         int temperature = data[1] & 0x00FF;
         System.out.print("Temperatura Nro ");System.out.print(thermistorID);System.out.print(": ");System.out.println(temperature);
         // revisar si thermistor id empieza en 1 o 0
         bms_temp.valoresRealesActuales[thermistorID-1] = temperature;
     }
-    void parseMessage082(byte[] data){
+    public void parseMessage082(byte[] data){
         int thermistorID = data[1] & 0x00FF;
         int temperature = data[2] & 0x00FF;
         System.out.print("Temperatura Nro ");System.out.print(thermistorID);System.out.print(": ");System.out.println(temperature);
         bms_temp.valoresRealesActuales[thermistorID-1] = temperature;
     }
-    void parseMessage036(byte[] data){
+    public void parseMessage036(byte[] data){
         int cellID = (data[0] & 0x00FF);
         int voltage = ((data[1] & 0x00FF)<<8)|(data[2] & 0x00FF);
         System.out.print("Voltaje Nro ");System.out.print(cellID);System.out.print(": ");System.out.println(voltage);
