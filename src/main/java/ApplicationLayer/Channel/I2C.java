@@ -12,8 +12,6 @@ import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class I2C extends Channel{
-    private ReentrantLock lock;
-    private boolean sync = false;
     private I2CBus bus;
     private I2CDevice arduino0;
     public AppComponent arduino1;
@@ -72,16 +70,11 @@ public class I2C extends Channel{
             }
         }
     }
-    public void sync(ReentrantLock lock) {
-        sync = true;
-        this.lock = lock;
-    }
 
     @Override
     public void readingLoop() {
         while (true) {
             try {
-                if(sync) { lock.lock(); }
                 arduino0.write((byte) ((currentRegister + 1) & 0xFF));
                 Thread.sleep(1000);
                 byte[] data = {(byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000, (byte) 0b00000000};
@@ -114,7 +107,6 @@ public class I2C extends Channel{
                 Thread.sleep(1000);
                 currentRegister = (currentRegister + 1) % 6; // Ask for next BMS message
                 this.informServices();
-                if(sync) { lock.unlock(); }
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
