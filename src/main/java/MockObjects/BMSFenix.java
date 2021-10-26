@@ -1,13 +1,10 @@
 package MockObjects;
 
-
 /**
- * Simulates I2C data for the BMS and MPPT
+ * Class that simulates the communication with the BMS, via CAN bus.
+ * It holds it's complete state as well as the methods to send the data in CAN frames format.
  */
-public class MockI2C {
-  
-    // It would be better to create controllers mockups and let them handle their canbus/i2c/other version of the message
-    // For example, calling MockBMS.generateMsg101().toI2C() or MockBMS.generateMsg101().toCanbus().
+public class BMSFenix {
 
     public double[] valoresRealesActualesBMS = new double[15];
     public double[] valoresRealesActualesBMS_TEMP = new double[60];
@@ -136,8 +133,6 @@ public class MockI2C {
         int cellID = (data[0] & 0x00FF);
         int voltage = ((data[1] & 0x00FF)<<8)|(data[2] & 0x00FF);
         valoresRealesActualesBMS_VOLT[cellID-1] = voltage;
-
         return data;
     }
-    
 }

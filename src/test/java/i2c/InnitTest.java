@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.I2C;
-import MockObjects.MockI2C;
+import MockObjects.BMSFenix;
 
 public class InnitTest {
     
@@ -43,21 +43,22 @@ public class InnitTest {
         // preocuparse de que funciona para 3 iteraciones minimo
         List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents("components/Eolian_fenix");
         
-        MockI2C mock_i2c = new MockI2C();
+        BMSFenix bms = new BMSFenix();
         byte offset = 0;
         I2C i2c = new I2C(lac, new ArrayList<>());
 
         for(byte i = 0; i < 10; i++) {
             offset = i;
-            i2c.parseMessage100(mock_i2c.msg100());
-            i2c.parseMessage101(mock_i2c.msg101());
-            i2c.parseMessage102(mock_i2c.msg102());
-            assertArrayEquals(mock_i2c.valoresRealesActualesBMS, i2c.bms.valoresRealesActuales);
-            i2c.parseMessage081(mock_i2c.msg081());
-            i2c.parseMessage082(mock_i2c.msg082());
-            assertArrayEquals(mock_i2c.valoresRealesActualesBMS_TEMP, i2c.bms_temp.valoresRealesActuales);
-            i2c.parseMessage036(mock_i2c.msg036());
-            assertArrayEquals(mock_i2c.valoresRealesActualesBMS_VOLT, i2c.bms_volt.valoresRealesActuales);
+            i2c.parseMessage100(bms.msg100());
+            i2c.parseMessage101(bms.msg101());
+            i2c.parseMessage102(bms.msg102());
+            assertArrayEquals(bms.valoresRealesActualesBMS, i2c.bms.valoresRealesActuales);
+            i2c.parseMessage081(bms.msg081());
+            i2c.parseMessage082(bms.msg082());
+            assertArrayEquals(bms.valoresRealesActualesBMS_TEMP, i2c.bms_temp.valoresRealesActuales);
+            i2c.parseMessage036(bms.msg036());
+            assertArrayEquals(bms.valoresRealesActualesBMS_VOLT, i2c.bms_volt.valoresRealesActuales);
+            bms.genData(offset);
         }
         //i2c.parseMessageMPPT(data);
     }
