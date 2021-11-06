@@ -4,7 +4,7 @@ import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.Canbus0;
-import ApplicationLayer.Channel.GPS;
+import ApplicationLayer.Channel.GPSChannel;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
 

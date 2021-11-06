@@ -6,7 +6,6 @@ import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.TestChannel;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
-import ApplicationLayer.SensorReading.SensorsReader;
 
 import java.util.ArrayList;
 import java.util.List;

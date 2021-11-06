@@ -1,4 +1,4 @@
-package ApplicationLayer.SensorReading.Utils;
+package ApplicationLayer.Utils;
 
 public class Utils {
 

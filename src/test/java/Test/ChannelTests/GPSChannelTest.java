@@ -2,8 +2,7 @@ package Test.ChannelTests;
 
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
-import ApplicationLayer.Channel.GPS;
-import ApplicationLayer.Channel.TestChannel;
+import ApplicationLayer.Channel.GPSChannel;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
 
@@ -36,7 +35,7 @@ public class GPSChannelTest {
         PrintService printService = new PrintService();
         services.add(printService);
 
-        GPS gpsChannel = new GPS(appSenders, services);
+        GPSChannel gpsChannel = new GPSChannel(appSenders, services);
 
         // Execute threads
         ExecutorService mainExecutor = Executors.newFixedThreadPool(2);

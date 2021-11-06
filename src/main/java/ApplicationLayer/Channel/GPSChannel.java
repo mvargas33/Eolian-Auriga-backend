@@ -1,27 +1,26 @@
 package ApplicationLayer.Channel;
 
 import ApplicationLayer.AppComponents.AppComponent;
-import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.LocalServices.Service;
-import ApplicationLayer.SensorReading.Utils.Utils;
+import ApplicationLayer.Utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public class GPS extends Channel {
-    private double[] data = new double[5];
+public class GPSChannel extends Channel {
+    private double[] data = new double[6];
 
-    private AppComponent gps;
-    private final int lenGPS = 391;
+    public AppComponent gps;
+    private final int lenGPS = 6;
     /**
      * Each channel has predefined AppComponents
      *
      * @param myComponentList List of AppComponent that this Channel update values to
      * @param myServices Services to inform to whenever an AppComponents get updated
      */
-    public GPS(List<AppComponent> myComponentList, List<Service> myServices) {
+    public GPSChannel(List<AppComponent> myComponentList, List<Service> myServices) {
         super(myComponentList, myServices);
         // Check that a BMS AppComponent was supplied
         // With the exact amount of double[] values as the implementation here
@@ -76,7 +75,7 @@ public class GPS extends Channel {
         }
     }
 
-    void parseMessage(String message){
+    public void parseMessage(String message){
         // Revisar el checksum aca
         if(checkSum(message)) {
             // leer el mensaje
@@ -121,7 +120,7 @@ public class GPS extends Channel {
         String newMsg = msg.replace("I", "");
         newMsg = newMsg.replace("$", "");
         // el 0 es el mensaje y el 1 es el codigo checksum
-        String[] msg_cs = Utils.split(newMsg, "\\*");
+        String[] msg_cs = Utils.split(newMsg, "*");
 
         int result = 0;
         for(int i = 0; i < msg_cs[0].length(); i++) {
@@ -134,26 +133,31 @@ public class GPS extends Channel {
     }
 
     public void RMCReader(String[] msg) {
+        //data[0] = Double.parseDouble(msg[3].substring(0, 2));
         data[0] = Double.parseDouble(msg[3].substring(0, 2));
+        this.gps.valoresRealesActuales[0] = data[0];
         data[1] = Double.parseDouble(msg[3].substring(2));
+        this.gps.valoresRealesActuales[1] = data[1];
         switch (msg[4]) {
             case "N":
-                this.gps.valoresRealesActuales[1] = 1; // Latitude_direction
+                this.gps.valoresRealesActuales[2] = 1; // Latitude_direction
                 break;
             case "S":
-                this.gps.valoresRealesActuales[1] = 0;
+                this.gps.valoresRealesActuales[2] = -1;
                 break;
             default:
                 System.out.println("ERROR: Valor "+msg[4]+" no identificado como direccion de latitud.");
         }
         data[3] = Double.parseDouble(msg[5].substring(0, 3));
+        this.gps.valoresRealesActuales[3] = data[3];
         data[4] = Double.parseDouble(msg[5].substring(3));
+        this.gps.valoresRealesActuales[4] = data[4];
         switch (msg[6]) {
             case "E":
-                this.gps.valoresRealesActuales[2] = 1; // Longitude_direction
+                this.gps.valoresRealesActuales[5] = 1; // Longitude_direction
                 break;
             case "W":
-                this.gps.valoresRealesActuales[2] = 0;
+                this.gps.valoresRealesActuales[5] = -1;
                 break;
             default:
                 System.out.println("ERROR: Valor "+msg[6]+" no identificado como direccion de longitud.");
@@ -163,25 +167,29 @@ public class GPS extends Channel {
 
     public void GGAReader(String[] msg) {
         data[0] = Double.parseDouble(msg[2].substring(0, 2));
+        this.gps.valoresRealesActuales[0] = data[0];
         data[1] = Double.parseDouble(msg[2].substring(2));
+        this.gps.valoresRealesActuales[1] = data[1];
         switch (msg[3]) {
             case "N":
-                this.gps.valoresRealesActuales[1] = 1; // Latitude_direction
+                this.gps.valoresRealesActuales[2] = 1; // Latitude_direction
                 break;
             case "S":
-                this.gps.valoresRealesActuales[1] = 0;
+                this.gps.valoresRealesActuales[2] = -1;
                 break;
             default:
                 System.out.println("ERROR: Valor "+msg[4]+" no identificado como direccion de latitud.");
         }
         data[3] = Double.parseDouble(msg[4].substring(0, 3));
+        this.gps.valoresRealesActuales[3] = data[3];
         data[4] = Double.parseDouble(msg[4].substring(3));
+        this.gps.valoresRealesActuales[4] = data[4];
         switch (msg[5]) {
             case "E":
-                this.gps.valoresRealesActuales[2] = 1; // Longitude_direction
+                this.gps.valoresRealesActuales[5] = 1; // Longitude_direction
                 break;
             case "W":
-                this.gps.valoresRealesActuales[2] = 0;
+                this.gps.valoresRealesActuales[5] = -1;
                 break;
             default:
                 System.out.println("ERROR: Valor "+msg[5]+" no identificado como direccion de longitud.");

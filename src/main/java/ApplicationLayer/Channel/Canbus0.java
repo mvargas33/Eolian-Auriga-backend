@@ -2,7 +2,7 @@ package ApplicationLayer.Channel;
 
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.LocalServices.Service;
-import ApplicationLayer.SensorReading.Utils.Utils;
+import ApplicationLayer.Utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

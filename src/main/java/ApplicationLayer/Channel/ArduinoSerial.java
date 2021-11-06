@@ -1,7 +1,6 @@
-package ApplicationLayer.SensorReading.FenixArduinoReader;
+package ApplicationLayer.Channel;
 
 import ApplicationLayer.AppComponents.AppComponent;
-import ApplicationLayer.SensorReading.SensorsReader;
 import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.State;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -13,7 +12,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.*;
 
-public class ArduinoReader extends SensorsReader implements SerialPortEventListener {
+/** TODO: Class to read data directly from an arduino via serial, yet to be implemented */
+
+public class ArduinoSerial extends Channel implements SerialPortEventListener {
     private SerialPort serialPort; /** The port we're normally going to use. */
     private String[] PORT_NAMES;
     private BufferedReader input;
@@ -26,8 +27,10 @@ public class ArduinoReader extends SensorsReader implements SerialPortEventListe
     private String header; // Lectura del primer split
     private State actualStateInRead; // Espacio para guardar el componente actual
 
-    public ArduinoReader(AppComponent myComponent, long readingDelayInMS, String PORT, int BAUD_RATE, int TIME_OUT) {
-        super(myComponent, readingDelayInMS);
+    public ArduinoSerial(AppComponent myComponent, long readingDelayInMS, String PORT, int BAUD_RATE, int TIME_OUT) {
+        super(new ArrayList<>(), new ArrayList<>());
+        //super(myComponent, readingDelayInMS);
+        
         this.PORT_NAMES = new String[]{
                 "/dev/tty.usbserial-A9007UX1", // Mac OS X
                 "/dev/ttyUSB0", // Linux
@@ -91,12 +94,20 @@ public class ArduinoReader extends SensorsReader implements SerialPortEventListe
     // TODO: Refactor para nuevo modelo. No es prioridad aún
 
     @Override
-    public void read(long delayTime) {
+    public void serialEvent(SerialPortEvent serialPortEvent) {
+
     }
 
     @Override
-    public void serialEvent(SerialPortEvent serialPortEvent) {
+    public void readingLoop() {
+        // TODO Auto-generated method stub
+        
+    }
 
+    @Override
+    public void setUp() {
+        // TODO Auto-generated method stub
+        
     }
 
     /**
