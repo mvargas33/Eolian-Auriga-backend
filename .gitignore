@@ -84,6 +84,9 @@ fabric.properties
 ######## VSCODE ########
 .vscode
 .vscode/*
+**/.settings
+**/.classpath
+**/.project
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
