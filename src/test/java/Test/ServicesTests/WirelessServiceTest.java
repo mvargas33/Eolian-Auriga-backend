@@ -6,9 +6,10 @@ import ApplicationLayer.Channel.TestChannel;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.LocalServices.WirelessService.PresentationLayer.Packages.State;
+import Test.ChannelsExec.TestChannelTest;
 import ApplicationLayer.LocalServices.WirelessService.WirelessReceiver;
 import ApplicationLayer.LocalServices.WirelessService.WirelessSender;
-import Test.ChannelTests.TestChannelTest;
+
 import org.junit.jupiter.api.Assertions;
 
 import java.util.ArrayList;

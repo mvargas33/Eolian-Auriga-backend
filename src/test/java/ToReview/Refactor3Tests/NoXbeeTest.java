@@ -1,3 +1,4 @@
+package ToReview.Refactor3Tests;
 //package Test.Refactor3Tests;
 //import ApplicationLayer.AppComponents.AppComponent;
 //import ApplicationLayer.AppComponents.AppReceiver;
@@ -17,23 +18,23 @@
 //import java.util.concurrent.Executors;
 //
 //
-//public class XbeeRandomTest {
+//public class NoXbeeTest {
 //    XbeeReceiver xbeeReceiver;
 //
 //    void receiverSetup() throws Exception {
-//        String dir = "src/ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
+//        String dir = "src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
 //        List<AppReceiver> appReceivers = CSVToAppComponent.CSVs_to_AppReceivers(dir);
 //
 //        // High Level Services
 //        PrintService printService = new PrintService();
-//        WirelessReceiver wirelessReceiver = new WirelessReceiver(appReceivers, "COM6");
+//        WirelessReceiver wirelessReceiver = new WirelessReceiver(appReceivers);
 //
-//        //this.xbeeReceiver = wirelessReceiver.getXbeeReceiver(); // Save globally to pass to xbeeSender
+//        this.xbeeReceiver = wirelessReceiver.getXbeeReceiver(); // Save globally to pass to xbeeSender
 //
 //        for (AppComponent ac: appReceivers) {ac.subscribeToService(printService); }
 //
 //        // Execute threads
-//        ExecutorService mainExecutor = Executors.newFixedThreadPool(4);
+//        ExecutorService mainExecutor = Executors.newFixedThreadPool(2);
 //
 //        // Init threads
 //        //mainExecutor.submit(wirelessReceiver); // Crea 2 threads más
@@ -49,7 +50,7 @@
 //     * @throws Exception
 //     */
 //    void senderSetup() throws Exception {
-//        String dir = "src/ApplicationLayer.AppComponents.ExcelToAppComponent/Eolian_fenix";
+//        String dir = "src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
 //        List<AppSender> appSenders = CSVToAppComponent.CSVs_to_AppSenders(dir);
 //        LinkedList<RandomReader> randomReaders = new LinkedList<>();
 //
@@ -64,7 +65,7 @@
 //
 //        // High Level Services
 //        PrintService printService = new PrintService();
-//        WirelessSender wirelessSender = new WirelessSender(appSenders, "/dev/ttyUSB0");
+//        WirelessSender wirelessSender = new WirelessSender(appSenders, xbeeReceiver);
 //
 //        for (AppComponent ac: appSenders) {
 //            ac.subscribeToService(printService);
@@ -85,16 +86,14 @@
 //    }
 //
 //
+//    void basicTest() throws Exception {
+//        receiverSetup();
+//        senderSetup();
+//    }
+//
 //    public static void main(String[] args) throws Exception{
-//        XbeeRandomTest xbeeRandomTest = new XbeeRandomTest();
-//        String device = "PC"; // Use Raspberry otherwise
-//
-//        if (device.equals("PC")){
-//            xbeeRandomTest.receiverSetup();
-//        }else if (device.equals("RASPBERRY")){
-//            xbeeRandomTest.senderSetup();
-//        }
-//
+//        NoXbeeTest noXbeeTest = new NoXbeeTest();
+//        noXbeeTest.basicTest();
 //    }
 //
 //}

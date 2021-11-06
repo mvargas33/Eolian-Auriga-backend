@@ -1,4 +1,4 @@
-package Test.ChannelTests;
+package Test.ChannelsExec;
 
 import ApplicationLayer.Channel.I2C;
 

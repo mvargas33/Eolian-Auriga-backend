@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.Channel.Channel;
 import ApplicationLayer.Channel.I2C;
-import Test.ChannelTests.I2CChannelTest;
+import Test.ChannelsExec.I2CChannelTest;
 
 public class MainTest {
 

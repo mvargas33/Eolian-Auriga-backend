@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.pi4j.system.SystemInfo;
+
 public class Main {
     public static String dir = "C:/Users/Dante/Desktop/Eolian/Eolian-Auriga-backend/src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
     public XbeeReceiver xbeeReceiver;
@@ -42,6 +44,11 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
+
+        System.out.println("Java Version      :  " + SystemInfo.getJavaVersion());
+        System.out.println("Java VM           :  " + SystemInfo.getJavaVirtualMachine());
+        System.out.println("Java Runtime      :  " + SystemInfo.getJavaRuntime());
+        
         List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(dir);
         List<Service> ls = new ArrayList<>();
         PrintService ps = new PrintService();
