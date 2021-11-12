@@ -12,6 +12,8 @@ import ApplicationLayer.Channel.TestChannel;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.LocalServices.WebSocketService;
+import ApplicationLayer.LocalServices.WirelessService.WirelessReceiver;
+import ApplicationLayer.LocalServices.WirelessService.WirelessSender;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeReceiver;
 import io.socket.engineio.client.transports.WebSocket;
 
@@ -49,20 +51,81 @@ public class Main {
         System.out.println("Java VM           :  " + SystemInfo.getJavaVirtualMachine());
         System.out.println("Java Runtime      :  " + SystemInfo.getJavaRuntime());
         
-        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(dir);
-        List<Service> ls = new ArrayList<>();
-        PrintService ps = new PrintService();
-        WebSocketService wss = new WebSocketService();
-        ls.add(ps);
-        ls.add(wss);
+        // List<AppComponent> lac = new ArrayList<>();
+        // List<Service> ls = new ArrayList<>();
 
-        TestChannel tc = new TestChannel(lac, ls);
-        Thread t1 = new Thread(tc);
-        Thread t2 = new Thread(ps);
-        Thread t3 = new Thread(wss);
+        // AppComponent ac = new AppComponent("A",
+        //  new double[] {0, 0, 0, 0}, //min cd
+        //  new double[] {10, 1, 1, 1}, //max cd
+        //  new String[] {"A1" , "A2", "A3", "A4"});
+
+        // //WirelessReceiver wr = new WirelessReceiver(lac, "COM6", false, ls);
+        // PrintService ps = new PrintService();
+        
+        // lac.add(ac);
+        // ls.add(ps);
+        
+        // WirelessReceiver wrr = new WirelessReceiver(lac,  false, ls);
+        // WirelessSender wrs = new WirelessSender(lac, wrr.getXbeeReceiver(), false);
+        // ls.add(wrs);
+        // TestChannel tc = new TestChannel(lac, ls);
+
+        // Thread t1 = new Thread(tc);
+        // Thread t2 = new Thread(ps);
+        // Thread t3 = new Thread(wrr);
+        // Thread t4 = new Thread(wrs);
+        // t1.start();
+        // //t2.start();
+        // t3.start();
+        // t4.start();
+        AppComponent acSND = new AppComponent("A",
+        new double[] {0, 0, 0, 0}, //min cd
+        new double[] {10, 1, 1, 1}, //max cd
+        new String[] {"A1" , "A2", "A3", "A4"});
+
+        AppComponent acRCV = new AppComponent("A",
+        new double[] {0, 0, 0, 0}, //min cd
+        new double[] {10, 1, 1, 1}, //max cd
+        new String[] {"A1" , "A2", "A3", "A4"});
+
+        List<AppComponent> appComponentsSND = new ArrayList<>();
+        List<AppComponent> appComponentsRCV = new ArrayList<>();
+
+        appComponentsRCV.add(acRCV);
+        appComponentsSND.add(acSND);
+
+        // WirelessReceiver
+        List<Service> otherServices = new ArrayList<>();
+        PrintService psRCV = new PrintService();
+        otherServices.add(psRCV);
+        WirelessReceiver wirelessReceiver = new WirelessReceiver(appComponentsRCV,false, otherServices);
+
+        // WirelessSender
+        List<Service> sendServices = new ArrayList<>();
+        PrintService psSND = new PrintService();
+        sendServices.add(psSND);
+        WirelessSender wirelessSender = new WirelessSender(appComponentsSND, wirelessReceiver.getXbeeReceiver(), false);
+        sendServices.add(wirelessSender);
+
+        TestChannel testChannel = new TestChannel(appComponentsSND, sendServices);
+
+        for(AppComponent a : testChannel.myComponentList){
+            wirelessSender.serve(a);
+        }
+        
+
+        wirelessReceiver.processMsg();
+        // Channel that informs to WirelessSender
+        Thread t1 = new Thread(testChannel);
+        Thread t4 = new Thread(psRCV);
+        Thread t5 = new Thread(psSND);
+        Thread t2 = new Thread(wirelessReceiver);
+        Thread t3 = new Thread(wirelessReceiver);
         t1.start();
+        t4.start();
         t2.start();
         t3.start();
-        Thread.sleep(10000);
+        //t5.start();
+
     }
 }

@@ -9,6 +9,7 @@ import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeReceiver;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeSender;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -64,6 +65,7 @@ public class WirelessSender extends WirelessService{
         }
 
         // 4. Send Array<bytes[]> through Xbee
+        System.out.println("Sent"+Arrays.toString(bytesToSendNow.get(0)));
         this.xbeeSender.sendBatch(bytesToSendNow);
     }
 
