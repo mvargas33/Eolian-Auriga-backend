@@ -69,7 +69,7 @@ public class MainReceiver {
         lac.add(ac);
         ls.add(ps);
         
-        WirelessReceiver wr = new WirelessReceiver(lac, "COM4", false, ls);
+        WirelessReceiver wr = new WirelessReceiver(lac, "COM6", false, ls);
         NullChannel nc = new NullChannel(lac, ls);
 
         Thread t1 = new Thread(nc);
