@@ -65,7 +65,7 @@ public class WirelessSender extends WirelessService{
         }
 
         // 4. Send Array<bytes[]> through Xbee
-        System.out.println("Sent"+Arrays.toString(bytesToSendNow.get(0)));
+        //System.out.println("Sent"+Arrays.toString(bytesToSendNow.get(0)));
         this.xbeeSender.sendBatch(bytesToSendNow);
     }
 

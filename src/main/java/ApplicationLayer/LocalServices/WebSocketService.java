@@ -30,6 +30,7 @@ public class WebSocketService extends Service{
         this.config.setHostname("localhost");
         this.config.setPort(3000);
         this.server = new SocketIOServer(config);
+        System.out.println("Server started at localhost:3000");
         this.map = new HashMap<>();
     }
 
@@ -57,9 +58,19 @@ public class WebSocketService extends Service{
     protected void serve(AppComponent c) {
         try {
             if (map.containsKey(c.getID())) {
-                map.put(c.getID(), (JSONObject) map.get(c.getID()).put("data", c.getValoresRealesActuales()));
-                server.getBroadcastOperations().sendEvent(c.getID(), map.get(c.getID())); // Enviar evento a WebSocket del componente específico
-                //System.out.println("Bradcast de: " + c.getID());
+                //map.put(c.getID(), (JSONObject) map.get(c.getID()).put("data", c.getValoresRealesActuales()));
+                //server.getBroadcastOperations().sendEvent(c.getID(), map.get(c.getID())); // Enviar evento a WebSocket del componente específico
+                //System.out.println("Bradcast de: " + c.getID()+".");
+                JSONObject obj = new JSONObject();
+                map.put(c.getID(), obj);
+                for(int i = 0; i < c.getValoresRealesActuales().length; i++) {
+                    obj.put(c.nombreParametros[i], c.valoresRealesActuales[i]);
+                }
+                JSONObject g_obj = new JSONObject();
+                g_obj.put("data", obj);
+                map.put(c.getID(), g_obj);
+                // System.out.println(c.getID()+" broadcast");
+                server.getBroadcastOperations().sendEvent("SOCKET_"+c.getID(), map.get(c.getID())); 
             }else{
                 JSONObject obj = new JSONObject();
                 map.put(c.getID(), obj);

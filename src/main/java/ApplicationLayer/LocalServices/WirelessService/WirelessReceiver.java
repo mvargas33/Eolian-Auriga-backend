@@ -70,7 +70,7 @@ public class WirelessReceiver extends WirelessService{
                 // 1. Extract header and found upUpdated Message
                 currentHeader = (char) b[0];                   // Extraer header
                 Message m = this.map.get(currentHeader);
-                System.out.println("Received"+Arrays.toString(b));
+                //System.out.println("Received"+Arrays.toString(b));
                 // 2. Update Message with new values
                 m.bytes = b;
 

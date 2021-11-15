@@ -48,34 +48,34 @@ public class MainSender {
     public static void main(String[] args) throws Exception {
 
         System.out.println("Java Version      :  " + SystemInfo.getJavaVersion());
+        if(!SystemInfo.getJavaVersion().equals("1.8.0_212")) {
+            System.out.println("WARNING: Java version should be 1.8.0_212, the current version is "+SystemInfo.getJavaVersion());
+        }
         System.out.println("Java VM           :  " + SystemInfo.getJavaVirtualMachine());
         System.out.println("Java Runtime      :  " + SystemInfo.getJavaRuntime());
         System.out.println("Main Sender");
         
-        List<AppComponent> lac = new ArrayList<>();
+        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(args[1]);
         List<Service> ls = new ArrayList<>();
-
-        AppComponent ac = new AppComponent("A",
-         new double[] {0, 0, 0, 0}, //min cd
-         new double[] {20, 25, 34, 24}, //max cd
-         new String[] {"A1" , "A2", "A3", "A4"});
         
-         lac.add(ac);
+        WirelessSender ws = new WirelessSender(lac, args[0], false);
+        PrintService ps = new PrintService("TX: ");
+        WebSocketService wss = new WebSocketService();
 
-        WirelessSender wr = new WirelessSender(lac, "COM3", false);
-        PrintService ps = new PrintService();
-
-
-        ls.add(wr);
+        ls.add(ws);
         ls.add(ps);
+        ls.add(wss);
 
         TestChannel tc = new TestChannel(lac, ls);
 
         Thread t1 = new Thread(tc);
         Thread t2 = new Thread(ps);
-        Thread t3 = new Thread(wr);
+        Thread t3 = new Thread(ws);
+        Thread t4 = new Thread(wss);
+        Thread.sleep(10000);
         t1.start();
-        t2.start();
+        //t2.start();
         t3.start();
+        t4.start();
     }
 }

@@ -24,7 +24,7 @@ import java.util.List;
 import com.pi4j.system.SystemInfo;
 
 public class Main {
-    public static String dir = "C:/Users/Dante/Desktop/Eolian/Eolian-Auriga-backend/src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
+    public static String dir = "C:/Users/Dante/Desktop/Eolian/Eolian-Auriga-backend/components/auriga";
     public XbeeReceiver xbeeReceiver;
 
     public Main() {
@@ -48,84 +48,29 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         System.out.println("Java Version      :  " + SystemInfo.getJavaVersion());
+        if(!SystemInfo.getJavaVersion().equals("1.8.0_212")) {
+            System.out.println("WARNING: Java version should be 1.8.0_212, the current version is "+SystemInfo.getJavaVersion());
+        }
         System.out.println("Java VM           :  " + SystemInfo.getJavaVirtualMachine());
         System.out.println("Java Runtime      :  " + SystemInfo.getJavaRuntime());
+        System.out.println("Main Sender");
         
-        // List<AppComponent> lac = new ArrayList<>();
-        // List<Service> ls = new ArrayList<>();
-
-        // AppComponent ac = new AppComponent("A",
-        //  new double[] {0, 0, 0, 0}, //min cd
-        //  new double[] {10, 1, 1, 1}, //max cd
-        //  new String[] {"A1" , "A2", "A3", "A4"});
-
-        // //WirelessReceiver wr = new WirelessReceiver(lac, "COM6", false, ls);
-        // PrintService ps = new PrintService();
+        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(dir);
+        List<Service> ls = new ArrayList<>();
         
-        // lac.add(ac);
-        // ls.add(ps);
-        
-        // WirelessReceiver wrr = new WirelessReceiver(lac,  false, ls);
-        // WirelessSender wrs = new WirelessSender(lac, wrr.getXbeeReceiver(), false);
-        // ls.add(wrs);
-        // TestChannel tc = new TestChannel(lac, ls);
+        PrintService ps = new PrintService("M: ");
+        WebSocketService wss = new WebSocketService();
+        ls.add(ps);
+        ls.add(wss);
 
-        // Thread t1 = new Thread(tc);
-        // Thread t2 = new Thread(ps);
-        // Thread t3 = new Thread(wrr);
-        // Thread t4 = new Thread(wrs);
-        // t1.start();
-        // //t2.start();
-        // t3.start();
-        // t4.start();
-        AppComponent acSND = new AppComponent("A",
-        new double[] {0, 0, 0, 0}, //min cd
-        new double[] {10, 1, 1, 1}, //max cd
-        new String[] {"A1" , "A2", "A3", "A4"});
+        TestChannel tc = new TestChannel(lac, ls);
 
-        AppComponent acRCV = new AppComponent("A",
-        new double[] {0, 0, 0, 0}, //min cd
-        new double[] {10, 1, 1, 1}, //max cd
-        new String[] {"A1" , "A2", "A3", "A4"});
-
-        List<AppComponent> appComponentsSND = new ArrayList<>();
-        List<AppComponent> appComponentsRCV = new ArrayList<>();
-
-        appComponentsRCV.add(acRCV);
-        appComponentsSND.add(acSND);
-
-        // WirelessReceiver
-        List<Service> otherServices = new ArrayList<>();
-        PrintService psRCV = new PrintService();
-        otherServices.add(psRCV);
-        WirelessReceiver wirelessReceiver = new WirelessReceiver(appComponentsRCV,false, otherServices);
-
-        // WirelessSender
-        List<Service> sendServices = new ArrayList<>();
-        PrintService psSND = new PrintService();
-        sendServices.add(psSND);
-        WirelessSender wirelessSender = new WirelessSender(appComponentsSND, wirelessReceiver.getXbeeReceiver(), false);
-        sendServices.add(wirelessSender);
-
-        TestChannel testChannel = new TestChannel(appComponentsSND, sendServices);
-
-        for(AppComponent a : testChannel.myComponentList){
-            wirelessSender.serve(a);
-        }
-        
-
-        wirelessReceiver.processMsg();
-        // Channel that informs to WirelessSender
-        Thread t1 = new Thread(testChannel);
-        Thread t4 = new Thread(psRCV);
-        Thread t5 = new Thread(psSND);
-        Thread t2 = new Thread(wirelessReceiver);
-        Thread t3 = new Thread(wirelessReceiver);
-        t1.start();
+        Thread t1 = new Thread(tc);
+        Thread t2 = new Thread(ps);
+        Thread t4 = new Thread(wss);
         t4.start();
-        t2.start();
-        t3.start();
-        //t5.start();
+        t1.start();
+        //t2.start();
 
     }
 }

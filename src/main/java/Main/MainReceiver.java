@@ -51,34 +51,35 @@ public class MainReceiver {
     public static void main(String[] args) throws Exception {
 
         System.out.println("Java Version      :  " + SystemInfo.getJavaVersion());
+        if(!SystemInfo.getJavaVersion().equals("1.8.0_212")) {
+            System.out.println("WARNING: Java version should be 1.8.0_212, the current version is "+SystemInfo.getJavaVersion());
+        }
         System.out.println("Java VM           :  " + SystemInfo.getJavaVirtualMachine());
         System.out.println("Java Runtime      :  " + SystemInfo.getJavaRuntime());
         System.out.println("MainReceiver");
         
-        List<AppComponent> lac = new ArrayList<>();
+        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(args[1]);
         List<Service> ls = new ArrayList<>();
 
-        AppComponent ac = new AppComponent("A",
-         new double[] {0, 0, 0, 0}, //min cd
-         new double[] {20, 25, 34, 24}, //max cd
-         new String[] {"A1" , "A2", "A3", "A4"});
-
         //WirelessReceiver wr = new WirelessReceiver(lac, "COM6", false, ls);
-        PrintService ps = new PrintService();
+        PrintService ps = new PrintService("RX: ");
+        WebSocketService wss = new WebSocketService();
         
-        lac.add(ac);
         ls.add(ps);
-        
-        WirelessReceiver wr = new WirelessReceiver(lac, "COM6", false, ls);
+        ls.add(wss);
+
+        WirelessReceiver wr = new WirelessReceiver(lac, args[0], false, ls);
         NullChannel nc = new NullChannel(lac, ls);
 
         Thread t1 = new Thread(nc);
         Thread t2 = new Thread(ps);
         Thread t3 = new Thread(wr);
+        Thread t4 = new Thread(wss);
+        Thread.sleep(10000);
+        t4.start();
         t1.start();
         t2.start();
         t3.start();
-
 
     }
 }
