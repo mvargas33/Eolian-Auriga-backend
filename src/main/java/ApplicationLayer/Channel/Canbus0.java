@@ -66,7 +66,7 @@ public class Canbus0 extends Channel {
     @Override
     public void readingLoop() {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("bash", "-c", "./candump any;");
+        processBuilder.command("bash", "-c", "candump any;");
         try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(
@@ -98,9 +98,9 @@ public class Canbus0 extends Channel {
         // NOTA: primero hay que iniciar el can com en comando 'stty -F /dev/serial0 raw 9600 cs8 clocal -cstopb'
         // (9600 es el baud rate)
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("sudo /sbin/ip link set can0 up type can bitrate 500000;");
-        stringBuilder.append("cd ./src/main/java/ApplicationLayer/SensorReading/CANReaders/linux-can-utils;");
-        stringBuilder.append("gcc candump.c lib.c -o candump;"); // Comment this on second execution, no need to recompile
+        stringBuilder.append("sudo /sbin/ip link set can0 up type can bitrate 500000");
+        //stringBuilder.append("cd ./src/main/java/ApplicationLayer/SensorReading/CANReaders/linux-can-utils;");
+        //stringBuilder.append("gcc candump.c lib.c -o candump;"); // Comment this on second execution, no need to recompile
         processBuilder.command("bash", "-c", stringBuilder.toString());
         try {
             processBuilder.start();
@@ -117,19 +117,21 @@ public class Canbus0 extends Channel {
     void parseMessage(String message) {
         String[] msg = Utils.split(message, " "); // Better performance split than String.split()
 
-        if (msg.length != 16){ // If it isn't CAN-type message
-            System.out.println("Message is not CAN-type. Split length is not 16.");
-            System.out.println(message);
-            return;
-        }
+        // if (msg.length != 16){ // If it isn't CAN-type message
+        //     System.out.println("Message is not CAN-type. Split length is not 16.");
+        //     System.out.println(message);
+        //     return;
+        // }
 
         // Parse HEX strings to byte data type, into local buffer
-        for(int i=8 ; i< 16; i++){
-            data[i-8] = (byte) ((Character.digit(msg[i].charAt(0), 16) << 4) + (Character.digit(msg[i].charAt(1), 16)));
+        int L = Character.getNumericValue(msg[2].charAt(1));
+        for(int i=0 ; i<L; i++){ //asume mensaje can de 8 bytes fijo, todo: hacer mas flexible en el futuro.
+            // atento a esto en la prueba, puede estar alrevez
+            data[i] = (byte) ((Character.digit(msg[3+i].charAt(0), 16) << 4) + (Character.digit(msg[3+i].charAt(1), 16)));
         }
 
-        switch (msg[5]){
-            case "622":
+        switch (msg[1]){
+            case "502":
                 // State of system
                 this.bms.valoresRealesActuales[message_622_index    ]  = (int) data[0] & 0b00000001;        // fault_state
                 this.bms.valoresRealesActuales[message_622_index + 1] = ((int) data[0] & 0b00000010) >> 1;  // K1_contactor
@@ -172,36 +174,36 @@ public class Canbus0 extends Channel {
                 this.bms.valoresRealesActuales[message_622_index + 29] = ((int) data[6] & 0b01000000) >> 6; // low_SOH
                 this.bms.valoresRealesActuales[message_622_index + 30] = ((int) data[6] & 0b10000000) >> 7; // isolateion_fault
 
-            case "623":
+            case "503":
                 this.bms.valoresRealesActuales[message_623_index    ] = (((int) data[0] << 8) & (int) data[1]); // pack_voltage   [V]       [0,65535]
                 this.bms.valoresRealesActuales[message_623_index + 1] = (int) data[2]/10.0;                     // min_voltage    [100mV]   [0, 255] -> [V] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_623_index + 2] = (int) data[3];                          // min_voltage_id           [0,255]
                 this.bms.valoresRealesActuales[message_623_index + 3] = (int) data[4]/10.0;                     // max_voltage    [100mV]   [0, 255] -> [V] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_623_index + 4] = (int) data[5];                          // max_voltage_id [0,255]
 
-            case "624":
+            case "504":
                 this.bms.valoresRealesActuales[message_624_index    ] = (((int) data[0] << 8) & (int) data[1]); // current          [A] signed! [-32764, 32764]
                 this.bms.valoresRealesActuales[message_624_index + 1] = (((int) data[2] << 8) & (int) data[3]); // charge_limit     [A]         [0, 65535]
                 this.bms.valoresRealesActuales[message_624_index + 2] = (((int) data[4] << 8) & (int) data[5]); // discharge_limit  [A]
 
-            case "625":
+            case "505":
                 this.bms.valoresRealesActuales[message_625_index    ] = ((int) data[0] << 8*3) & ((int) data[1] << 8*2) & ((int) data[2] << 8) & (int) data[3]; // batt_energy_in  [kWh][0,4294967295]
                 this.bms.valoresRealesActuales[message_625_index + 1] = ((int) data[4] << 8*3) & ((int) data[5] << 8*2) & ((int) data[6] << 8) & (int) data[7]; // batt_energy_out [kWh][0,4294967295]
 
-            case "626":
+            case "506":
                 this.bms.valoresRealesActuales[message_626_index    ] = (int) data[0];                          // SOC      [%]  [0,100]
                 this.bms.valoresRealesActuales[message_626_index + 1] = (((int) data[1] << 8) & (int) data[2]); // DOD      [AH] [0,65535]
                 this.bms.valoresRealesActuales[message_626_index + 2] = (((int) data[3] << 8) & (int) data[4]); // capacity [AH] [0,65535]
                 this.bms.valoresRealesActuales[message_626_index + 3] = (int) data[6];                          // SOH      [%]  [0,100]
 
-            case "627":
+            case "507":
                 this.bms.valoresRealesActuales[message_627_index    ] = (int) data[0]; // temperature [C] signed! [-127,127]
                 this.bms.valoresRealesActuales[message_627_index + 1] = (int) data[2]; // min_temp    [C] signed! [-127,127]
                 this.bms.valoresRealesActuales[message_627_index + 2] = (int) data[3]; // min_temp_id
                 this.bms.valoresRealesActuales[message_627_index + 3] = (int) data[4]; // max_temp    [C] signed! [-127,127]
                 this.bms.valoresRealesActuales[message_627_index + 4] = (int) data[5]; // max_temp_id
 
-            case "628":
+            case "508":
                 this.bms.valoresRealesActuales[message_628_index    ] = (((int) data[0] << 8) & (int) data[1])/10.0;    // pack_resistance    [100 micro-ohm][0,65525] -> [milli ohm] [0.0,6552.5]
                 this.bms.valoresRealesActuales[message_628_index + 1] = ((int) data[2])/10.0;                           // min_resistance     [100 micro-ohm][0,255]   -> [milli ohm] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_628_index + 2] = (int) data[3];                                  // min_resistance_id
@@ -209,16 +211,15 @@ public class Canbus0 extends Channel {
                 this.bms.valoresRealesActuales[message_628_index + 4] = (int) data[5];                                  // max_resistance_id
 
             default:
-                int BASE_DUMP_ID = 0;
-                int id = Integer.parseInt(msg[5]);
-
+                int BASE_DUMP_ID = Integer.parseInt("200", 16);
+                int id = Integer.parseInt(msg[1], 16);
                 // Individual cell details // data[0] = Cell ID [0-27]
                 if (id == BASE_DUMP_ID){
                     if (data[0] > 27){
                         System.out.println("Message from cell outside range, ignoring");
-                        System.out.print("ID: " + msg[5] + " MSG: ");
-                        for(int i=8 ; i< 16; i++){
-                            System.out.print(" " + msg[i]);
+                        System.out.print("ID: " + msg[1] + " MSG: ");
+                        for(int i=0 ; i< L; i++){
+                            System.out.print(" " + msg[i+3]);
                         }System.out.println("");
                         return;
                     }
@@ -250,9 +251,9 @@ public class Canbus0 extends Channel {
                         this.bms.valoresRealesActuales[voltages_index + ((id - BASE_DUMP_ID - 1) * 8) + 7] = (((int) data[7]) + 2.0) / 100.0;
                     }
                 }else{
-                    System.out.print("ID: " + msg[5] + " MSG: ");
-                    for(int i=8 ; i< 16; i++){
-                        System.out.print(" " + msg[i]);
+                    System.out.print("ID: " + msg[1] + " MSG: ");
+                    for(int i=0 ; i< L; i++){
+                        System.out.print(" " + msg[i+3]);
                     }System.out.println("");
                 }
         } // switch

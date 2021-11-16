@@ -7,6 +7,7 @@ package Main;
 
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
+import ApplicationLayer.Channel.Canbus0;
 import ApplicationLayer.Channel.I2C;
 import ApplicationLayer.Channel.TestChannel;
 import ApplicationLayer.LocalServices.PrintService;
@@ -66,9 +67,9 @@ public class MainSender {
         ls.add(ps);
         ls.add(wss);
 
-        TestChannel tc = new TestChannel(lac, ls);
+        Canbus0 can0 = new Canbus0(lac, ls);
 
-        Thread t1 = new Thread(tc);
+        Thread t1 = new Thread(can0);
         Thread t2 = new Thread(ps);
         Thread t3 = new Thread(ws);
         Thread t4 = new Thread(wss);

@@ -6,6 +6,7 @@ import ApplicationLayer.AppComponents.AppComponent;
 import com.corundumstudio.socketio.Configuration;
 import com.corundumstudio.socketio.SocketIOServer;
 import org.json.simple.JSONObject;
+import org.omg.PortableServer.THREAD_POLICY_ID;
 
 import java.util.HashMap;
 
@@ -25,13 +26,7 @@ public class WebSocketService extends Service{
      * Constructor con valores default de parámetros
      */
     public WebSocketService(){
-        super();
-        this.config = new Configuration();
-        this.config.setHostname("localhost");
-        this.config.setPort(3000);
-        this.server = new SocketIOServer(config);
-        System.out.println("Server started at localhost:3000");
-        this.map = new HashMap<>();
+        this(3000, "localhost");
     }
 
     /**
@@ -70,7 +65,8 @@ public class WebSocketService extends Service{
                 g_obj.put("data", obj);
                 map.put(c.getID(), g_obj);
                 // System.out.println(c.getID()+" broadcast");
-                server.getBroadcastOperations().sendEvent("SOCKET_"+c.getID(), map.get(c.getID())); 
+                server.getBroadcastOperations().sendEvent(c.getID(), c.valoresRealesActuales); 
+
             }else{
                 JSONObject obj = new JSONObject();
                 map.put(c.getID(), obj);
@@ -80,9 +76,10 @@ public class WebSocketService extends Service{
                 JSONObject g_obj = new JSONObject();
                 g_obj.put("data", obj);
                 map.put(c.getID(), g_obj);
-                server.getBroadcastOperations().sendEvent(c.getID(), map.get(c.getID())); // Enviar evento a WebSocket del componente específico
+                server.getBroadcastOperations().sendEvent(c.getID(), c.valoresRealesActuales); // Enviar evento a WebSocket del componente específico
                 //System.out.println("Bradcast de: " + c.getID());
             }
+            Thread.sleep(10);
         }catch (Exception e){
             e.printStackTrace(); // Sólo se hace print, el sistema no se puede caer
         }

@@ -78,7 +78,7 @@ public class MainReceiver {
         Thread.sleep(10000);
         t4.start();
         t1.start();
-        t2.start();
+        //t2.start();
         t3.start();
 
     }
