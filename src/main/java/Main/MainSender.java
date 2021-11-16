@@ -73,9 +73,8 @@ public class MainSender {
         Thread t2 = new Thread(ps);
         Thread t3 = new Thread(ws);
         Thread t4 = new Thread(wss);
-        Thread.sleep(10000);
         t1.start();
-        //t2.start();
+        t2.start();
         t3.start();
         t4.start();
     }
