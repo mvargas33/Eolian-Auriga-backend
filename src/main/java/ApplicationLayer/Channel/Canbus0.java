@@ -13,7 +13,7 @@ public class Canbus0 extends Channel {
     private int[] data = new int[8]; // Memory efficient buffer
 
     private AppComponent sevcon;
-    private final int lenSevcon = 391; // Hardcoded, specific, actual values updated in this implementation for this Component
+    private final int lenSevcon = 14; // Hardcoded, specific, actual values updated in this implementation for this Component
 
     /**
      * Each channel has predefined AppComponents
@@ -27,14 +27,14 @@ public class Canbus0 extends Channel {
         // With the exact amount of double[] values as the implementation here
         try{
             this.sevcon = this.myComponentsMap.get("sevcon"); // Must match name in .xlsx file
-            //if(sevcon != null){
-            //    int len = sevcon.len;
-            //    if(len != this.lenSevcon){
-            //        throw new Exception("Cantidad de valores del SEVCON en AppComponent != Cantidad de valores de lectura implementados");
-            //    }
-            //}else{
-            //    throw new Exception("A Sevcon AppComponent was not supplied in Canbus1 channel");
-            //}
+            if(sevcon != null){
+                int len = sevcon.len;
+                if(len != this.lenSevcon){
+                    throw new Exception("Cantidad de valores del SEVCON en AppComponent != Cantidad de valores de lectura implementados");
+                }
+            }else{
+                throw new Exception("A Sevcon AppComponent was not supplied in Canbus1 channel");
+            }
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -105,6 +105,7 @@ public class Canbus0 extends Channel {
         // }
 
         // Parse HEX strings to byte data type, into local buffer
+        this.sevcon.valoresRealesActuales[13] = 0.3*2*3.6*3.1416*this.sevcon.valoresRealesActuales[4]/60;
         switch (msg[0].split(":")[1]){
             case "100":
                 this.sevcon.valoresRealesActuales[0] = Double.parseDouble(msg[2].split(":")[1]);//v bat
