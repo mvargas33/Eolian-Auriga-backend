@@ -10,6 +10,7 @@ import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.I2C;
 import ApplicationLayer.Channel.NullChannel;
 import ApplicationLayer.Channel.TestChannel;
+import ApplicationLayer.LocalServices.DatabaseService;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.LocalServices.WebSocketService;
@@ -64,21 +65,25 @@ public class MainReceiver {
         //WirelessReceiver wr = new WirelessReceiver(lac, "COM6", false, ls);
         PrintService ps = new PrintService("RX: ");
         WebSocketService wss = new WebSocketService();
+        DatabaseService db = new DatabaseService(lac);
         
         ls.add(ps);
         ls.add(wss);
+        ls.add(db);
 
         WirelessReceiver wr = new WirelessReceiver(lac, args[0], false, ls);
+
         NullChannel nc = new NullChannel(lac, ls);
 
         Thread t1 = new Thread(nc);
         Thread t2 = new Thread(ps);
         Thread t3 = new Thread(wr);
         Thread t4 = new Thread(wss);
-        Thread.sleep(10000);
+        System.out.println("Empezando lecturas en 5 segundos...");
+        Thread.sleep(5000);
         t4.start();
         t1.start();
-        //t2.start();
+        t2.start();
         t3.start();
 
     }

@@ -3,7 +3,7 @@ package Test.ChannelsExec;
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
-import ApplicationLayer.Channel.Canbus0;
+import ApplicationLayer.Channel.Canbus1;
 import ApplicationLayer.Channel.GPSChannel;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
@@ -37,7 +37,7 @@ public class Canbus0ChannelTest {
         PrintService printService = new PrintService();
         services.add(printService);
 
-        Canbus0 gpsChannel = new Canbus0(appSenders, services);
+        Canbus1 gpsChannel = new Canbus1(appSenders, services);
 
         // Execute threads
         ExecutorService mainExecutor = Executors.newFixedThreadPool(2);

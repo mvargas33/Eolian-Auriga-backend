@@ -7,8 +7,10 @@ package Main;
 
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
+import ApplicationLayer.Channel.Canbus1;
 import ApplicationLayer.Channel.I2C;
 import ApplicationLayer.Channel.TestChannel;
+import ApplicationLayer.LocalServices.DatabaseService;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.LocalServices.WebSocketService;
@@ -55,21 +57,32 @@ public class Main {
         System.out.println("Java Runtime      :  " + SystemInfo.getJavaRuntime());
         System.out.println("Main Sender");
         
-        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(dir);
+        //List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(dir);
+        List<AppComponent> lac = new ArrayList<>();
+        AppComponent ac = new AppComponent("sevcon", new double[] {0, 1, 2}, new double[] {9, 19, 29}, new String[] {"rpm", "torque", "fault"});
+        AppComponent ac2 = new AppComponent("sevc2on", new double[] {0, 1, 2}, new double[] {9, 19, 29}, new String[] {"rpm", "torque", "fault"});
+        lac.add(ac);
+        lac.add(ac2);
         List<Service> ls = new ArrayList<>();
         
         PrintService ps = new PrintService("M: ");
         WebSocketService wss = new WebSocketService();
+        DatabaseService db = new DatabaseService(lac);
         ls.add(ps);
         ls.add(wss);
+        ls.add(db);
 
-        TestChannel tc = new TestChannel(lac, ls);
-
-        Thread t1 = new Thread(tc);
+        TestChannel reader = new TestChannel(lac, ls);
+    
+        
+        Thread t1 = new Thread(reader);
         Thread t2 = new Thread(ps);
         Thread t4 = new Thread(wss);
-        t4.start();
+        Thread t3 = new Thread(db);
         t1.start();
+        t3.start();
+        //t4.start();
+        //t1.start();
         //t2.start();
 
     }

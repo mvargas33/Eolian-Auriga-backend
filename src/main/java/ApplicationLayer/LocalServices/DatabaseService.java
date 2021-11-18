@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Se encarga de guardar la información de los componentes a la base de datos.
@@ -20,7 +21,7 @@ public class DatabaseService extends Service implements Runnable {
     public String[] components;
     public String date_dir; // path to /data/{date} folder
 
-    public DatabaseService() {
+    public DatabaseService(List<AppComponent> lac) {
         super();
 
         absolute_path = System.getProperty("user.dir") + "\\data";
@@ -32,13 +33,22 @@ public class DatabaseService extends Service implements Runnable {
         date_dir = absolute_path + "\\" + formatter.format(date);
 
         // creates a file object with specified path
-        File file = new File(date_dir);
+        new File(date_dir).mkdirs();
 
         /*
         iniciar los .csv de todos los componentes o esperar a que llamen initDataLog
-
+        
          */
+        for(AppComponent ac : lac) {
+            try {
+                initDataLog(ac.nombreParametros, ac.getID());
+            }
+            catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
+    
 
     /**
      * Debe tomar el AppComponent y guardar sus valores en su tabla respectiva en la base de datos
@@ -86,11 +96,12 @@ public class DatabaseService extends Service implements Runnable {
      * @param ID Nombre del archivo a modificar.
      * @throws IOException
      */
-    public void writeValues(double[] values, String ID) throws IOException {
+    public void writeValues(double[] values, String ID) throws IOException, InterruptedException {
+        Thread.sleep(250);
         String fileName = date_dir+"\\"+ID+".csv"; // el filename sera el mismo id?;
         FileWriter fileWriter = new FileWriter(fileName, true); // append = true
         PrintWriter printWriter = new PrintWriter(fileWriter);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss"); //esto hay que revisarlo en concreto con la bd
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS"); //esto hay que revisarlo en concreto con la bd
         Date date = new Date();
         printWriter.print(formatter.format(date)+",");
 

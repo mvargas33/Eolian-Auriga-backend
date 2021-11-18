@@ -8,6 +8,7 @@ package Main;
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.Canbus0;
+import ApplicationLayer.Channel.Canbus1;
 import ApplicationLayer.Channel.I2C;
 import ApplicationLayer.Channel.TestChannel;
 import ApplicationLayer.LocalServices.PrintService;
@@ -61,21 +62,25 @@ public class MainSender {
         
         WirelessSender ws = new WirelessSender(lac, args[0], false);
         PrintService ps = new PrintService("TX: ");
-        WebSocketService wss = new WebSocketService();
+        //WebSocketService wss = new WebSocketService();
 
         ls.add(ws);
         ls.add(ps);
-        ls.add(wss);
+        //ls.add(wss);
 
+        Canbus1 can1 = new Canbus1(lac, ls);
         Canbus0 can0 = new Canbus0(lac, ls);
 
-        Thread t1 = new Thread(can0);
+        Thread t1 = new Thread(can1);
+        Thread t5 = new Thread(can0);
         Thread t2 = new Thread(ps);
         Thread t3 = new Thread(ws);
-        Thread t4 = new Thread(wss);
+        //Thread t4 = new Thread(wss);
         t1.start();
+        t5.start();
         t2.start();
         t3.start();
-        t4.start();
+        //t4.start(); 
+
     }
 }
