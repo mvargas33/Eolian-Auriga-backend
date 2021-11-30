@@ -1,4 +1,4 @@
-package Test.Sandboxes;
+package Test.Examples;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;

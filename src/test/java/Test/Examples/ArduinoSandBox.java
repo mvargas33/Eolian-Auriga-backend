@@ -1,4 +1,4 @@
-package Test.Sandboxes;
+package Test.Examples;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

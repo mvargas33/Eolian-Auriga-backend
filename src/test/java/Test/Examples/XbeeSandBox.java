@@ -1,4 +1,4 @@
-package Test.Sandboxes;
+package Test.Examples;
 
 import com.digi.xbee.api.RemoteXBeeDevice;
 import com.digi.xbee.api.XBeeDevice;
