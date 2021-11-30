@@ -42,6 +42,7 @@ public class WirelessSender extends WirelessService{
 
     @Override
     public void serve(AppComponent c) {
+        //System.out.println("Sent data through xbee for component "+c.getID());
         // 1. Get 1:1 associated State, that holds info about wich Messages this Component is associated to
         actState = this.states.get(c.getID());
 

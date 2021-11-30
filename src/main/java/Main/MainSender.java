@@ -11,6 +11,8 @@ import ApplicationLayer.Channel.Canbus0;
 import ApplicationLayer.Channel.Canbus1;
 import ApplicationLayer.Channel.I2C;
 import ApplicationLayer.Channel.TestChannel;
+import ApplicationLayer.LocalServices.LCDScreen1;
+import ApplicationLayer.LocalServices.LCDScreen2;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.LocalServices.WebSocketService;
@@ -57,30 +59,42 @@ public class MainSender {
         System.out.println("Java Runtime      :  " + SystemInfo.getJavaRuntime());
         System.out.println("Main Sender");
         
+        // Components
         List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(args[1]);
-        List<Service> ls = new ArrayList<>();
         
+        // Services
+        List<Service> ls = new ArrayList<>();
         WirelessSender ws = new WirelessSender(lac, args[0], false);
-        PrintService ps = new PrintService("TX: ");
-        //WebSocketService wss = new WebSocketService();
+        //PrintService ps = new PrintService("TX: ");
+        WebSocketService wss = new WebSocketService();
+        //LCDScreen1 lcd1 = new LCDScreen1(0x26); //ver si las lcd van o no, para no gastar threads
+        //LCDScreen2 lcd2 = new LCDScreen2(0x25);
 
         ls.add(ws);
-        ls.add(ps);
-        //ls.add(wss);
+        //ls.add(lcd1);
+        //ls.add(lcd2);
+        //ls.add(ps);
+        ls.add(wss);
 
+        // Channels
         Canbus1 can1 = new Canbus1(lac, ls);
         Canbus0 can0 = new Canbus0(lac, ls);
 
+        // Main loops
         Thread t1 = new Thread(can1);
         Thread t5 = new Thread(can0);
-        Thread t2 = new Thread(ps);
+        //Thread t6 = new Thread(lcd1);
+        //Thread t7 = new Thread(lcd2);
+        //Thread t2 = new Thread(ps);
         Thread t3 = new Thread(ws);
-        //Thread t4 = new Thread(wss);
+        Thread t4 = new Thread(wss);
         t1.start();
         t5.start();
-        t2.start();
+        //t6.start();
+        //t7.start();
+        //t2.start();
         t3.start();
-        //t4.start(); 
+        t4.start(); 
 
     }
 }

@@ -19,6 +19,11 @@ public class PrintService extends Service{
     }
     @Override
     protected void serve(AppComponent c) {
-        System.out.println(printPrefix + c.getID() + " : " + Arrays.toString(c.getValoresRealesActuales()));
+        //System.out.println(Arrays.toString(c.nombreParametros));
+        //System.out.println(printPrefix + c.getID() + " : " + Arrays.toString(c.getValoresRealesActuales()));
+        for(int i = 0; i < c.valoresRealesActuales.length; i++) {
+            System.out.print(c.nombreParametros[i]+":"+c.valoresRealesActuales[i]+", ");
+        }
+        System.out.println("\n");
     }
 }

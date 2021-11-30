@@ -1,2 +1,4 @@
-while True:
-    print("True")
+def a():
+    print("a")
+def b():
+    print("b")

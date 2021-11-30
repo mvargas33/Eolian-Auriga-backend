@@ -9,8 +9,11 @@ import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.Canbus1;
 import ApplicationLayer.Channel.I2C;
+import ApplicationLayer.Channel.NullChannel;
 import ApplicationLayer.Channel.TestChannel;
 import ApplicationLayer.LocalServices.DatabaseService;
+import ApplicationLayer.LocalServices.LCDScreen1;
+import ApplicationLayer.LocalServices.LCDScreen2;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.LocalServices.WebSocketService;
@@ -57,33 +60,50 @@ public class Main {
         System.out.println("Java Runtime      :  " + SystemInfo.getJavaRuntime());
         System.out.println("Main Sender");
         
-        //List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(dir);
-        List<AppComponent> lac = new ArrayList<>();
-        AppComponent ac = new AppComponent("sevcon", new double[] {0, 1, 2}, new double[] {9, 19, 29}, new String[] {"rpm", "torque", "fault"});
-        AppComponent ac2 = new AppComponent("sevc2on", new double[] {0, 1, 2}, new double[] {9, 19, 29}, new String[] {"rpm", "torque", "fault"});
-        lac.add(ac);
-        lac.add(ac2);
+        //List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(args[1]);
+        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(dir);
+        //for(AppComponent c : lac) {
+        //    if(c.getID().equals("lcd")) lac.remove(c);
+        //}
+        // List<AppComponent> lac = new ArrayList<>();
+        // AppComponent ac = new AppComponent("sevcon", new double[] {0, 1, 2}, new double[] {9, 19, 29}, new String[] {"rpm", "torque", "fault"});
+        // AppComponent ac2 = new AppComponent("sevc2on", new double[] {0, 1, 2}, new double[] {9, 19, 29}, new String[] {"rpm", "torque", "fault"});
+        // lac.add(ac);
+        // lac.add(ac2);
         List<Service> ls = new ArrayList<>();
         
-        PrintService ps = new PrintService("M: ");
+        //PrintService ps = new PrintService("M: ");
         WebSocketService wss = new WebSocketService();
-        DatabaseService db = new DatabaseService(lac);
-        ls.add(ps);
+        //DatabaseService db = new DatabaseService(lac);
+        // DatabaseService db = new DatabaseService(lac);
+        //LCDScreen1 lcd1 = new LCDScreen1(0x27); //0x25
+        //LCDScreen2 lcd2 = new LCDScreen2(0x27); //0x26
+        //ls.add(lcd2);
+        //ls.add(ps);
         ls.add(wss);
-        ls.add(db);
+        //ls.add(db);
+        // ls.add(db);
 
         TestChannel reader = new TestChannel(lac, ls);
-    
+        //NullChannel nc = new NullChannel(lac, ls);
         
+        
+        //Thread t6 = new Thread(lcd1);
+        //Thread t7 = new Thread(lcd2);
         Thread t1 = new Thread(reader);
-        Thread t2 = new Thread(ps);
+        //Thread t2 = new Thread(ps);
         Thread t4 = new Thread(wss);
-        Thread t3 = new Thread(db);
+        //Thread t3 = new Thread(db);
+        //Thread t5 = new Thread(nc);
+        
+        //t6.start();
         t1.start();
-        t3.start();
-        //t4.start();
-        //t1.start();
+        //t7.start();
+        //t3.start();
+        t4.start();
+        // //t1.start();
         //t2.start();
+        //t5.start();
 
     }
 }

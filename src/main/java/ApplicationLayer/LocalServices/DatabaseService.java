@@ -58,6 +58,9 @@ public class DatabaseService extends Service implements Runnable {
      */
     @Override
     protected void serve(AppComponent c) {
+        if(c.getID().equals("lcd")) { //no tiene sentido logear los datos de la pantalla
+            return;
+        }
         try {
             // INSERT double[] en su tabla, sacar el timestamp del momento en que guarda
             // en este punto ya se debio haber llamado a initDataLog con los argumentos correspondientes
@@ -80,10 +83,10 @@ public class DatabaseService extends Service implements Runnable {
         FileWriter fileWriter = new FileWriter(fileName, true); // append = true
         PrintWriter printWriter = new PrintWriter(fileWriter);
 
-        printWriter.print("TIMESTAMP,");
+        printWriter.print("TIMESTAMP;");
 
         for (int i = 0; i < values.length - 1; i++) {
-            printWriter.printf("%s,", values[i]);
+            printWriter.printf("%s;", values[i]);
         }
         printWriter.printf("%s\n", values[values.length - 1]);
 
@@ -97,16 +100,15 @@ public class DatabaseService extends Service implements Runnable {
      * @throws IOException
      */
     public void writeValues(double[] values, String ID) throws IOException, InterruptedException {
-        Thread.sleep(250);
         String fileName = date_dir+"\\"+ID+".csv"; // el filename sera el mismo id?;
         FileWriter fileWriter = new FileWriter(fileName, true); // append = true
         PrintWriter printWriter = new PrintWriter(fileWriter);
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS"); //esto hay que revisarlo en concreto con la bd
         Date date = new Date();
-        printWriter.print(formatter.format(date)+",");
+        printWriter.print(formatter.format(date)+";");
 
         for(int i = 0; i < values.length-1; i++) {
-            printWriter.printf("%f,", values[i]);
+            printWriter.printf("%f;", values[i]);
         }
         printWriter.printf("%f\n", values[values.length-1]);
 

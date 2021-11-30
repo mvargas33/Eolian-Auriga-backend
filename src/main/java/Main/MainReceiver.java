@@ -67,7 +67,7 @@ public class MainReceiver {
         WebSocketService wss = new WebSocketService();
         DatabaseService db = new DatabaseService(lac);
         
-        ls.add(ps);
+        //ls.add(ps);
         ls.add(wss);
         ls.add(db);
 
@@ -76,15 +76,17 @@ public class MainReceiver {
         NullChannel nc = new NullChannel(lac, ls);
 
         Thread t1 = new Thread(nc);
-        Thread t2 = new Thread(ps);
+        //Thread t2 = new Thread(ps);
         Thread t3 = new Thread(wr);
         Thread t4 = new Thread(wss);
+        Thread t5 = new Thread(db);
         System.out.println("Empezando lecturas en 5 segundos...");
         Thread.sleep(5000);
         t4.start();
         t1.start();
-        t2.start();
+        //t2.start();
         t3.start();
+        t5.start();
 
     }
 }

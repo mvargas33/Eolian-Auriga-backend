@@ -94,9 +94,10 @@ public class Canbus1 extends Channel {
     @Override
     public void setUp() {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.redirectErrorStream(true);
+        //processBuilder.redirectErrorStream(true);
         // NOTA: primero hay que iniciar el can com en comando 'stty -F /dev/serial0 raw 9600 cs8 clocal -cstopb'
         // (9600 es el baud rate)
+        
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("sudo /sbin/ip link set can1 up type can bitrate 500000");
         //stringBuilder.append("cd ./src/main/java/ApplicationLayer/SensorReading/CANReaders/linux-can-utils;");
@@ -105,6 +106,12 @@ public class Canbus1 extends Channel {
         try {
             processBuilder.start();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            Thread.sleep(1000);
+        }
+        catch(Exception e) {
             e.printStackTrace();
         }
     }
@@ -174,43 +181,43 @@ public class Canbus1 extends Channel {
                 this.bms.valoresRealesActuales[message_622_index + 28] = ((int) data[6] & 0b00100000) >> 5; // hot_temp
                 this.bms.valoresRealesActuales[message_622_index + 29] = ((int) data[6] & 0b01000000) >> 6; // low_SOH
                 this.bms.valoresRealesActuales[message_622_index + 30] = ((int) data[6] & 0b10000000) >> 7; // isolateion_fault
-
+                break;
             case "503":
                 this.bms.valoresRealesActuales[message_623_index    ] = (((int) data[0] << 8) & (int) data[1]); // pack_voltage   [V]       [0,65535]
                 this.bms.valoresRealesActuales[message_623_index + 1] = (int) data[2]/10.0;                     // min_voltage    [100mV]   [0, 255] -> [V] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_623_index + 2] = (int) data[3];                          // min_voltage_id           [0,255]
                 this.bms.valoresRealesActuales[message_623_index + 3] = (int) data[4]/10.0;                     // max_voltage    [100mV]   [0, 255] -> [V] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_623_index + 4] = (int) data[5];                          // max_voltage_id [0,255]
-
+                break;
             case "504":
                 this.bms.valoresRealesActuales[message_624_index    ] = (((int) data[0] << 8) & (int) data[1]); // current          [A] signed! [-32764, 32764]
                 this.bms.valoresRealesActuales[message_624_index + 1] = (((int) data[2] << 8) & (int) data[3]); // charge_limit     [A]         [0, 65535]
                 this.bms.valoresRealesActuales[message_624_index + 2] = (((int) data[4] << 8) & (int) data[5]); // discharge_limit  [A]
-
+                break;
             case "505":
                 this.bms.valoresRealesActuales[message_625_index    ] = ((int) data[0] << 8*3) & ((int) data[1] << 8*2) & ((int) data[2] << 8) & (int) data[3]; // batt_energy_in  [kWh][0,4294967295]
                 this.bms.valoresRealesActuales[message_625_index + 1] = ((int) data[4] << 8*3) & ((int) data[5] << 8*2) & ((int) data[6] << 8) & (int) data[7]; // batt_energy_out [kWh][0,4294967295]
-
+                break;
             case "506":
                 this.bms.valoresRealesActuales[message_626_index    ] = (int) data[0];                          // SOC      [%]  [0,100]
                 this.bms.valoresRealesActuales[message_626_index + 1] = (((int) data[1] << 8) & (int) data[2]); // DOD      [AH] [0,65535]
                 this.bms.valoresRealesActuales[message_626_index + 2] = (((int) data[3] << 8) & (int) data[4]); // capacity [AH] [0,65535]
                 this.bms.valoresRealesActuales[message_626_index + 3] = (int) data[6];                          // SOH      [%]  [0,100]
-
+                break;
             case "507":
                 this.bms.valoresRealesActuales[message_627_index    ] = (int) data[0]; // temperature [C] signed! [-127,127]
                 this.bms.valoresRealesActuales[message_627_index + 1] = (int) data[2]; // min_temp    [C] signed! [-127,127]
                 this.bms.valoresRealesActuales[message_627_index + 2] = (int) data[3]; // min_temp_id
                 this.bms.valoresRealesActuales[message_627_index + 3] = (int) data[4]; // max_temp    [C] signed! [-127,127]
                 this.bms.valoresRealesActuales[message_627_index + 4] = (int) data[5]; // max_temp_id
-
+                break;
             case "508":
                 this.bms.valoresRealesActuales[message_628_index    ] = (((int) data[0] << 8) & (int) data[1])/10.0;    // pack_resistance    [100 micro-ohm][0,65525] -> [milli ohm] [0.0,6552.5]
                 this.bms.valoresRealesActuales[message_628_index + 1] = ((int) data[2])/10.0;                           // min_resistance     [100 micro-ohm][0,255]   -> [milli ohm] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_628_index + 2] = (int) data[3];                                  // min_resistance_id
                 this.bms.valoresRealesActuales[message_628_index + 3] = (int) data[4];                                  // max_resistance     [100 micro-ohm][0,255]   -> [milli ohm] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_628_index + 4] = (int) data[5];                                  // max_resistance_id
-
+                break;
             default:
                 int BASE_DUMP_ID = Integer.parseInt("200", 16);
                 int id = Integer.parseInt(msg[2], 16);
