@@ -91,3 +91,4 @@ fabric.properties
 *.code-workspace
 /bin/
 /components
+.settings/
