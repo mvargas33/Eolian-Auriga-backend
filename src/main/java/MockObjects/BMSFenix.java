@@ -22,12 +22,6 @@ public class BMSFenix {
     public void genData(byte[] data) {
         this.data = data;
     }
-
-    /**
-     * 
-     * @param offset
-     * @return
-     */
     
     public byte[] msg100() {
 
@@ -42,14 +36,6 @@ public class BMSFenix {
 
         return data;
     }
-
-  
-
-    /**
-     * 
-     * @param offset
-     * @return
-     */
     
     public byte[] msg101() {
 
@@ -63,12 +49,6 @@ public class BMSFenix {
         return data;
     }
 
-    /**
-     * 
-     * @param offset
-     * @return
-     */
-    
     public byte[] msg102() {
 
         int highTemperature   = data[0] & 0x00FF;
@@ -91,12 +71,6 @@ public class BMSFenix {
         return data;
     }
 
-    /**
-     * 
-     * @param offset
-     * @return
-     */
-    
     public byte[] msg081() {
 
         int thermistorID = data[0] & 0x00FF;
@@ -107,12 +81,6 @@ public class BMSFenix {
         return data;
     }
 
-    /**
-     * 
-     * @param offset
-     * @return
-     */
-    
     public byte[] msg082() {
 
         int thermistorID = data[1] & 0x00FF;
@@ -122,12 +90,6 @@ public class BMSFenix {
         return data;
     }
 
-    /**
-     * 
-     * @param offset
-     * @return
-     */
-    
     public byte[] msg036() {
 
         int cellID = (data[0] & 0x00FF);
@@ -135,4 +97,36 @@ public class BMSFenix {
         valoresRealesActualesBMS_VOLT[cellID-1] = voltage;
         return data;
     }
+
+    public byte[] msg100(byte[] new_data) {
+        genData(new_data);
+        return msg100();
+    }
+
+  
+    public byte[] msg101(byte[] new_data) {
+        genData(new_data);
+        return msg101();
+    }
+    
+    public byte[] msg102(byte[] new_data) {
+        genData(new_data);
+        return msg102();
+    }
+    
+    public byte[] msg081(byte[] new_data) {
+        genData(new_data);
+        return msg081();
+    }
+    
+    public byte[] msg082(byte[] new_data) {
+        genData(new_data);
+        return msg082();
+    }
+
+    public byte[] msg036(byte[] new_data) {
+        genData(new_data);
+        return msg036();
+    }
+    
 }
