@@ -137,7 +137,7 @@ public class Canbus0 extends Channel {
                 this.bms.valoresRealesActuales[message_622_index + 3] = ((int) data[0] & 0b00001000) >> 3;  // K3_contactor
                 this.bms.valoresRealesActuales[message_622_index + 4] = ((int) data[0] & 0b00010000) >> 4;  // relay_fault
 
-                this.bms.valoresRealesActuales[message_622_index + 5] = (((int) data[1] << 8) & (int) data[2]); // powerup_time [s]
+                this.bms.valoresRealesActuales[message_622_index + 5] = (((int) data[1] << 8) | (int) data[2]); // powerup_time [s]
 
                 // Byte of flags
                 this.bms.valoresRealesActuales[message_622_index + 6] = (int) data[3] & 0b00000001;         // power_from_source
@@ -173,25 +173,25 @@ public class Canbus0 extends Channel {
                 this.bms.valoresRealesActuales[message_622_index + 30] = ((int) data[6] & 0b10000000) >> 7; // isolateion_fault
 
             case "623":
-                this.bms.valoresRealesActuales[message_623_index    ] = (((int) data[0] << 8) & (int) data[1]); // pack_voltage   [V]       [0,65535]
+                this.bms.valoresRealesActuales[message_623_index    ] = (((int) data[0] << 8) | (int) data[1]); // pack_voltage   [V]       [0,65535]
                 this.bms.valoresRealesActuales[message_623_index + 1] = (int) data[2]/10.0;                     // min_voltage    [100mV]   [0, 255] -> [V] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_623_index + 2] = (int) data[3];                          // min_voltage_id           [0,255]
                 this.bms.valoresRealesActuales[message_623_index + 3] = (int) data[4]/10.0;                     // max_voltage    [100mV]   [0, 255] -> [V] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_623_index + 4] = (int) data[5];                          // max_voltage_id [0,255]
 
             case "624":
-                this.bms.valoresRealesActuales[message_624_index    ] = (((int) data[0] << 8) & (int) data[1]); // current          [A] signed! [-32764, 32764]
-                this.bms.valoresRealesActuales[message_624_index + 1] = (((int) data[2] << 8) & (int) data[3]); // charge_limit     [A]         [0, 65535]
-                this.bms.valoresRealesActuales[message_624_index + 2] = (((int) data[4] << 8) & (int) data[5]); // discharge_limit  [A]
+                this.bms.valoresRealesActuales[message_624_index    ] = (((int) data[0] << 8) | (int) data[1]); // current          [A] signed! [-32764, 32764]
+                this.bms.valoresRealesActuales[message_624_index + 1] = (((int) data[2] << 8) | (int) data[3]); // charge_limit     [A]         [0, 65535]
+                this.bms.valoresRealesActuales[message_624_index + 2] = (((int) data[4] << 8) | (int) data[5]); // discharge_limit  [A]
 
             case "625":
-                this.bms.valoresRealesActuales[message_625_index    ] = ((int) data[0] << 8*3) & ((int) data[1] << 8*2) & ((int) data[2] << 8) & (int) data[3]; // batt_energy_in  [kWh][0,4294967295]
-                this.bms.valoresRealesActuales[message_625_index + 1] = ((int) data[4] << 8*3) & ((int) data[5] << 8*2) & ((int) data[6] << 8) & (int) data[7]; // batt_energy_out [kWh][0,4294967295]
+                this.bms.valoresRealesActuales[message_625_index    ] = ((int) data[0] << 8*3) | ((int) data[1] << 8*2) | ((int) data[2] << 8) | (int) data[3]; // batt_energy_in  [kWh][0,4294967295]
+                this.bms.valoresRealesActuales[message_625_index + 1] = ((int) data[4] << 8*3) | ((int) data[5] << 8*2) | ((int) data[6] << 8) | (int) data[7]; // batt_energy_out [kWh][0,4294967295]
 
             case "626":
                 this.bms.valoresRealesActuales[message_626_index    ] = (int) data[0];                          // SOC      [%]  [0,100]
-                this.bms.valoresRealesActuales[message_626_index + 1] = (((int) data[1] << 8) & (int) data[2]); // DOD      [AH] [0,65535]
-                this.bms.valoresRealesActuales[message_626_index + 2] = (((int) data[3] << 8) & (int) data[4]); // capacity [AH] [0,65535]
+                this.bms.valoresRealesActuales[message_626_index + 1] = (((int) data[1] << 8) | (int) data[2]); // DOD      [AH] [0,65535]
+                this.bms.valoresRealesActuales[message_626_index + 2] = (((int) data[3] << 8) | (int) data[4]); // capacity [AH] [0,65535]
                 this.bms.valoresRealesActuales[message_626_index + 3] = (int) data[6];                          // SOH      [%]  [0,100]
 
             case "627":
@@ -202,7 +202,7 @@ public class Canbus0 extends Channel {
                 this.bms.valoresRealesActuales[message_627_index + 4] = (int) data[5]; // max_temp_id
 
             case "628":
-                this.bms.valoresRealesActuales[message_628_index    ] = (((int) data[0] << 8) & (int) data[1])/10.0;    // pack_resistance    [100 micro-ohm][0,65525] -> [milli ohm] [0.0,6552.5]
+                this.bms.valoresRealesActuales[message_628_index    ] = (((int) data[0] << 8) | (int) data[1])/10.0;    // pack_resistance    [100 micro-ohm][0,65525] -> [milli ohm] [0.0,6552.5]
                 this.bms.valoresRealesActuales[message_628_index + 1] = ((int) data[2])/10.0;                           // min_resistance     [100 micro-ohm][0,255]   -> [milli ohm] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_628_index + 2] = (int) data[3];                                  // min_resistance_id
                 this.bms.valoresRealesActuales[message_628_index + 3] = (int) data[4];                                  // max_resistance     [100 micro-ohm][0,255]   -> [milli ohm] [0.0,25.5]
