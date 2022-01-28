@@ -132,55 +132,55 @@ public class Canbus0_real extends Channel {
         switch (msg[2]){
             case "100":
                 this.sevcon.valoresRealesActuales[message_100_index    ] = 0.0625 * (((data[0] << 8) | data[1]) & 0x00FFFF); // der_battery_V
-                this.sevcon.valoresRealesActuales[message_100_index + 1] = 0.0625 * ((data[2] << 8) | data[3]) ; // der_battery_I SIGNED
+                this.sevcon.valoresRealesActuales[message_100_index + 1] = -1 * 0.0625 * ((data[2] << 8) | data[3]) ; // der_battery_I SIGNED
                 this.sevcon.valoresRealesActuales[message_100_index + 2] = (data[4] & 0x00FF); // der_inverter_temp
                 break;
             case "200":
-                this.sevcon.valoresRealesActuales[message_200_index    ] = ((data[0] << 8) | data[1]) ; // der_motor_I SIGNED [A]
-                this.sevcon.valoresRealesActuales[message_200_index + 1] = 0.1 * ((data[2] << 8) | data[3]) ; // der_motor_torque_demand SIGNED
-                this.sevcon.valoresRealesActuales[message_200_index + 2] = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | data[7] ; // der_motor_RPM SIGNED [rad/s]
+                this.sevcon.valoresRealesActuales[message_200_index    ] = -1 * ((data[0] << 8) | data[1]) ; // der_motor_I SIGNED [A]
+                this.sevcon.valoresRealesActuales[message_200_index + 1] = -1 * 0.1 * ((data[2] << 8) | data[3]) ; // der_motor_torque_demand SIGNED
+                this.sevcon.valoresRealesActuales[message_200_index + 2] = -1 * (int) ((data[4] << 24) | (data[5] << 16) | (data[6] << 8) | data[7]) ; // der_motor_RPM SIGNED [rad/s]
                 break;
             case "300":
-                this.sevcon.valoresRealesActuales[message_300_index    ] = 0.0625 * ((data[0] << 8) | data[1]) ; // der_target_I_quadrature SIGNED
-                this.sevcon.valoresRealesActuales[message_300_index + 1] = 0.0625 * ((data[2] << 8) | data[3]) ; // der_I_quadrature SIGNED
-                this.sevcon.valoresRealesActuales[message_300_index + 2] = 0.1 * ((data[4] << 8) | data[5]) ; // der_torque_actual SIGNED
-                this.sevcon.valoresRealesActuales[message_300_index + 3] = 0.0625 * ((data[6] << 8) | data[7]) ; // der_V_quadrature SIGNED
+                this.sevcon.valoresRealesActuales[message_300_index    ] = -1 * 0.0625 * ((data[0] << 8) | data[1]) ; // der_target_I_quadrature SIGNED
+                this.sevcon.valoresRealesActuales[message_300_index + 1] = -1 * 0.0625 * ((data[2] << 8) | data[3]) ; // der_I_quadrature SIGNED
+                this.sevcon.valoresRealesActuales[message_300_index + 2] = -1 * 0.1 * ((data[4] << 8) | data[5]) ; // der_torque_actual SIGNED
+                this.sevcon.valoresRealesActuales[message_300_index + 3] = -1 * 0.0625 * ((data[6] << 8) | data[7]) ; // der_V_quadrature SIGNED
                 break;
             case "400":
-                this.sevcon.valoresRealesActuales[message_400_index    ] = 0.00390625 * ((data[0] << 8) | data[1]) ; // der_throttle_V SIGNED [V]
-                this.sevcon.valoresRealesActuales[message_400_index + 1] = 0.0625 * ((data[2] << 8) | data[3]) ; // der_target_I_direct SIGNED
-                this.sevcon.valoresRealesActuales[message_400_index + 2] = 0.0625 * ((data[4] << 8) | data[5]) ; // der_I_direct SIGNED
-                this.sevcon.valoresRealesActuales[message_400_index + 3] = 0.0625 * ((data[6] << 8) | data[7]) ; // der_V_direct SIGNED
+                this.sevcon.valoresRealesActuales[message_400_index    ] = 0.00390625 * (((data[0] << 8) | data[1]) & 0x00FF) ; // der_throttle_V [V]
+                this.sevcon.valoresRealesActuales[message_400_index + 1] = -1 * 0.0625 * ((data[2] << 8) | data[3]) ; // der_target_I_direct SIGNED
+                this.sevcon.valoresRealesActuales[message_400_index + 2] = -1 * 0.0625 * ((data[4] << 8) | data[5]) ; // der_I_direct SIGNED
+                this.sevcon.valoresRealesActuales[message_400_index + 3] = -1 * 0.0625 * ((data[6] << 8) | data[7]) ; // der_V_direct SIGNED
                 break;
             case "500":
-                this.sevcon.valoresRealesActuales[message_500_index    ] = 0.1 * ((data[0] << 8) | data[1]) ; // der_target_torque_percentaje SIGNED
-                this.sevcon.valoresRealesActuales[message_500_index + 1] = 0.00390625 * ((data[2] << 8) | data[3]) ; // der_footbrake_V SIGNED
+                this.sevcon.valoresRealesActuales[message_500_index    ] = 0.1 * (((data[0] << 8) | data[1]) & 0x00FF) ; // der_target_torque_percentaje
+                this.sevcon.valoresRealesActuales[message_500_index + 1] = 0.00390625 * (((data[2] << 8) | data[3]) & 0x00FF) ; // der_footbrake_V [V]
                 break;
             case "102":
                 this.sevcon.valoresRealesActuales[message_102_index    ] = 0.0625 * (((data[0] << 8) | data[1]) & 0x00FFFF); // izq_battery_V
-                this.sevcon.valoresRealesActuales[message_102_index + 1] = 0.0625 * ((data[2] << 8) | data[3]) ; // izq_battery_I SIGNED
+                this.sevcon.valoresRealesActuales[message_102_index + 1] = -1 * 0.0625 * ((data[2] << 8) | data[3]) ; // izq_battery_I SIGNED
                 this.sevcon.valoresRealesActuales[message_102_index + 2] = (data[4] & 0x00FF); // izq_inverter_temp
                 break;
             case "202":
-                this.sevcon.valoresRealesActuales[message_202_index    ] = ((data[0] << 8) | data[1]) ; // izq_motor_I SIGNED
-                this.sevcon.valoresRealesActuales[message_202_index + 1] = 0.1 * ((data[2] << 8) | data[3]) ; // izq_motor_torque_demand SIGNED
-                this.sevcon.valoresRealesActuales[message_202_index + 2] = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | data[7] ; // izq_motor_RPM SIGNED
+                this.sevcon.valoresRealesActuales[message_202_index    ] = -1 * ((data[0] << 8) | data[1]) ; // izq_motor_I SIGNED
+                this.sevcon.valoresRealesActuales[message_202_index + 1] = -1 * 0.1 * ((data[2] << 8) | data[3]) ; // izq_motor_torque_demand SIGNED
+                this.sevcon.valoresRealesActuales[message_202_index + 2] = -1 * (int) ((data[4] << 24) | (data[5] << 16) | (data[6] << 8) | data[7]) ; // izq_motor_RPM SIGNED
                 break;
             case "302":
-                this.sevcon.valoresRealesActuales[message_302_index    ] = 0.0625 * ((data[0] << 8) | data[1]) ; // izq_target_I_quadrature SIGNED
-                this.sevcon.valoresRealesActuales[message_302_index + 1] = 0.0625 * ((data[2] << 8) | data[3]) ; // izq_I_quadrature SIGNED
-                this.sevcon.valoresRealesActuales[message_302_index + 2] = 0.1 * ((data[4] << 8) | data[5]) ; // izq_torque_actual SIGNED
-                this.sevcon.valoresRealesActuales[message_302_index + 3] = 0.0625 * ((data[6] << 8) | data[7]) ; // izq_V_quadrature SIGNED
+                this.sevcon.valoresRealesActuales[message_302_index    ] = -1 * 0.0625 * ((data[0] << 8) | data[1]) ; // izq_target_I_quadrature SIGNED
+                this.sevcon.valoresRealesActuales[message_302_index + 1] = -1 * 0.0625 * ((data[2] << 8) | data[3]) ; // izq_I_quadrature SIGNED
+                this.sevcon.valoresRealesActuales[message_302_index + 2] = -1 * 0.1 * ((data[4] << 8) | data[5]) ; // izq_torque_actual SIGNED
+                this.sevcon.valoresRealesActuales[message_302_index + 3] = -1 * 0.0625 * ((data[6] << 8) | data[7]) ; // izq_V_quadrature SIGNED
                 break;
             case "402":
-                this.sevcon.valoresRealesActuales[message_402_index    ] = 0.00390625 * ((data[0] << 8) | data[1]) ; // izq_throttle_V SIGNED
-                this.sevcon.valoresRealesActuales[message_402_index + 1] = 0.0625 * ((data[2] << 8) | data[3]) ; // izq_target_I_direct SIGNED
-                this.sevcon.valoresRealesActuales[message_402_index + 2] = 0.0625 * ((data[4] << 8) | data[5]) ; // izq_I_direct SIGNED
-                this.sevcon.valoresRealesActuales[message_402_index + 3] = 0.0625 * ((data[6] << 8) | data[7]) ; // izq_V_direct SIGNED
+                this.sevcon.valoresRealesActuales[message_402_index    ] = 0.00390625 * (((data[0] << 8) | data[1]) & 0x00FF) ; // izq_throttle_V [V]
+                this.sevcon.valoresRealesActuales[message_402_index + 1] = -1 * 0.0625 * ((data[2] << 8) | data[3]) ; // izq_target_I_direct SIGNED
+                this.sevcon.valoresRealesActuales[message_402_index + 2] = -1 * 0.0625 * ((data[4] << 8) | data[5]) ; // izq_I_direct SIGNED
+                this.sevcon.valoresRealesActuales[message_402_index + 3] = -1 * 0.0625 * ((data[6] << 8) | data[7]) ; // izq_V_direct SIGNED
                 break;
             case "502":
-                this.sevcon.valoresRealesActuales[message_502_index    ] = 0.1 * ((data[0] << 8) | data[1]) ; // izq_target_torque_percentaje SIGNED
-                this.sevcon.valoresRealesActuales[message_502_index + 1] = 0.00390625 * ((data[2] << 8) | data[3]) ; // izq_footbrake_V SIGNED
+                this.sevcon.valoresRealesActuales[message_502_index    ] = 0.1 * (((data[0] << 8) | data[1]) & 0x00FF); // izq_target_torque_percentaje
+                this.sevcon.valoresRealesActuales[message_502_index + 1] = 0.00390625 * (((data[2] << 8) | data[3]) & 0x00FF) ; // izq_footbrake_V [V]
                 break;
             default:
                 System.out.print("ID: " + msg[2] + " MSG: ");
