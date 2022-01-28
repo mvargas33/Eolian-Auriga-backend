@@ -6,8 +6,6 @@ import ApplicationLayer.AppComponents.AppComponent;
 import com.corundumstudio.socketio.Configuration;
 import com.corundumstudio.socketio.SocketIOServer;
 import org.json.simple.JSONObject;
-import org.omg.PortableServer.THREAD_POLICY_ID;
-
 import java.util.HashMap;
 
 

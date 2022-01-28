@@ -11,11 +11,7 @@ import ApplicationLayer.Channel.Canbus0;
 import ApplicationLayer.Channel.Canbus1;
 import ApplicationLayer.Channel.I2C;
 import ApplicationLayer.Channel.TestChannel;
-import ApplicationLayer.LocalServices.LCDScreen1;
-import ApplicationLayer.LocalServices.LCDScreen2;
-import ApplicationLayer.LocalServices.PrintService;
-import ApplicationLayer.LocalServices.Service;
-import ApplicationLayer.LocalServices.WebSocketService;
+import ApplicationLayer.LocalServices.*;
 import ApplicationLayer.LocalServices.WirelessService.WirelessSender;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeReceiver;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeSender;
@@ -69,12 +65,14 @@ public class MainSender {
         WebSocketService wss = new WebSocketService();
         //LCDScreen1 lcd1 = new LCDScreen1(0x26); //ver si las lcd van o no, para no gastar threads
         //LCDScreen2 lcd2 = new LCDScreen2(0x25);
+        DatabaseService dbs = new DatabaseService(lac);
 
         ls.add(ws);
         //ls.add(lcd1);
         //ls.add(lcd2);
         //ls.add(ps);
         ls.add(wss);
+        ls.add(dbs);
 
         // Channels
         Canbus1 can1 = new Canbus1(lac, ls);
@@ -88,6 +86,7 @@ public class MainSender {
         //Thread t2 = new Thread(ps);
         Thread t3 = new Thread(ws);
         Thread t4 = new Thread(wss);
+        Thread t9 = new Thread(dbs);
         t1.start();
         t5.start();
         //t6.start();
@@ -95,6 +94,6 @@ public class MainSender {
         //t2.start();
         t3.start();
         t4.start(); 
-
+        t9.start();
     }
 }
