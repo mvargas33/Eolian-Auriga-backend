@@ -18,8 +18,8 @@ import ApplicationLayer.LocalServices.WirelessService.WirelessReceiver;
 import ApplicationLayer.LocalServices.WirelessService.WirelessSender;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeReceiver;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeSender;
-import io.socket.engineio.client.transports.WebSocket;
-import javafx.print.Printer;
+//import io.socket.engineio.client.transports.WebSocket;
+//import javafx.print.Printer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,7 +28,7 @@ import java.util.List;
 import com.pi4j.system.SystemInfo;
 
 public class MainReceiver {
-    public static String dir = "C:/Users/Dante/Desktop/Eolian/Eolian-Auriga-backend/src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
+    public static String dir = "A:\\Github\\Eolian\\Eolian-Auriga-backend\\src\\main\\java\\ApplicationLayer\\AppComponents\\ExcelToAppComponent\\Eolian_fenix";
     public XbeeReceiver xbeeReceiver;
 
     public MainReceiver() {
