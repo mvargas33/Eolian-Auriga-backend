@@ -1,8 +1,6 @@
 package ApplicationLayer.SensorReading.MPPTReader;
 
-import ApplicationLayer.AppComponents.AppSender;
-import ApplicationLayer.SensorReading.GPSReader.GPSReader;
-import ApplicationLayer.SensorReading.SensorsReader;
+import ApplicationLayer.AppComponents.AppComponent;
 import MockObjects.GPS;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
@@ -15,7 +13,8 @@ import java.io.InputStreamReader;
 import java.util.Random;
 import ApplicationLayer.LocalServices.WirelessService.Utilities.BitOperations;
 
-public class MPPTReader extends SensorsReader {
+// TODO: REMOVE THIS, BECAUSE IT WAS CREATED BEFORE CHANNEL AND APPCOIMOPNENT UNIFICATION
+public class MPPTReader {
 
     //todo enviar por i2c
     //evaluar si mejorar esto o dejarlo asi
@@ -42,8 +41,8 @@ public class MPPTReader extends SensorsReader {
 
     private double[] values = new double[6];
 
-    public MPPTReader(AppSender myComponent, long readingDelayInMS) {
-        super(myComponent, readingDelayInMS);
+    public MPPTReader(AppComponent myComponent, long readingDelayInMS) {
+        super();
     }
 
     // recibe un byte[] de largo 10, el frame CAN "directo" (pasó por el arduino) del MPPT
@@ -110,9 +109,6 @@ public class MPPTReader extends SensorsReader {
         }
     }
 
-
-
-    @Override
     public double[] read() {
         //pendiente aplicar la logica requerida (leer cada tantos ms)
         return values;
@@ -121,7 +117,7 @@ public class MPPTReader extends SensorsReader {
     public static void main(String[] argv) {
         // propuesta para tests
 
-        AppSender appSender = new AppSender("testing_AS",
+        AppComponent appSender = new AppComponent("testing_AS",
                 new double[] {0}, // mins
                 new double[] {60}, //maxs
                 new String[] {"DUMMY"});
