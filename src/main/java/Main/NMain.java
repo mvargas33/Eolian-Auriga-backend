@@ -26,7 +26,7 @@ public class NMain {
         PrintService printService = new PrintService();
         serviceList.add(printService);
 
-        List<AppComponent> ACList = CSVToAppComponent.CSVs_toAppComponents(dir);
+        List<AppComponent> ACList = CSVToAppComponent.CSVs_to_AppComponents(dir);
 
         // voy a partir haciendo uno para testchannel
         TestChannel tc = new TestChannel(ACList, serviceList, new String[] {"BMS", "MPPT"});
