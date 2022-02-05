@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_eolian-auriga-backend" default="compile.module.eolian-auriga-backend">
+  <dirname property="module.eolian-auriga-backend.basedir" file="${ant.file.module_eolian-auriga-backend}"/>
+  
+  <property name="module.jdk.home.eolian-auriga-backend" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.eolian-auriga-backend" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.eolian-auriga-backend" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.eolian-auriga-backend" value="-encoding UTF-8 -source 8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="eolian-auriga-backend.output.dir" value="${module.eolian-auriga-backend.basedir}/target/classes"/>
+  <property name="eolian-auriga-backend.testoutput.dir" value="${module.eolian-auriga-backend.basedir}/target/test-classes"/>
+  
+  <path id="eolian-auriga-backend.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="eolian-auriga-backend.module.production.classpath">
+    <path refid="${module.jdk.classpath.eolian-auriga-backend}"/>
+    <path refid="library.maven:_com.digi.xbee:xbee-java-library:1.3.0.classpath"/>
+    <path refid="library.maven:_org.rxtx:rxtx:2.2.classpath"/>
+    <path refid="library.maven:_org.rxtx:rxtx-native:win32_x86:2.2.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-jdk14:1.7.12.classpath"/>
+    <path refid="library.maven:_com.corundumstudio.socketio:netty-socketio:1.7.7.classpath"/>
+    <path refid="library.maven:_io.netty:netty-buffer:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-common:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-transport:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-handler:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-codec-http:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-codec:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-transport-native-epoll:4.0.25.final.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.4.3.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.4.3.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.4.0.classpath"/>
+    <path refid="library.maven:_com.googlecode.json-simple:json-simple:1.1.classpath"/>
+    <path refid="library.maven:_io.socket:socket.io-client:1.0.0.classpath"/>
+    <path refid="library.maven:_io.socket:engine.io-client:1.0.0.classpath"/>
+    <path refid="library.maven:_com.squareup.okhttp3:okhttp:3.8.1.classpath"/>
+    <path refid="library.maven:_com.squareup.okio:okio:1.13.0.classpath"/>
+    <path refid="library.maven:_org.json:json:20090211.classpath"/>
+    <path refid="library.maven:_com.pi4j:pi4j-core:1.3.classpath"/>
+  </path>
+  
+  <path id="eolian-auriga-backend.runtime.production.module.classpath">
+    <pathelement location="${eolian-auriga-backend.output.dir}"/>
+    <path refid="library.maven:_com.digi.xbee:xbee-java-library:1.3.0.classpath"/>
+    <path refid="library.maven:_org.rxtx:rxtx:2.2.classpath"/>
+    <path refid="library.maven:_org.rxtx:rxtx-native:win32_x86:2.2.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-jdk14:1.7.12.classpath"/>
+    <path refid="library.maven:_com.corundumstudio.socketio:netty-socketio:1.7.7.classpath"/>
+    <path refid="library.maven:_io.netty:netty-buffer:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-common:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-transport:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-handler:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-codec-http:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-codec:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-transport-native-epoll:4.0.25.final.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.4.3.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.4.3.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.4.0.classpath"/>
+    <path refid="library.maven:_com.googlecode.json-simple:json-simple:1.1.classpath"/>
+    <path refid="library.maven:_io.socket:socket.io-client:1.0.0.classpath"/>
+    <path refid="library.maven:_io.socket:engine.io-client:1.0.0.classpath"/>
+    <path refid="library.maven:_com.squareup.okhttp3:okhttp:3.8.1.classpath"/>
+    <path refid="library.maven:_com.squareup.okio:okio:1.13.0.classpath"/>
+    <path refid="library.maven:_org.json:json:20090211.classpath"/>
+    <path refid="library.maven:_com.pi4j:pi4j-core:1.3.classpath"/>
+  </path>
+  
+  <path id="eolian-auriga-backend.module.classpath">
+    <path refid="${module.jdk.classpath.eolian-auriga-backend}"/>
+    <pathelement location="${eolian-auriga-backend.output.dir}"/>
+    <path refid="library.maven:_com.digi.xbee:xbee-java-library:1.3.0.classpath"/>
+    <path refid="library.maven:_org.rxtx:rxtx:2.2.classpath"/>
+    <path refid="library.maven:_org.rxtx:rxtx-native:win32_x86:2.2.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-jdk14:1.7.12.classpath"/>
+    <path refid="library.maven:_org.junit.jupiter:junit-jupiter-engine:5.4.0.classpath"/>
+    <path refid="library.maven:_org.apiguardian:apiguardian-api:1.0.0.classpath"/>
+    <path refid="library.maven:_org.junit.platform:junit-platform-engine:1.4.0.classpath"/>
+    <path refid="library.maven:_org.opentest4j:opentest4j:1.1.1.classpath"/>
+    <path refid="library.maven:_org.junit.platform:junit-platform-commons:1.4.0.classpath"/>
+    <path refid="library.maven:_org.junit.jupiter:junit-jupiter-api:5.4.0.classpath"/>
+    <path refid="library.maven:_com.corundumstudio.socketio:netty-socketio:1.7.7.classpath"/>
+    <path refid="library.maven:_io.netty:netty-buffer:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-common:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-transport:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-handler:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-codec-http:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-codec:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-transport-native-epoll:4.0.25.final.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.4.3.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.4.3.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.4.0.classpath"/>
+    <path refid="library.maven:_com.googlecode.json-simple:json-simple:1.1.classpath"/>
+    <path refid="library.maven:_io.socket:socket.io-client:1.0.0.classpath"/>
+    <path refid="library.maven:_io.socket:engine.io-client:1.0.0.classpath"/>
+    <path refid="library.maven:_com.squareup.okhttp3:okhttp:3.8.1.classpath"/>
+    <path refid="library.maven:_com.squareup.okio:okio:1.13.0.classpath"/>
+    <path refid="library.maven:_org.json:json:20090211.classpath"/>
+    <path refid="library.maven:_org.openjdk.jmh:jmh-core:1.27.classpath"/>
+    <path refid="library.maven:_net.sf.jopt-simple:jopt-simple:4.6.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-math3:3.2.classpath"/>
+    <path refid="library.maven:_com.pi4j:pi4j-core:1.3.classpath"/>
+  </path>
+  
+  <path id="eolian-auriga-backend.runtime.module.classpath">
+    <pathelement location="${eolian-auriga-backend.testoutput.dir}"/>
+    <pathelement location="${eolian-auriga-backend.output.dir}"/>
+    <path refid="library.maven:_com.digi.xbee:xbee-java-library:1.3.0.classpath"/>
+    <path refid="library.maven:_org.rxtx:rxtx:2.2.classpath"/>
+    <path refid="library.maven:_org.rxtx:rxtx-native:win32_x86:2.2.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-jdk14:1.7.12.classpath"/>
+    <path refid="library.maven:_org.junit.jupiter:junit-jupiter-engine:5.4.0.classpath"/>
+    <path refid="library.maven:_org.apiguardian:apiguardian-api:1.0.0.classpath"/>
+    <path refid="library.maven:_org.junit.platform:junit-platform-engine:1.4.0.classpath"/>
+    <path refid="library.maven:_org.opentest4j:opentest4j:1.1.1.classpath"/>
+    <path refid="library.maven:_org.junit.platform:junit-platform-commons:1.4.0.classpath"/>
+    <path refid="library.maven:_org.junit.jupiter:junit-jupiter-api:5.4.0.classpath"/>
+    <path refid="library.maven:_com.corundumstudio.socketio:netty-socketio:1.7.7.classpath"/>
+    <path refid="library.maven:_io.netty:netty-buffer:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-common:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-transport:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-handler:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-codec-http:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-codec:4.0.25.final.classpath"/>
+    <path refid="library.maven:_io.netty:netty-transport-native-epoll:4.0.25.final.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.4.3.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.4.3.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.4.0.classpath"/>
+    <path refid="library.maven:_com.googlecode.json-simple:json-simple:1.1.classpath"/>
+    <path refid="library.maven:_io.socket:socket.io-client:1.0.0.classpath"/>
+    <path refid="library.maven:_io.socket:engine.io-client:1.0.0.classpath"/>
+    <path refid="library.maven:_com.squareup.okhttp3:okhttp:3.8.1.classpath"/>
+    <path refid="library.maven:_com.squareup.okio:okio:1.13.0.classpath"/>
+    <path refid="library.maven:_org.json:json:20090211.classpath"/>
+    <path refid="library.maven:_org.openjdk.jmh:jmh-core:1.27.classpath"/>
+    <path refid="library.maven:_net.sf.jopt-simple:jopt-simple:4.6.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-math3:3.2.classpath"/>
+    <path refid="library.maven:_com.pi4j:pi4j-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.eolian-auriga-backend">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.eolian-auriga-backend">
+    <patternset refid="excluded.from.module.eolian-auriga-backend"/>
+  </patternset>
+  
+  <path id="eolian-auriga-backend.module.sourcepath">
+    <dirset dir="${module.eolian-auriga-backend.basedir}">
+      <include name="src/main/java"/>
+    </dirset>
+  </path>
+  
+  <path id="eolian-auriga-backend.module.test.sourcepath">
+    <dirset dir="${module.eolian-auriga-backend.basedir}">
+      <include name="src/test/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.eolian-auriga-backend" depends="compile.module.eolian-auriga-backend.production,compile.module.eolian-auriga-backend.tests" description="Compile module Eolian-Auriga-backend"/>
+  
+  <target name="compile.module.eolian-auriga-backend.production" depends="register.custom.compilers" description="Compile module Eolian-Auriga-backend; production classes">
+    <mkdir dir="${eolian-auriga-backend.output.dir}"/>
+    <javac2 destdir="${eolian-auriga-backend.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.eolian-auriga-backend}/javac">
+      <compilerarg line="${compiler.args.eolian-auriga-backend}"/>
+      <bootclasspath refid="eolian-auriga-backend.module.bootclasspath"/>
+      <classpath refid="eolian-auriga-backend.module.production.classpath"/>
+      <src refid="eolian-auriga-backend.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.eolian-auriga-backend"/>
+    </javac2>
+    
+    <copy todir="${eolian-auriga-backend.output.dir}">
+      <fileset dir="${module.eolian-auriga-backend.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.eolian-auriga-backend.tests" depends="register.custom.compilers,compile.module.eolian-auriga-backend.production" description="compile module Eolian-Auriga-backend; test classes" unless="skip.tests">
+    <mkdir dir="${eolian-auriga-backend.testoutput.dir}"/>
+    <javac2 destdir="${eolian-auriga-backend.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.eolian-auriga-backend}/javac">
+      <compilerarg line="${compiler.args.eolian-auriga-backend}"/>
+      <bootclasspath refid="eolian-auriga-backend.module.bootclasspath"/>
+      <classpath refid="eolian-auriga-backend.module.classpath"/>
+      <src refid="eolian-auriga-backend.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.eolian-auriga-backend"/>
+    </javac2>
+    
+    <copy todir="${eolian-auriga-backend.testoutput.dir}">
+      <fileset dir="${module.eolian-auriga-backend.basedir}/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.eolian-auriga-backend" description="cleanup module">
+    <delete dir="${eolian-auriga-backend.output.dir}"/>
+    <delete dir="${eolian-auriga-backend.testoutput.dir}"/>
+  </target>
+</project>

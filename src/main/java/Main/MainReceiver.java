@@ -7,20 +7,19 @@ package Main;
 
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
-import ApplicationLayer.Channel.Canbus1;
 import ApplicationLayer.Channel.I2C;
 import ApplicationLayer.Channel.NullChannel;
 import ApplicationLayer.Channel.TestChannel;
 import ApplicationLayer.LocalServices.DatabaseService;
-import ApplicationLayer.LocalServices.LCDScreen1;
-import ApplicationLayer.LocalServices.LCDScreen2;
 import ApplicationLayer.LocalServices.PrintService;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.LocalServices.WebSocketService;
 import ApplicationLayer.LocalServices.WirelessService.WirelessReceiver;
 import ApplicationLayer.LocalServices.WirelessService.WirelessSender;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeReceiver;
-import io.socket.engineio.client.transports.WebSocket;
+import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeSender;
+//import io.socket.engineio.client.transports.WebSocket;
+//import javafx.print.Printer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,11 +27,11 @@ import java.util.List;
 
 import com.pi4j.system.SystemInfo;
 
-public class Main {
-    public static String dir = "C:/Users/Dante/Desktop/Eolian/Eolian-Auriga-backend/components/auriga";
+public class MainReceiver {
+    public static String dir = "A:\\Github\\Eolian\\Eolian-Auriga-backend\\src\\main\\java\\ApplicationLayer\\AppComponents\\ExcelToAppComponent\\Eolian_fenix";
     public XbeeReceiver xbeeReceiver;
 
-    public Main() {
+    public MainReceiver() {
     }
 
     public static AppComponent findAppComponent(List<AppComponent> list, String componentID) throws Exception {
@@ -58,52 +57,36 @@ public class Main {
         }
         System.out.println("Java VM           :  " + SystemInfo.getJavaVirtualMachine());
         System.out.println("Java Runtime      :  " + SystemInfo.getJavaRuntime());
-        System.out.println("Main Sender");
+        System.out.println("MainReceiver");
         
-        //List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(args[1]);
-        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(dir);
-        //for(AppComponent c : lac) {
-        //    if(c.getID().equals("lcd")) lac.remove(c);
-        //}
-        // List<AppComponent> lac = new ArrayList<>();
-        // AppComponent ac = new AppComponent("sevcon", new double[] {0, 1, 2}, new double[] {9, 19, 29}, new String[] {"rpm", "torque", "fault"});
-        // AppComponent ac2 = new AppComponent("sevc2on", new double[] {0, 1, 2}, new double[] {9, 19, 29}, new String[] {"rpm", "torque", "fault"});
-        // lac.add(ac);
-        // lac.add(ac2);
+        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(args[1]);
         List<Service> ls = new ArrayList<>();
-        
-        //PrintService ps = new PrintService("M: ");
+
+        //WirelessReceiver wr = new WirelessReceiver(lac, "COM6", false, ls);
+        PrintService ps = new PrintService("RX: ");
         WebSocketService wss = new WebSocketService();
-        //DatabaseService db = new DatabaseService(lac);
-        // DatabaseService db = new DatabaseService(lac);
-        //LCDScreen1 lcd1 = new LCDScreen1(0x27); //0x25
-        //LCDScreen2 lcd2 = new LCDScreen2(0x27); //0x26
-        //ls.add(lcd2);
+        DatabaseService db = new DatabaseService(lac);
+        
         //ls.add(ps);
         ls.add(wss);
-        //ls.add(db);
-        // ls.add(db);
+        ls.add(db);
 
-        TestChannel reader = new TestChannel(lac, ls);
-        //NullChannel nc = new NullChannel(lac, ls);
-        
-        
-        //Thread t6 = new Thread(lcd1);
-        //Thread t7 = new Thread(lcd2);
-        Thread t1 = new Thread(reader);
+        WirelessReceiver wr = new WirelessReceiver(lac, args[0], false, ls);
+
+        NullChannel nc = new NullChannel(lac, ls);
+
+        Thread t1 = new Thread(nc);
         //Thread t2 = new Thread(ps);
+        Thread t3 = new Thread(wr);
         Thread t4 = new Thread(wss);
-        //Thread t3 = new Thread(db);
-        //Thread t5 = new Thread(nc);
-        
-        //t6.start();
-        t1.start();
-        //t7.start();
-        //t3.start();
+        Thread t5 = new Thread(db);
+        System.out.println("Empezando lecturas en 5 segundos...");
+        Thread.sleep(5000);
         t4.start();
-        // //t1.start();
+        t1.start();
         //t2.start();
-        //t5.start();
+        t3.start();
+        t5.start();
 
     }
 }

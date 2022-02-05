@@ -1,14 +1,14 @@
 // DEBUG
 
-#define serial_print // Usar para ver que los mppt se están leyendo bien
+//#define serial_print // Usar para ver que los mppt se están leyendo bien
 
 #define debug_i2c
 // CANBUS
 #include <Serial_CAN_Module.h>
 #include <SoftwareSerial.h>
 Serial_CAN can;
-#define can_tx  2           // tx of serial can module connect to D2
-#define can_rx  3           // rx of serial can module connect to D3
+#define can_tx  1           // tx of serial can module connect to D2
+#define can_rx  0           // rx of serial can module connect to D3
 unsigned long id = 0;
 unsigned long id_aux = 0;// Just to fix a bug with print
 unsigned char buff[8];
@@ -92,10 +92,9 @@ void processRequestEvent(void){
 /*///////////////////// SET UP /////////////////////*/
 void setup() {
   // Config canbus baudrate to 1000KBS for bms
-  //Serial.begin(9600);
-  Serial.begin(9600);
-  can.begin(can_tx, can_rx, 9600); // CANBUS baudrate is set to 125 KB
-  Wire.begin(0x08); // Join I2C bus as slave with address 8
+  //Serial.begin(57600);
+  can.begin(can_tx, can_rx, 57600); // CANBUS baudrate is set to 125 KB
+  Wire.begin(0x8); // Join I2C bus as slave with address 8
   Wire.setClock(400000); // Set Hz to max RP4 Hz allowed
   Wire.onReceive(processWriteEvent);  
   Wire.onRequest(processRequestEvent);
@@ -113,16 +112,22 @@ void setup() {
 
 /*///////////////////// LOOP /////////////////////*/
 void loop() {
-  delay(1000); // Delay empírico. Si no está, algo le pasa al canbus y se traba, no actualiza ningún MPPT.
+  //delay(4); // Delay empírico. Si no está, algo le pasa al canbus y se traba, no actualiza ningún MPPT.
   #ifdef serial_print
     //delay(1000);
   #endif
 
   if(can.recv(&id, buff)){
+    id_aux = id; // Just to fix a bug with print
+    #ifdef serial_print
+      Serial.print("ID: ");Serial.println(id_aux, HEX);
+      for(int i= 0; i<8; i++){
+        Serial.print(" ");Serial.print(buff[i], HEX);
+      }
+      Serial.println("");
+    #endif
 
-    id_aux = id;
     if (id_aux == 0x100){
-      Serial.println("100 updated");
       for(int i=0;i<8;i++){bms_100[i] = buff[i];};
       #ifdef serial_print
         Serial.println("100 updated");
@@ -156,4 +161,10 @@ void loop() {
     
   }// FIn Check Receive()
 
+  #ifdef serial_print
+    Serial.flush();
+  #endif
+  #ifdef debug_i2c
+    Serial.flush();
+  #endif
 }

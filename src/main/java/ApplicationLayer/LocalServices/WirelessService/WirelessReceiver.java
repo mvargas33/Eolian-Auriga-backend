@@ -11,6 +11,7 @@ import ApplicationLayer.LocalServices.WirelessService.Utilities.BitOperations;
 import ApplicationLayer.LocalServices.WirelessService.ZigBeeLayer.XbeeReceiver;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -69,7 +70,7 @@ public class WirelessReceiver extends WirelessService{
                 // 1. Extract header and found upUpdated Message
                 currentHeader = (char) b[0];                   // Extraer header
                 Message m = this.map.get(currentHeader);
-
+                //System.out.println("Received"+Arrays.toString(b));
                 // 2. Update Message with new values
                 m.bytes = b;
 
