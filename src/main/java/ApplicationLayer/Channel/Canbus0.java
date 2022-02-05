@@ -24,7 +24,7 @@ public class Canbus0 extends Channel {
      * @param myServices Services to inform to whenever an AppComponents get updated
      */
     public Canbus0(List<AppComponent> myComponentList, List<Service> myServices) {
-        super(myComponentList, myServices);
+        super(myComponentList, myServices, new String[] {"BMS", "MPPT"});
         // Check that a BMS AppComponent was supplied
         // With the exact amount of double[] values as the implementation here
         for(AppComponent ac : myComponentList) {

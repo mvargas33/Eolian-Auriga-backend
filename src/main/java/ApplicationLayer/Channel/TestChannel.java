@@ -1,7 +1,7 @@
 package ApplicationLayer.Channel;
 
 import ApplicationLayer.AppComponents.AppComponent;
-import ApplicationLayer.AppComponents.AppComponent;
+import ApplicationLayer.AppComponents.AppSender;
 import ApplicationLayer.LocalServices.Service;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class TestChannel extends Channel{
      */
     public TestChannel(List<AppComponent> myComponentList, List<Service> myServices) {
         super(myComponentList, myServices);
-        this.r = new Random(12345);
+        this.r = new Random();
         this.valuesMap = new HashMap<>();
         for (AppComponent a : myComponentList
              ) {
@@ -28,28 +28,17 @@ public class TestChannel extends Channel{
     }
 
     /**
-     * Moved separately to test correctly.
-     * Generates random values in allowed range for each value for each Component
+     * Each channel has predefined AppComponents
+     *  @param myComponentList List of AppComponent that this Channel update values to
+     * @param myServices Services to inform to whenever an AppComponents get updated
      */
-    public void randomValuesInRangeForAllComponents(){
-        try{
-            for (AppComponent a : myComponentList
-            ) {
-                // Update values directly. Without the call of updateValues() inside AppComponent
-                for (int i = 0; i < a.len; i++) {
-                    double old = a.valoresRealesActuales[i]; // Test purpose
-
-                    a.valoresRealesActuales[i] = a.minimosConDecimal[i] + (a.maximosConDecimal[i] - a.minimosConDecimal[i]) * this.r.nextDouble(); // Random value in adequate range
-
-                    if(a.valoresRealesActuales[i] < a.minimosConDecimal[i] | a.valoresRealesActuales[i] > a.maximosConDecimal[i]){
-                        System.out.println(a.getID() + " | Actual " + old + " | Min " + a.minimosConDecimal[i] + " | Max " + a.maximosConDecimal[i] + " | New " + a.valoresRealesActuales[i]);
-                        throw new Exception("Test Channel failure: Created random value outside range for " + a.getID());
-                    }
-                }
-            }
-            super.informServices(); // Call this just after all AppComponent in myComponentList were updated
-        }catch (Exception exception){
-            exception.printStackTrace();
+    public TestChannel(List<AppComponent> myComponentList, List<Service> myServices, String[] componentsIds) {
+        super(myComponentList, myServices, componentsIds);
+        this.r = new Random();
+        this.valuesMap = new HashMap<>();
+        for (AppComponent a : myComponentList
+        ) {
+            valuesMap.put(a, new double[a.len]);
         }
     }
 
@@ -61,7 +50,18 @@ public class TestChannel extends Channel{
     @Override
     public void readingLoop() {
         while(true){
-            this.randomValuesInRangeForAllComponents();
+            try{
+                for (AppComponent a : myComponentList
+                     ) {
+                    // Update values directly. Without the call of updateValues() inside AppComponent
+                    for (int i = 0; i < a.len; i++) {
+                        a.valoresRealesActuales[i] = a.minimosConDecimal[i] + (a.maximosConDecimal[i] - a.minimosConDecimal[i]) * this.r.nextDouble(); // Random value in adequate range
+                    }
+                }
+                super.informServices(); // Call this just after all AppComponent in myComponentList were updated
+            }catch (Exception exception){
+                exception.printStackTrace();
+            }
         }
     }
 
