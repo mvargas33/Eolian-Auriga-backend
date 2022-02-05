@@ -43,7 +43,7 @@ public class WirelessServiceTest {
         // Setp-by-step test
 
         // 0. Create random values in range for all Components and save those values
-        testChannel.randomValuesInRangeForAllComponents();
+        //testChannel.randomValuesInRangeForAllComponents(); // TODO: REDO THIS TEST TO GEN VALUES IN RANGE
         List<AppComponent> appComponents_SND = testChannel.myComponentList; // Source
 
         // 1. Send over protocol, put bytes inn XbeeReceiver Queue
