@@ -37,7 +37,7 @@ public class Canbus0ChannelTest {
         PrintService printService = new PrintService();
         services.add(printService);
 
-        Canbus1 gpsChannel = new Canbus1(appSenders, services);
+        Canbus1 gpsChannel = new Canbus1(appSenders, services, false);
 
         // Execute threads
         ExecutorService mainExecutor = Executors.newFixedThreadPool(2);

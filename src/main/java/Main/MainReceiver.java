@@ -63,15 +63,16 @@ public class MainReceiver {
         List<Service> ls = new ArrayList<>();
 
         //WirelessReceiver wr = new WirelessReceiver(lac, "COM6", false, ls);
-        PrintService ps = new PrintService("RX: ");
+        //PrintService ps = new PrintService("RX: ");
         WebSocketService wss = new WebSocketService();
-        DatabaseService db = new DatabaseService(lac);
+        DatabaseService db = new DatabaseService(lac, "");
         
         //ls.add(ps);
         ls.add(wss);
         ls.add(db);
 
         WirelessReceiver wr = new WirelessReceiver(lac, args[0], false, ls);
+        ls.add(wr);
 
         NullChannel nc = new NullChannel(lac, ls);
 

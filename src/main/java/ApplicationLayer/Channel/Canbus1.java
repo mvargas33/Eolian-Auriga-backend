@@ -34,6 +34,7 @@ public class Canbus1 extends Channel {
     private final int temperature_sensor_fault_index = 307;       // 28 cells
     private final int resistance_calculation_fault_index = 335;   // 28 cells
     private final int load_fault_index = 363;                     // 28 cells
+    private boolean dev;
 
     /**
      * Each channel has predefined AppComponents
@@ -41,8 +42,9 @@ public class Canbus1 extends Channel {
      * @param myComponentList List of AppComponent that this Channel update values to
      * @param myServices Services to inform to whenever an AppComponents get updated
      */
-    public Canbus1(List<AppComponent> myComponentList, List<Service> myServices) {
+    public Canbus1(List<AppComponent> myComponentList, List<Service> myServices, boolean dev) {
         super(myComponentList, myServices);
+        this.dev = dev;
         // Check that a BMS AppComponent was supplied
         // With the exact amount of double[] values as the implementation here
         try{
@@ -66,7 +68,8 @@ public class Canbus1 extends Channel {
     @Override
     public void readingLoop() {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("bash", "-c", "candump can1,111~FFF");
+        if(dev) processBuilder.command("bash", "-c", "candump vcan1");
+        else processBuilder.command("bash", "-c", "candump can1");
         try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(
@@ -99,7 +102,8 @@ public class Canbus1 extends Channel {
         // (9600 es el baud rate)
         
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("sudo /sbin/ip link set can1 up type can bitrate 500000");
+        if(dev) stringBuilder.append("sudo /sbin/ip link add dev vcan1 type vcan;sudo /sbin/ip link set vcan1 up"); 
+        else stringBuilder.append("sudo /sbin/ip link set can1 up type can bitrate 500000");
         //stringBuilder.append("cd ./src/main/java/ApplicationLayer/SensorReading/CANReaders/linux-can-utils;");
         //stringBuilder.append("gcc candump.c lib.c -o candump;"); // Comment this on second execution, no need to recompile
         processBuilder.command("bash", "-c", stringBuilder.toString());
@@ -259,10 +263,11 @@ public class Canbus1 extends Channel {
                         this.bms.valoresRealesActuales[voltages_index + ((id - BASE_DUMP_ID - 1) * 8) + 7] = data[7]/100.0 + 2;
                     }
                 }else{
-                    System.out.print("ID: " + msg[2] + " MSG: ");
-                    for(int i=0 ; i< L; i++){
-                        System.out.print(" " + msg[i+4]);
-                    }System.out.println("");
+                    return;
+                    // System.out.print("ID: " + msg[2] + " MSG: ");
+                    // for(int i=0 ; i< L; i++){
+                    //     System.out.print(" " + msg[i+4]);
+                    // }System.out.println("");
                 }
         } // switch
     } // parseMessage()

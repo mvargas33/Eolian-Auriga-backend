@@ -1,3 +1,3 @@
-Fix_found,Latitude_direction,Longitude_direction,Latitude,Longitude
-0,0,0,-0.0001,-0.0001
-1,1,1,9999999.9999,9999999.9999
+lat_dir,lat_angle,lat_degree,long_dir,long_angle,long_degree
+-1,0,0.0001,-1,0,0.0001
+1,90,99.0001,1,180,99

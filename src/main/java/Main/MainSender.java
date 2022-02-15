@@ -8,7 +8,9 @@ package Main;
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.Canbus0;
+import ApplicationLayer.Channel.Canbus0_real;
 import ApplicationLayer.Channel.Canbus1;
+import ApplicationLayer.Channel.GPSChannel;
 import ApplicationLayer.Channel.I2C;
 import ApplicationLayer.Channel.TestChannel;
 import ApplicationLayer.LocalServices.*;
@@ -46,6 +48,38 @@ public class MainSender {
     }
 
     public static void main(String[] args) throws Exception {
+        boolean dev = false;
+        boolean encrypt = false;
+        String xbeePort = "/dev/ttyUSB0";
+        String componentsPath = "/home/pi/Desktop/RPI/components/auriga/";
+        String databasePath = "/home/pi/Desktop/RPI/";
+        for(int i = 0; i < args.length; i++) {
+            try {
+                if(args[i].equals("--dev")) {
+                    dev = true;
+                }
+                else if(args[i].equals("--xbee")) {
+                    xbeePort = args[i+1];
+                }
+                else if(args[i].equals("--out")) {
+                    databasePath = args[i+1];
+                }
+                else if(args[i].equals("--in")) {
+                    componentsPath = args[i+1];
+                }
+                else if(args[i].equals("--encrypt")) {
+                    encrypt = true;
+                }
+            }
+            catch (ArrayIndexOutOfBoundsException e) {
+                System.out.println("Usage: java -jar Main.jar [OPTIONS]");
+                System.out.println("Options: --xbee <port>");
+                System.out.println("         --out <path>");
+                System.out.println("         --in <path>");
+                System.out.println("         --dev");
+                System.out.println("         --encrypt");
+            }
+        }
 
         System.out.println("Java Version      :  " + SystemInfo.getJavaVersion());
         if(!SystemInfo.getJavaVersion().equals("1.8.0_212")) {
@@ -56,43 +90,39 @@ public class MainSender {
         System.out.println("Main Sender");
         
         // Components
-        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(args[1]);
+        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(componentsPath);
         
         // Services
         List<Service> ls = new ArrayList<>();
-        WirelessSender ws = new WirelessSender(lac, args[0], false);
+        //WirelessSender ws = new WirelessSender(lac, xbeePort, encrypt);
         //PrintService ps = new PrintService("TX: ");
         WebSocketService wss = new WebSocketService();
-        //LCDScreen1 lcd1 = new LCDScreen1(0x26); //ver si las lcd van o no, para no gastar threads
-        //LCDScreen2 lcd2 = new LCDScreen2(0x25);
-        DatabaseService dbs = new DatabaseService(lac);
+        DatabaseService dbs = new DatabaseService(lac, databasePath);
 
-        ls.add(ws);
-        //ls.add(lcd1);
-        //ls.add(lcd2);
+        //ls.add(ws);
         //ls.add(ps);
         ls.add(wss);
         ls.add(dbs);
 
         // Channels
-        Canbus1 can1 = new Canbus1(lac, ls);
-        Canbus0 can0 = new Canbus0(lac, ls);
-
+        Canbus1 can1 = new Canbus1(lac, ls, dev);
+        //Canbus0_real can0 = new Canbus0_real(lac, ls, dev);
+        GPSChannel gps = new GPSChannel(lac, ls);
+        Canbus0 can0 = new Canbus0(lac, ls, dev);
         // Main loops
         Thread t1 = new Thread(can1);
         Thread t5 = new Thread(can0);
-        //Thread t6 = new Thread(lcd1);
-        //Thread t7 = new Thread(lcd2);
+        Thread t6 = new Thread(gps);
         //Thread t2 = new Thread(ps);
-        Thread t3 = new Thread(ws);
+        //Thread t3 = new Thread(ws); 
         Thread t4 = new Thread(wss);
         Thread t9 = new Thread(dbs);
         t1.start();
         t5.start();
-        //t6.start();
+        t6.start();
         //t7.start();
         //t2.start();
-        t3.start();
+        //t3.start();
         t4.start(); 
         t9.start();
     }

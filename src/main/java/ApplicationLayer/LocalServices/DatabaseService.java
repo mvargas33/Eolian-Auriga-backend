@@ -21,10 +21,11 @@ public class DatabaseService extends Service implements Runnable {
     public String[] components;
     public String date_dir; // path to /data/{date} folder
 
-    public DatabaseService(List<AppComponent> lac) {
+    public DatabaseService(List<AppComponent> lac, String out_dir) {
         super();
 
-        absolute_path = System.getProperty("user.dir") + "/data";
+        // absolute_path = System.getProperty("user.dir") + out_dir + "/data";
+        absolute_path = out_dir + "/data";
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
         Date date = new Date();

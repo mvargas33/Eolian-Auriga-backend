@@ -16,15 +16,16 @@ public class Canbus0 extends Channel {
     private AppComponent sevcon_der;
     private AppComponent lcd;
     private final int lenSevcon = 16; // Hardcoded, specific, actual values updated in this implementation for this Component
-
+    private boolean dev = false;
     /**
      * Each channel has predefined AppComponents
      *
      * @param myComponentList List of AppComponent that this Channel update values to
      * @param myServices Services to inform to whenever an AppComponents get updated
      */
-    public Canbus0(List<AppComponent> myComponentList, List<Service> myServices) {
-        super(myComponentList, myServices, new String[] {"BMS", "MPPT"});
+    public Canbus0(List<AppComponent> myComponentList, List<Service> myServices, boolean dev) {
+        super(myComponentList, myServices);
+        this.dev = dev;
         // Check that a BMS AppComponent was supplied
         // With the exact amount of double[] values as the implementation here
         for(AppComponent ac : myComponentList) {
@@ -60,8 +61,12 @@ public class Canbus0 extends Channel {
     @Override
     public void readingLoop() {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("bash", "-c", "python3 /home/pi/Desktop/lectura/Codigo_rendimiento.py");
-        try {
+        if(dev) {
+            processBuilder.command("bash", "-c", "python3 /home/pi/Desktop/lectura/Codigo_rendimiento.py --dev");
+        }
+        else {
+            processBuilder.command("bash", "-c", "python3 /home/pi/Desktop/lectura/Codigo_rendimiento.py");
+        }try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream())
@@ -111,6 +116,7 @@ public class Canbus0 extends Channel {
     public void parseMessage(String message) {
         //String[] msg = Utils.split(message, " "); // Better performance split than String.split()
         String[] msg = message.split(","); // etter performance split than String.split()
+        if(msg[0].length() < 1) return;
 
         // if (msg.length != 16){ // If it isn't CAN-type message
         //     System.out.println("Message is not CAN-type. Split length is not 16.");
@@ -119,7 +125,8 @@ public class Canbus0 extends Channel {
         // }
 
         // Parse HEX strings to byte data type, into local buffer
-        switch (msg[0].split(":")[1]){
+        String s = msg[0].split(":")[1];
+        switch (s){
             case "100":
                 this.sevcon_izq.valoresRealesActuales[0] = Double.parseDouble(msg[2].split(":")[1]);//v bat
                 this.sevcon_izq.valoresRealesActuales[1] = Double.parseDouble(msg[1].split(":")[1]); // current bat
