@@ -24,13 +24,13 @@ public class DatabaseService extends Service implements Runnable {
     public DatabaseService(List<AppComponent> lac) {
         super();
 
-        absolute_path = System.getProperty("user.dir") + "\\data";
+        absolute_path = System.getProperty("user.dir") + "/data";
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
         Date date = new Date();
 
 
-        date_dir = absolute_path + "\\" + formatter.format(date);
+        date_dir = absolute_path + "/" + formatter.format(date);
 
         // creates a file object with specified path
         new File(date_dir).mkdirs();
@@ -79,7 +79,7 @@ public class DatabaseService extends Service implements Runnable {
      * @throws IOException
      */
     public void initDataLog(String[] values, String ID) throws IOException { //ver cuando llamar a initDataLog
-        String fileName = date_dir + "\\" + ID + ".csv"; // el filename sera el mismo id?;
+        String fileName = date_dir + "/" + ID + ".csv"; // el filename sera el mismo id?;
         FileWriter fileWriter = new FileWriter(fileName, true); // append = true
         PrintWriter printWriter = new PrintWriter(fileWriter);
 
@@ -100,7 +100,7 @@ public class DatabaseService extends Service implements Runnable {
      * @throws IOException
      */
     public void writeValues(double[] values, String ID) throws IOException, InterruptedException {
-        String fileName = date_dir+"\\"+ID+".csv"; // el filename sera el mismo id?;
+        String fileName = date_dir+"/"+ID+".csv"; // el filename sera el mismo id?;
         FileWriter fileWriter = new FileWriter(fileName, true); // append = true
         PrintWriter printWriter = new PrintWriter(fileWriter);
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS"); //esto hay que revisarlo en concreto con la bd
