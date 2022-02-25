@@ -114,6 +114,7 @@ public class Canbus0 extends Channel {
      * @param message
      */
     public void parseMessage(String message) {
+        System.out.println(message);
         //String[] msg = Utils.split(message, " "); // Better performance split than String.split()
         String[] msg = message.split(","); // etter performance split than String.split()
         if(msg[0].length() < 1) return;

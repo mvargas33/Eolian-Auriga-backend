@@ -48,7 +48,9 @@ public class WirelessSender extends WirelessService{
 
         // 2. Update State's int[] myValues, using just updated double[] valoresRealesActuales
         for (int i = 0; i < actState.len; i++) {
+            System.out.println("actual "+c.nombreParametros[i]+": "+c.valoresRealesActuales[i]);
             actState.myValues[i] = (int) Math.floor( c.valoresRealesActuales[i] * Math.pow(10, actState.decimales[i]) ) + actState.offset[i];
+            System.out.println("sent "+c.nombreParametros[i]+": "+actState.myValues[i]);
         }
 
         // 3. For Message that is associated with State, update bytes in corresponding range

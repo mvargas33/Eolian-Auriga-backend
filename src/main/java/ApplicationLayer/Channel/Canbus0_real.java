@@ -14,8 +14,8 @@ public class Canbus0_real extends Channel {
     private AppComponent sevcon;
     private final int lenSEVCON = 32; // Hardcoded, specific, actual values updated in this implementation for this Component
 
-    private final int message_100_index = 0; // 3 data
-    private final int message_200_index = 3; // 3 data
+    private final int message_100_index = 3; // 3 data
+    private final int message_200_index = 0; // 3 data
     private final int message_300_index = 6; // 4 data
     private final int message_400_index = 10; // 4 data
     private final int message_500_index = 14; // 2 data
@@ -142,6 +142,7 @@ public class Canbus0_real extends Channel {
      */
     public void parseMessage(String message) {
         //String[] msg = Utils.split(message, " "); // Better performance split than String.split()
+        System.out.println(message);
         String[] msg = message.split("\\s+"); // Better performance split than String.split()
 
         // if (msg.length != 16){ // If it isn't CAN-type message
@@ -166,7 +167,8 @@ public class Canbus0_real extends Channel {
             case "200":
                 this.sevcon.valoresRealesActuales[message_200_index    ] = -1 * twoComp(((data[0] << 8) | data[1]),15) ; // der_motor_I SIGNED [A]
                 this.sevcon.valoresRealesActuales[message_200_index + 1] = -1 * 0.1 * twoComp(((data[2] << 8) | data[3]),15) ; // der_motor_torque_demand SIGNED
-                this.sevcon.valoresRealesActuales[message_200_index + 2] = -1 * twoComp(((data[4] << 24) | (data[5] << 16) | (data[6] << 8) | data[7]),31) ; // der_motor_RPM SIGNED [rad/s]
+                this.sevcon.valoresRealesActuales[message_200_index + 2] = -1 * twoComp(((data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4]),31) ; // der_motor_RPM SIGNED [rad/s]
+                System.out.println("RPM: "+this.sevcon.valoresRealesActuales[message_200_index+2]);
                 break;
             case "300":
                 this.sevcon.valoresRealesActuales[message_300_index    ] = -1 * 0.0625 * twoComp(((data[0] << 8) | data[1]), 15); // der_target_I_quadrature SIGNED
