@@ -84,7 +84,6 @@ public class WirelessReceiver extends WirelessService{
                     // 3.2 Update double[] valoresReales (directo) actuales con data de int[] myValues
                     for (int j = 0; j < s.len; j++) {
                         s.myAppComponent.valoresRealesActuales[j] = (s.myValues[j] - s.offset[j]) * Math.pow(10, - s.decimales[j]);
-                        if(s.myAppComponent.nombreParametros[j].contains("der")) System.out.println("recv "+s.myAppComponent.nombreParametros[j]+": "+s.myAppComponent.valoresRealesActuales[j]);
                     }
 
                     // 3.3 Add to list of AppComponents updated

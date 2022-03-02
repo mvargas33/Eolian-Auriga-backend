@@ -69,7 +69,7 @@ public class Initializer {
         while(iCompActual < allStates.size()){ // Mientras tenga componentes por revisar
 
             // Si me queda espacio en el mensaje actual Y Tengo un valor más en el Componente
-            while(tamanoMsgActual < msgLimitSize - 8 & iValorAtual < tamanoBitSig){ // 8 Ultimos bits para CRC
+            while(tamanoMsgActual < msgLimitSize - 8 && iValorAtual < tamanoBitSig){ // 8 Ultimos bits para CRC
                 // Si puedo poner un valor más
                 if(tamanoMsgActual + arrayBitSigActual[iValorAtual] <= msgLimitSize - 8){
                     tamanoMsgActual += arrayBitSigActual[iValorAtual]; // Aumento tamaño del mensaje actual
@@ -87,23 +87,31 @@ public class Initializer {
 
                 // Le digo al Componente que tiene un nuevo mensaje, y los bits que le corresponden
                 compActual.addNewMessage(mensajeActual, raw_inicio, raw_fin, bitSigInicio, componentNumber);
+                messages.put(header, mensajeActual);
 
                 iCompActual++; // Siguiente componente
                 componentNumber++; // Avanzo en comp number
 
                 if(iCompActual < allStates.size()){ // Si me queda otro componente por revisar
-
+                    
+                    componentNumber = 0;
                     compActual = allStates.get(iCompActual); // Paso al siguiente componente
+                    tamanoMsgActual = 8; // 8 bits header
+                    raw_inicio = 8; // 8 bits header
+                    header++;
+                    mensajeActual = new Message(header, msgLimitSizeInBytes);
+                    mensajeActual.addState(compActual);
+
                     iValorAtual = 0; // Parto del indice 0
                     arrayBitSigActual = compActual.getBitSig(); // Extraigo array de bits significativos
                     tamanoBitSig = arrayBitSigActual.length; // Para no recalcular
                     bitSigInicio = 0; // Desde primer índice del nuevo componente
 
                     // Si puedo calzar al menos un valor más en el mensaje
-                    if(tamanoMsgActual + arrayBitSigActual[iValorAtual] <= msgLimitSize - 8){
-                        raw_inicio = tamanoMsgActual; // Desde bit siguiente al componente anterior
-                        mensajeActual.addState(compActual); // Agrego nuevo componente al mensaje
-                    }
+                    // if(tamanoMsgActual + arrayBitSigActual[iValorAtual] <= msgLimitSize - 8){
+                    //     raw_inicio = tamanoMsgActual; // Desde bit siguiente al componente anterior
+                    //     mensajeActual.addState(compActual); // Agrego nuevo componente al mensaje
+                    // }
                     // Acá voy a while de inicio y voy poniendo mas bits en el mensaje actual
                 }
                 // Sino, no tenía más componentes y se acaba iteración
@@ -134,7 +142,7 @@ public class Initializer {
         if(tamanoMsgActual > 0){ // Si mi mensaje tenía valores, no estaba vacío (necesario por si cambie de mensaje y componente en última iteración)
             //raw_fin = tamanoMsgActual - 1;
             //compActual.addNewMessage(mensajeActual, raw_inicio, raw_fin, bitSigInicio);
-
+            compActual.addNewMessage(mensajeActual, raw_inicio, raw_fin, bitSigInicio, componentNumber);
             messages.put(header, mensajeActual); // Para el HashMap del receiver
             //messages.add(mensajeActual); // Debug
             //System.out.println(mensajeActual.toString()); // Debug

@@ -50,6 +50,7 @@ public class WebSocketService extends Service{
     @Override
     protected void serve(AppComponent c) {
         try {
+            Thread.sleep(250);
             if (map.containsKey(c.getID())) {
                 //map.put(c.getID(), (JSONObject) map.get(c.getID()).put("data", c.getValoresRealesActuales()));
                 //server.getBroadcastOperations().sendEvent(c.getID(), map.get(c.getID())); // Enviar evento a WebSocket del componente específico
@@ -78,6 +79,8 @@ public class WebSocketService extends Service{
                 //System.out.println("Bradcast de: " + c.getID());
             }
             Thread.sleep(10);
+        }catch (InterruptedException e) {
+            this.server.stop();
         }catch (Exception e){
             e.printStackTrace(); // Sólo se hace print, el sistema no se puede caer
         }

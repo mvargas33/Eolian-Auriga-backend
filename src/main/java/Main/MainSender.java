@@ -96,12 +96,12 @@ public class MainSender {
         List<Service> ls = new ArrayList<>();
         WirelessSender ws = new WirelessSender(lac, xbeePort, encrypt);
         //PrintService ps = new PrintService("TX: ");
-        //--WebSocketService wss = new WebSocketService();
+        WebSocketService wss = new WebSocketService();
         //DatabaseService dbs = new DatabaseService(lac, databasePath);
 
         ls.add(ws);
         //ls.add(ps);
-        //ls.add(wss);
+        ls.add(wss);
         //ls.add(dbs);
 
         // Channels
@@ -113,14 +113,14 @@ public class MainSender {
         Thread t5 = new Thread(can0);
         //Thread t2 = new Thread(ps);
         Thread t3 = new Thread(ws); 
-        //Thread t4 = new Thread(wss);
+        Thread t4 = new Thread(wss);
         //Thread t9 = new Thread(dbs);
         t1.start();
         t5.start();
         //t7.start();
         //t2.start();
         t3.start();
-        //t4.start(); 
+        t4.start(); 
         //t9.start();
     }
 }

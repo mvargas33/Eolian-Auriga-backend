@@ -28,7 +28,7 @@ import java.util.List;
 import com.pi4j.system.SystemInfo;
 
 public class MainReceiver {
-    public static String dir = "C:/Users/Dante/Downloads/PC-20220111T175102Z-001/PC/components/auriga";
+    public static String dir = "C:/Users/Dante/Desktop/Eolian/PC/components";
     public XbeeReceiver xbeeReceiver;
 
     public MainReceiver() {
@@ -71,7 +71,7 @@ public class MainReceiver {
         ls.add(wss);
         //ls.add(db);
 
-        WirelessReceiver wr = new WirelessReceiver(lac, "COM5", false, ls);
+        WirelessReceiver wr = new WirelessReceiver(lac, "COM3", false, ls);
 
         NullChannel nc = new NullChannel(lac, ls);
 
