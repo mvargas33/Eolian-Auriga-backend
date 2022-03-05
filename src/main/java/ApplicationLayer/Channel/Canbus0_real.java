@@ -18,12 +18,10 @@ public class Canbus0_real extends Channel {
     private final int message_200_index = 0; // 3 data
     private final int message_300_index = 6; // 4 data
     private final int message_400_index = 10; // 4 data
-    private final int message_500_index = 14; // 2 data
-    private final int message_102_index = 16; // 3
-    private final int message_202_index = 19; // 3
+    private final int message_102_index = 19; // 3
+    private final int message_202_index = 16; // 3
     private final int message_302_index = 22; // 4
     private final int message_402_index = 26; // 4
-    private final int message_502_index = 30; // 2 data
 
     private boolean dev;
 
@@ -186,14 +184,10 @@ public class Canbus0_real extends Channel {
                 this.sevcon.valoresRealesActuales[message_300_index + 3] = -1 * 0.0625 * parseCan(data, 6, 7); // der_V_quadrature SIGNED
                 break;
             case "400":
-                this.sevcon.valoresRealesActuales[message_400_index    ] = 0.0625 *  parseCan(data, 0, 1); // der_throttle_V [V]
+                this.sevcon.valoresRealesActuales[message_400_index    ] = 0.00390625 *  parseCan(data, 0, 1); // der_throttle_V [V]
                 this.sevcon.valoresRealesActuales[message_400_index + 1] = -1 * 0.0625 * parseCan(data, 2, 3); // der_target_I_direct SIGNED
                 this.sevcon.valoresRealesActuales[message_400_index + 2] = -1 * 0.0625 * parseCan(data, 4, 5); // der_I_direct SIGNED
                 this.sevcon.valoresRealesActuales[message_400_index + 3] = -1 * 0.0625 * parseCan(data, 6, 7); // der_V_direct SIGNED
-                break;
-            case "500":
-                this.sevcon.valoresRealesActuales[message_500_index    ] = 0.1 * parseCan(data, 0, 1); // der_target_torque_percentaje
-                this.sevcon.valoresRealesActuales[message_500_index + 1] = 0.0625 * parseCan(data, 2, 3); // der_footbrake_V [V]
                 break;
             case "102":
                 this.sevcon.valoresRealesActuales[message_102_index    ] = 0.0625 * parseCan(data, 0, 1); // izq_battery_V
@@ -202,13 +196,13 @@ public class Canbus0_real extends Channel {
                 break;
             case "202":
                 this.sevcon.valoresRealesActuales[message_202_index    ] = -1 * parseCan(data, 0, 1) ; // izq_motor_I SIGNED
-                this.sevcon.valoresRealesActuales[message_202_index + 1] = -1 * 0.1 * parseCan(data, 2, 3); // izq_motor_torque_demand SIGNED
+                this.sevcon.valoresRealesActuales[message_202_index + 1] = -1 * 0.0625 * parseCan(data, 2, 3); // izq_motor_torque_demand SIGNED
                 this.sevcon.valoresRealesActuales[message_202_index + 2] = -1 * parseCan(data, 4, 7); // izq_motor_RPM SIGNED
                 break;
             case "302":
                 this.sevcon.valoresRealesActuales[message_302_index    ] = -1 * 0.0625 * parseCan(data, 0, 1); // izq_target_I_quadrature SIGNED
                 this.sevcon.valoresRealesActuales[message_302_index + 1] = -1 * 0.0625 * parseCan(data, 2, 3); // izq_I_quadrature SIGNED
-                this.sevcon.valoresRealesActuales[message_302_index + 2] = -1 * 0.1    * parseCan(data, 4, 5); // izq_torque_actual SIGNED
+                this.sevcon.valoresRealesActuales[message_302_index + 2] = -1 * 0.0625    * parseCan(data, 4, 5); // izq_torque_actual SIGNED
                 this.sevcon.valoresRealesActuales[message_302_index + 3] = -1 * 0.0625 * parseCan(data, 6, 7); // izq_V_quadrature SIGNED
                 break;
             case "402":
@@ -217,11 +211,8 @@ public class Canbus0_real extends Channel {
                 this.sevcon.valoresRealesActuales[message_402_index + 2] = -1 * 0.0625 * parseCan(data, 4, 5);  // izq_I_direct SIGNED
                 this.sevcon.valoresRealesActuales[message_402_index + 3] = -1 * 0.0625 * parseCan(data, 6, 7);  // izq_V_direct SIGNED
                 break;
-            case "502":
-                this.sevcon.valoresRealesActuales[message_502_index    ] = 0.1 * parseCan(data,0,1); // izq_target_torque_percentaje
-                this.sevcon.valoresRealesActuales[message_502_index + 1] = 0.00390625 * parseCan(data,2,3); // izq_footbrake_V [V]
-                break;
             default:
+                break;
                 //System.out.print("ID: " + msg[2] + " MSG: ");
                 //for(int i=0 ; i< L; i++){
                 //    System.out.print(" " + msg[i+4]);
