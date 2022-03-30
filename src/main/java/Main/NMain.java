@@ -20,7 +20,7 @@ public class NMain {
         // segun entiendo, ahora deberia iniciar todos los channels
         // con sus appcomponents definidos y lanzarlos a correr en paralelo
         // con el mismo executor del main antiguo
-
+        System.out.println(((((255 << 8) | 255) >> 15) & 1) == 1);
         // usar servicio print service
         List<Service> serviceList = new ArrayList<>();
         PrintService printService = new PrintService();
@@ -29,14 +29,11 @@ public class NMain {
         List<AppComponent> ACList = CSVToAppComponent.CSVs_to_AppComponents(dir);
 
         // voy a partir haciendo uno para testchannel
-        TestChannel tc = new TestChannel(ACList, serviceList, new String[] {"BMS", "MPPT"});
+        //TestChannel tc = new TestChannel(ACList, serviceList, new String[] {"BMS", "MPPT"});
 
         // con esto solo quedaria iniciar los channels con sus respectivos app components + el print service
         // y luego lanzar cada uno a un thread en el executer + el printService
-        ExecutorService mainExecutor = Executors.newFixedThreadPool(2);
-        mainExecutor.submit(printService);
-        mainExecutor.submit(tc);
-        mainExecutor.shutdown();
+
         // init canbus0
 
         // duda: Si usamos la conversion de csv/excel -> AppComponent como dice la linea abajo,

@@ -87,7 +87,7 @@
                     <configuration>
                         <archive>
                             <manifest>
-                                <mainClass>Main.Sevcon</mainClass>
+                                <mainClass>Main.MainSender</mainClass>
                             </manifest>
                         </archive>
                         <descriptorRefs>

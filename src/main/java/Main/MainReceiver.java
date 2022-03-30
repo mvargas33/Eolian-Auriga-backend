@@ -59,19 +59,19 @@ public class MainReceiver {
         System.out.println("Java Runtime      :  " + SystemInfo.getJavaRuntime());
         System.out.println("MainReceiver");
         
-        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(dir);
+        List<AppComponent> lac = CSVToAppComponent.CSVs_to_AppComponents(args[1]);
         List<Service> ls = new ArrayList<>();
 
         //WirelessReceiver wr = new WirelessReceiver(lac, "COM6", false, ls);
         //PrintService ps = new PrintService("RX: ");
         WebSocketService wss = new WebSocketService();
-        //DatabaseService db = new DatabaseService(lac, "");
+        DatabaseService db = new DatabaseService(lac, args[2]);
         
         //ls.add(ps);
         ls.add(wss);
-        //ls.add(db);
+        ls.add(db);
 
-        WirelessReceiver wr = new WirelessReceiver(lac, "COM3", false, ls);
+        WirelessReceiver wr = new WirelessReceiver(lac, args[0], false, ls);
 
         NullChannel nc = new NullChannel(lac, ls);
 
@@ -79,14 +79,14 @@ public class MainReceiver {
         //Thread t2 = new Thread(ps);
         Thread t3 = new Thread(wr);
         Thread t4 = new Thread(wss);
-        //Thread t5 = new Thread(db);
+        Thread t5 = new Thread(db);
         System.out.println("Empezando lecturas en 5 segundos...");
         Thread.sleep(5000);
         t4.start();
         t1.start();
         //t2.start();
         t3.start();
-        //t5.start();
+        t5.start();
 
     }
 }

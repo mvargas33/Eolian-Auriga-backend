@@ -65,8 +65,9 @@ public class DatabaseService extends Service implements Runnable {
         try {
             // INSERT double[] en su tabla, sacar el timestamp del momento en que guarda
             // en este punto ya se debio haber llamado a initDataLog con los argumentos correspondientes
-            writeValues(c.getValoresRealesActuales(), c.getID());
 
+            writeValues(c.getValoresRealesActuales(), c.getID());
+            Thread.sleep(250);
         } catch (Exception e) {
             e.printStackTrace(); // Sólo se hace print, el sistema no se puede caer
         }

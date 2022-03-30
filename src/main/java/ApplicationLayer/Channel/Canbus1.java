@@ -120,6 +120,31 @@ public class Canbus1 extends Channel {
         }
     }
 
+    // msb indexado desde 0 a 31
+    public int twoComp(int val, int msb) {
+        if(msb == 31) {
+            return val;
+        }
+        else {
+            if(((val >> msb) & 1) == 1) {
+                return -(1<<(msb+1))+val;
+            }
+            else {
+                return val;
+            }
+        }
+    }
+
+    public int parseCan(int[] data, int start, int end) {
+        int o = 0;
+        int offset = 8*(end-start);
+        for(int i = start; i <= end; i++) {
+            o = o | (data[i] << offset);
+            offset -= 8;
+        }
+        return twoComp(o, (end-start+1)*8-1);
+    }
+
     /**
      * Parsing function. Transforms CANBUS message from console to double,
      * into AppComponent bms's double[] valoresRealesActuales, directly.
@@ -145,82 +170,82 @@ public class Canbus1 extends Channel {
         switch (msg[2]){
             case "502":
                 // State of system
-                this.bms.valoresRealesActuales[message_622_index    ]  = (int) data[0] & 0b00000001;        // fault_state
-                this.bms.valoresRealesActuales[message_622_index + 1] = ((int) data[0] & 0b00000010) >> 1;  // K1_contactor
-                this.bms.valoresRealesActuales[message_622_index + 2] = ((int) data[0] & 0b00000100) >> 2;  // K2_contactor
-                this.bms.valoresRealesActuales[message_622_index + 3] = ((int) data[0] & 0b00001000) >> 3;  // K3_contactor
-                this.bms.valoresRealesActuales[message_622_index + 4] = ((int) data[0] & 0b00010000) >> 4;  // relay_fault
+                this.bms.valoresRealesActuales[message_622_index    ]  = data[0] & 0b00000001;        // fault_state
+                this.bms.valoresRealesActuales[message_622_index + 1] = (data[0] & 0b00000010) >> 1;  // K1_contactor
+                this.bms.valoresRealesActuales[message_622_index + 2] = (data[0] & 0b00000100) >> 2;  // K2_contactor
+                this.bms.valoresRealesActuales[message_622_index + 3] = (data[0] & 0b00001000) >> 3;  // K3_contactor
+                this.bms.valoresRealesActuales[message_622_index + 4] = (data[0] & 0b00010000) >> 4;  // relay_fault
 
-                this.bms.valoresRealesActuales[message_622_index + 5] = (((int) data[1] << 8) & (int) data[2]); // powerup_time [s]
+                this.bms.valoresRealesActuales[message_622_index + 5] = (data[1] << 8) | data[2]; // powerup_time [s]
 
                 // Byte of flags
-                this.bms.valoresRealesActuales[message_622_index + 6] = (int) data[3] & 0b00000001;         // power_from_source
-                this.bms.valoresRealesActuales[message_622_index + 7] = ((int) data[3] & 0b00000010) >> 1;  // power_from_load
-                this.bms.valoresRealesActuales[message_622_index + 8] = ((int) data[3] & 0b00000100) >> 2;  // interlock_tripped
-                this.bms.valoresRealesActuales[message_622_index + 9] = ((int) data[3] & 0b00001000) >> 3;  // hard_wire_contactor_request
-                this.bms.valoresRealesActuales[message_622_index + 10] = ((int) data[3] & 0b00010000) >> 4; // can_contactor_request
-                this.bms.valoresRealesActuales[message_622_index + 11] = ((int) data[3] & 0b00100000) >> 5; // HLIM_set
-                this.bms.valoresRealesActuales[message_622_index + 12] = ((int) data[3] & 0b01000000) >> 6; // LLIM_set
-                this.bms.valoresRealesActuales[message_622_index + 13] = ((int) data[3] & 0b10000000) >> 7; // fan_on
+                this.bms.valoresRealesActuales[message_622_index + 6] = data[3] & 0b00000001;         // power_from_source
+                this.bms.valoresRealesActuales[message_622_index + 7] = ( data[3] & 0b00000010) >> 1;  // power_from_load
+                this.bms.valoresRealesActuales[message_622_index + 8] = ( data[3] & 0b00000100) >> 2;  // interlock_tripped
+                this.bms.valoresRealesActuales[message_622_index + 9] = ( data[3] & 0b00001000) >> 3;  // hard_wire_contactor_request
+                this.bms.valoresRealesActuales[message_622_index + 10] = ( data[3] & 0b00010000) >> 4; // can_contactor_request
+                this.bms.valoresRealesActuales[message_622_index + 11] = ( data[3] & 0b00100000) >> 5; // HLIM_set
+                this.bms.valoresRealesActuales[message_622_index + 12] = ( data[3] & 0b01000000) >> 6; // LLIM_set
+                this.bms.valoresRealesActuales[message_622_index + 13] = ( data[3] & 0b10000000) >> 7; // fan_on
 
                 // Fault code, stored
-                this.bms.valoresRealesActuales[message_622_index + 14] = (int) data[4];  // fault_code
+                this.bms.valoresRealesActuales[message_622_index + 14] = data[4];  // fault_code
 
                 // Level fault flags
-                this.bms.valoresRealesActuales[message_622_index + 15] = (int) data[5] & 0b00000001;        // driving_off_while_plugged_in
-                this.bms.valoresRealesActuales[message_622_index + 16] = ((int) data[5] & 0b00000010) >> 1; // interlock_tripped2
-                this.bms.valoresRealesActuales[message_622_index + 17] = ((int) data[5] & 0b00000100) >> 2; // comm_fault_blank_or_cell
-                this.bms.valoresRealesActuales[message_622_index + 18] = ((int) data[5] & 0b00001000) >> 3; // charge_overcurrent
-                this.bms.valoresRealesActuales[message_622_index + 19] = ((int) data[5] & 0b00010000) >> 4; // discharge_overcurrent
-                this.bms.valoresRealesActuales[message_622_index + 20] = ((int) data[5] & 0b00100000) >> 5; // over_temp
-                this.bms.valoresRealesActuales[message_622_index + 21] = ((int) data[5] & 0b01000000) >> 6; // under_voltage
-                this.bms.valoresRealesActuales[message_622_index + 22] = ((int) data[5] & 0b10000000) >> 7; // over_voltage
+                this.bms.valoresRealesActuales[message_622_index + 15] = data[5] & 0b00000001;        // driving_off_while_plugged_in
+                this.bms.valoresRealesActuales[message_622_index + 16] = (data[5] & 0b00000010) >> 1; // interlock_tripped2
+                this.bms.valoresRealesActuales[message_622_index + 17] = (data[5] & 0b00000100) >> 2; // comm_fault_blank_or_cell
+                this.bms.valoresRealesActuales[message_622_index + 18] = (data[5] & 0b00001000) >> 3; // charge_overcurrent
+                this.bms.valoresRealesActuales[message_622_index + 19] = (data[5] & 0b00010000) >> 4; // discharge_overcurrent
+                this.bms.valoresRealesActuales[message_622_index + 20] = (data[5] & 0b00100000) >> 5; // over_temp
+                this.bms.valoresRealesActuales[message_622_index + 21] = (data[5] & 0b01000000) >> 6; // under_voltage
+                this.bms.valoresRealesActuales[message_622_index + 22] = (data[5] & 0b10000000) >> 7; // over_voltage
 
                 // Warnings flags
-                this.bms.valoresRealesActuales[message_622_index + 23] = (int) data[6] & 0b00000001;        // low_voltage
-                this.bms.valoresRealesActuales[message_622_index + 24] = ((int) data[6] & 0b00000010) >> 1; // high_voltage
-                this.bms.valoresRealesActuales[message_622_index + 25] = ((int) data[6] & 0b00000100) >> 2; // charge_overcurrent_warning
-                this.bms.valoresRealesActuales[message_622_index + 26] = ((int) data[6] & 0b00001000) >> 3; // discharge_overcurrent_warning
-                this.bms.valoresRealesActuales[message_622_index + 27] = ((int) data[6] & 0b00010000) >> 4; // cold_temp
-                this.bms.valoresRealesActuales[message_622_index + 28] = ((int) data[6] & 0b00100000) >> 5; // hot_temp
-                this.bms.valoresRealesActuales[message_622_index + 29] = ((int) data[6] & 0b01000000) >> 6; // low_SOH
-                this.bms.valoresRealesActuales[message_622_index + 30] = ((int) data[6] & 0b10000000) >> 7; // isolateion_fault
+                this.bms.valoresRealesActuales[message_622_index + 23] = data[6] & 0b00000001;        // low_voltage
+                this.bms.valoresRealesActuales[message_622_index + 24] = (data[6] & 0b00000010) >> 1; // high_voltage
+                this.bms.valoresRealesActuales[message_622_index + 25] = (data[6] & 0b00000100) >> 2; // charge_overcurrent_warning
+                this.bms.valoresRealesActuales[message_622_index + 26] = (data[6] & 0b00001000) >> 3; // discharge_overcurrent_warning
+                this.bms.valoresRealesActuales[message_622_index + 27] = (data[6] & 0b00010000) >> 4; // cold_temp
+                this.bms.valoresRealesActuales[message_622_index + 28] = (data[6] & 0b00100000) >> 5; // hot_temp
+                this.bms.valoresRealesActuales[message_622_index + 29] = (data[6] & 0b01000000) >> 6; // low_SOH
+                this.bms.valoresRealesActuales[message_622_index + 30] = (data[6] & 0b10000000) >> 7; // isolateion_fault
                 break;
             case "503":
-                this.bms.valoresRealesActuales[message_623_index    ] = (((int) data[0] << 8) & (int) data[1]); // pack_voltage   [V]       [0,65535]
-                this.bms.valoresRealesActuales[message_623_index + 1] = (int) data[2]/10.0;                     // min_voltage    [100mV]   [0, 255] -> [V] [0.0,25.5]
-                this.bms.valoresRealesActuales[message_623_index + 2] = (int) data[3];                          // min_voltage_id           [0,255]
-                this.bms.valoresRealesActuales[message_623_index + 3] = (int) data[4]/10.0;                     // max_voltage    [100mV]   [0, 255] -> [V] [0.0,25.5]
-                this.bms.valoresRealesActuales[message_623_index + 4] = (int) data[5];                          // max_voltage_id [0,255]
+                this.bms.valoresRealesActuales[message_623_index    ] = (data[0] << 8) | data[1]; // pack_voltage   [V]       [0,65535]
+                this.bms.valoresRealesActuales[message_623_index + 1] = data[2]/10.0;                     // min_voltage    [100mV]   [0, 255] -> [V] [0.0,25.5]
+                this.bms.valoresRealesActuales[message_623_index + 2] = data[3];                          // min_voltage_id           [0,255]
+                this.bms.valoresRealesActuales[message_623_index + 3] = data[4]/10.0;                     // max_voltage    [100mV]   [0, 255] -> [V] [0.0,25.5]
+                this.bms.valoresRealesActuales[message_623_index + 4] = data[5];                          // max_voltage_id [0,255]
                 break;
             case "504":
-                this.bms.valoresRealesActuales[message_624_index    ] = (((int) data[0] << 8) & (int) data[1]); // current          [A] signed! [-32764, 32764]
-                this.bms.valoresRealesActuales[message_624_index + 1] = (((int) data[2] << 8) & (int) data[3]); // charge_limit     [A]         [0, 65535]
-                this.bms.valoresRealesActuales[message_624_index + 2] = (((int) data[4] << 8) & (int) data[5]); // discharge_limit  [A]
+                this.bms.valoresRealesActuales[message_624_index    ] = parseCan(data, 0, 1); // current          [A] signed! [-32764, 32764]
+                this.bms.valoresRealesActuales[message_624_index + 1] = (data[2] << 8) | data[3]; // charge_limit     [A]         [0, 65535]
+                this.bms.valoresRealesActuales[message_624_index + 2] = (data[4] << 8) | data[5]; // discharge_limit  [A]
                 break;
             case "505":
-                this.bms.valoresRealesActuales[message_625_index    ] = ((int) data[0] << 8*3) & ((int) data[1] << 8*2) & ((int) data[2] << 8) & (int) data[3]; // batt_energy_in  [kWh][0,4294967295]
-                this.bms.valoresRealesActuales[message_625_index + 1] = ((int) data[4] << 8*3) & ((int) data[5] << 8*2) & ((int) data[6] << 8) & (int) data[7]; // batt_energy_out [kWh][0,4294967295]
+                this.bms.valoresRealesActuales[message_625_index    ] = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3]; // batt_energy_in  [kWh][0,4294967295]
+                this.bms.valoresRealesActuales[message_625_index + 1] = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | data[7]; // batt_energy_out [kWh][0,4294967295]
                 break;
             case "506":
-                this.bms.valoresRealesActuales[message_626_index    ] = (int) data[0];                          // SOC      [%]  [0,100]
-                this.bms.valoresRealesActuales[message_626_index + 1] = (((int) data[1] << 8) & (int) data[2]); // DOD      [AH] [0,65535]
-                this.bms.valoresRealesActuales[message_626_index + 2] = (((int) data[3] << 8) & (int) data[4]); // capacity [AH] [0,65535]
-                this.bms.valoresRealesActuales[message_626_index + 3] = (int) data[6];                          // SOH      [%]  [0,100]
+                this.bms.valoresRealesActuales[message_626_index    ] = data[0];                          // SOC      [%]  [0,100]
+                this.bms.valoresRealesActuales[message_626_index + 1] = (data[1] << 8) | data[2]; // DOD      [AH] [0,65535]
+                this.bms.valoresRealesActuales[message_626_index + 2] = (data[3] << 8) | data[4]; // capacity [AH] [0,65535]
+                this.bms.valoresRealesActuales[message_626_index + 3] = data[6];                          // SOH      [%]  [0,100]
                 break;
             case "507":
-                this.bms.valoresRealesActuales[message_627_index    ] = (int) data[0]; // temperature [C] signed! [-127,127]
-                this.bms.valoresRealesActuales[message_627_index + 1] = (int) data[2]; // min_temp    [C] signed! [-127,127]
-                this.bms.valoresRealesActuales[message_627_index + 2] = (int) data[3]; // min_temp_id
-                this.bms.valoresRealesActuales[message_627_index + 3] = (int) data[4]; // max_temp    [C] signed! [-127,127]
-                this.bms.valoresRealesActuales[message_627_index + 4] = (int) data[5]; // max_temp_id
+                this.bms.valoresRealesActuales[message_627_index    ] = parseCan(data, 0, 0); // temperature [C] signed! [-127,127]
+                this.bms.valoresRealesActuales[message_627_index + 1] = parseCan(data, 2, 2); // min_temp    [C] signed! [-127,127]
+                this.bms.valoresRealesActuales[message_627_index + 2] = data[3]; // min_temp_id
+                this.bms.valoresRealesActuales[message_627_index + 3] = parseCan(data, 4, 4); // max_temp    [C] signed! [-127,127]
+                this.bms.valoresRealesActuales[message_627_index + 4] = data[5]; // max_temp_id
                 break;
             case "508":
-                this.bms.valoresRealesActuales[message_628_index    ] = (((int) data[0] << 8) & (int) data[1])/10.0;    // pack_resistance    [100 micro-ohm][0,65525] -> [milli ohm] [0.0,6552.5]
-                this.bms.valoresRealesActuales[message_628_index + 1] = ((int) data[2])/10.0;                           // min_resistance     [100 micro-ohm][0,255]   -> [milli ohm] [0.0,25.5]
-                this.bms.valoresRealesActuales[message_628_index + 2] = (int) data[3];                                  // min_resistance_id
-                this.bms.valoresRealesActuales[message_628_index + 3] = (int) data[4];                                  // max_resistance     [100 micro-ohm][0,255]   -> [milli ohm] [0.0,25.5]
-                this.bms.valoresRealesActuales[message_628_index + 4] = (int) data[5];                                  // max_resistance_id
+                this.bms.valoresRealesActuales[message_628_index    ] = ((data[0] << 8) | data[1])/10.0;    // pack_resistance    [100 micro-ohm][0,65525] -> [milli ohm] [0.0,6552.5]
+                this.bms.valoresRealesActuales[message_628_index + 1] = data[2]/10.0;                           // min_resistance     [100 micro-ohm][0,255]   -> [milli ohm] [0.0,25.5]
+                this.bms.valoresRealesActuales[message_628_index + 2] = data[3];                                  // min_resistance_id
+                this.bms.valoresRealesActuales[message_628_index + 3] = data[4]/10.0;                                  // max_resistance     [100 micro-ohm][0,255]   -> [milli ohm] [0.0,25.5]
+                this.bms.valoresRealesActuales[message_628_index + 4] = data[5];                                  // max_resistance_id
                 break;
             default:
                 int BASE_DUMP_ID = Integer.parseInt("200", 16);

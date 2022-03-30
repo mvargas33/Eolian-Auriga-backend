@@ -12,6 +12,7 @@ import ApplicationLayer.Channel.Canbus0_real;
 import ApplicationLayer.Channel.Canbus1;
 import ApplicationLayer.Channel.GPSChannel;
 import ApplicationLayer.Channel.I2C;
+import ApplicationLayer.Channel.I2CTemp;
 import ApplicationLayer.Channel.TestChannel;
 import ApplicationLayer.LocalServices.*;
 import ApplicationLayer.LocalServices.WirelessService.WirelessSender;
@@ -25,11 +26,11 @@ import java.util.List;
 
 import com.pi4j.system.SystemInfo;
 
-public class GPSM {
+public class Temp {
     public static String dir = "C:/Users/Dante/Desktop/Eolian/Eolian-Auriga-backend/src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
     public XbeeReceiver xbeeReceiver;
 
-    public GPSM() {
+    public Temp() {
     }
 
     public static AppComponent findAppComponent(List<AppComponent> list, String componentID) throws Exception {
@@ -94,15 +95,11 @@ public class GPSM {
         
         // Services
         List<Service> ls = new ArrayList<>();
-        DatabaseService db = new DatabaseService(lac, databasePath);
 
-        ls.add(db);
         // Channels
-        GPSChannel gps = new GPSChannel(lac, ls);
+        I2CTemp temp = new I2CTemp(lac,ls);
         // Main loops
-        Thread t1 = new Thread(gps);
-        Thread t2 = new Thread(db);
+        Thread t1 = new Thread(temp);
         t1.start();
-        t2.start();
     }
 }

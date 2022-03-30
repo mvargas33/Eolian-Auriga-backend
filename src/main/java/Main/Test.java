@@ -25,11 +25,11 @@ import java.util.List;
 
 import com.pi4j.system.SystemInfo;
 
-public class GPSM {
+public class Test {
     public static String dir = "C:/Users/Dante/Desktop/Eolian/Eolian-Auriga-backend/src/main/java/ApplicationLayer/AppComponents/ExcelToAppComponent/Eolian_fenix";
     public XbeeReceiver xbeeReceiver;
 
-    public GPSM() {
+    public Test() {
     }
 
     public static AppComponent findAppComponent(List<AppComponent> list, String componentID) throws Exception {
@@ -94,15 +94,28 @@ public class GPSM {
         
         // Services
         List<Service> ls = new ArrayList<>();
-        DatabaseService db = new DatabaseService(lac, databasePath);
+        //WirelessSender ws = new WirelessSender(lac, xbeePort, encrypt);
+        PrintService ps = new PrintService("TX: ");
+        //WebSocketService wss = new WebSocketService();
+        //DatabaseService dbs = new DatabaseService(lac, databasePath);
 
-        ls.add(db);
+        //ls.add(ws);
+        ls.add(ps);
+        //ls.add(wss);
+        //ls.add(dbs);
+
         // Channels
-        GPSChannel gps = new GPSChannel(lac, ls);
+        Canbus1 can1 = new Canbus1(lac, ls, dev);
+        //Canbus0 can0 = new Canbus0(lac, ls, dev);
         // Main loops
-        Thread t1 = new Thread(gps);
-        Thread t2 = new Thread(db);
+        Thread t1 = new Thread(can1);
+        Thread t2 = new Thread(ps);
+        //Thread t3 = new Thread(ws); 
+        //Thread t4 = new Thread(wss);
         t1.start();
-        t2.start();
+        //t7.start();
+        //t2.start();
+        //t3.start();
+        //t4.start(); 
     }
 }

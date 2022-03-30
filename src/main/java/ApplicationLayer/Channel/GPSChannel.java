@@ -26,14 +26,14 @@ public class GPSChannel extends Channel {
         // With the exact amount of double[] values as the implementation here
         try{
             this.gps = this.myComponentsMap.get("gps"); // Must match name in .xlsx file
-            if(gps != null){
-                int len = gps.len;
-                if(len != this.lenGPS){
-                    throw new Exception("Cantidad de valores de GPS en AppComponent != Cantidad de valores de lectura implementados");
-                }
-            }else{
-                throw new Exception("A GPS AppComponent was not supplied in GPS channel");
-            }
+            // if(gps != null){
+            //     int len = gps.len;
+            //     if(len != this.lenGPS){
+            //         throw new Exception("Cantidad de valores de GPS en AppComponent != Cantidad de valores de lectura implementados");
+            //     }
+            // }else{
+            //     throw new Exception("A GPS AppComponent was not supplied in GPS channel");
+            // }
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -83,9 +83,11 @@ public class GPSChannel extends Channel {
                 // esto se podria hacer con una clase 'NMEAsentenceReader' implementada para cada tipo de mensaje, pero no se
                 // que tanto valga la pena, primero se planea implementar asi, luego evaluar si es mejor abstraerlo mas.
                 case "$GPRMC":
-                    RMCReader(msg);
+                    //if(!msg[2].equals("V"))
+                    //RMCReader(msg);
                     break;
                 case "$GPGGA":
+                    if(msg[2].length() != 0)
                     GGAReader(msg);
                     break;
                 case "$GPGSV":
@@ -192,7 +194,9 @@ public class GPSChannel extends Channel {
             default:
                 System.out.println("ERROR: Valor "+msg[5]+" no identificado como direccion de longitud.");
                 // todo: no se si un mensaje de aviso basta o es mejor tirar un error.
-        }
+        } //$GPGGA,152229.000,3336.0864,S,07031.3493,W,2,06,1.02,777.6,M,29.2,M,0000,0000*65
+        this.gps.valoresRealesActuales[6] = Double.parseDouble(msg[11]);
+        this.gps.valoresRealesActuales[7] = Double.parseDouble(msg[9]);
     }
 
     public void VTGReader(String[] msg) {
