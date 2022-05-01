@@ -15,12 +15,18 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public abstract class Service implements Runnable{
     BlockingQueue<AppComponent> componentsToBeChecked; // Cola de AppComponents
+    private int sleepMillis = 0;
 
     /**
      * Constructor de objetos default
      */
     public Service(){
         this.componentsToBeChecked = new LinkedBlockingDeque<>();
+    }
+
+    public Service(int sleepMillis) {
+        super();
+        this.sleepMillis = sleepMillis;
     }
 
     /**
@@ -71,6 +77,7 @@ public abstract class Service implements Runnable{
     public void run() {
         while(true){
             try {
+                Thread.sleep(sleepMillis);
                 consumeComponent(); // Siempre consume componentes y ejecuta el servicio
             }catch (Exception e){
                 e.printStackTrace();

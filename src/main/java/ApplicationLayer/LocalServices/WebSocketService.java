@@ -33,7 +33,7 @@ public class WebSocketService extends Service{
      * @param HOSTNAME Host a donde enviar eventos
      */
     public WebSocketService(int PORT, String HOSTNAME) {
-        super();
+        super(200);
         this.config = new Configuration();
         this.config.setHostname(HOSTNAME);
         this.config.setPort(PORT);
