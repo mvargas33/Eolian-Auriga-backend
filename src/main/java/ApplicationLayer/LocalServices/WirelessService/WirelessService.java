@@ -38,6 +38,7 @@ public class WirelessService extends Service {
     int FIRST_HEADER = 56;
 
     public WirelessService(List<AppComponent> components, boolean encrypt) throws Exception{
+        super(500);
         this.encrypt = encrypt;
         this.states = new HashMap<>();
         // CryptoAdmin
