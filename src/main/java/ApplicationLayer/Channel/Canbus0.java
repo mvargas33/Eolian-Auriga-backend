@@ -12,11 +12,13 @@ import java.util.List;
 public class Canbus0 extends Channel {
     private int[] data = new int[8]; // Memory efficient buffer
 
-    private AppComponent sevcon_izq;
-    private AppComponent sevcon_der;
-    private AppComponent lcd;
+    private AppComponent kelly;
     private final int lenSevcon = 16; // Hardcoded, specific, actual values updated in this implementation for this Component
     private boolean dev = false;
+    private boolean found = false;
+    private int currentMsg = -1;
+    private int lastLen = -1;
+    private int currentKelly = -1; //0 para el izquierdo 1 para el derecho, -1 para aun no encontrado
     /**
      * Each channel has predefined AppComponents
      *
@@ -29,14 +31,8 @@ public class Canbus0 extends Channel {
         // Check that a BMS AppComponent was supplied
         // With the exact amount of double[] values as the implementation here
         for(AppComponent ac : myComponentList) {
-            if(ac.getID().equals("sevcon_izq")) {
-                sevcon_izq = ac;
-            }
-            else if(ac.getID().equals("sevcon_der")) {
-                sevcon_der = ac;
-            }
-            else if(ac.getID().equals("lcd")) {
-                lcd = ac;
+            if(ac.getID().equals("kelly")) {
+                kelly = ac;
             }
         }
         // try{
@@ -62,10 +58,10 @@ public class Canbus0 extends Channel {
     public void readingLoop() {
         ProcessBuilder processBuilder = new ProcessBuilder();
         if(dev) {
-            processBuilder.command("bash", "-c", "python3 /home/pi/Desktop/lectura/Codigo_rendimiento.py --dev");
+            processBuilder.command("bash", "-c", "candump vcan0");
         }
         else {
-            processBuilder.command("bash", "-c", "python3 /home/pi/Desktop/lectura/Codigo_rendimiento.py");
+            processBuilder.command("bash", "-c", "candump can0");
         }try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(
@@ -97,15 +93,27 @@ public class Canbus0 extends Channel {
         // NOTA: primero hay que iniciar el can com en comando 'stty -F /dev/serial0 raw 9600 cs8 clocal -cstopb'
         // (9600 es el baud rate)
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Iniciando lecturas del sevcon...");
+        stringBuilder.append("sudo ip link set can0 up type can bitrate 1000000");
         //stringBuilder.append("cd ./src/main/java/ApplicationLayer/SensorReading/CANReaders/linux-can-utils;");
         //stringBuilder.append("gcc candump.c lib.c -o candump;"); // Comment this on second execution, no need to recompile
         processBuilder.command("bash", "-c", stringBuilder.toString());
-        // try {
-        //     processBuilder.start();
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
+        try {
+            processBuilder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int searchMsg(int lastLen, int L) {
+        if(lastLen == 8 && L == 2) return 1;
+        if(lastLen == 2 && L == 1) return 2;
+        if(lastLen == 1 && L == 5) return 6;
+        if(lastLen == 5 && L == 6) return 7;
+        if(lastLen == 6 && L == 6) return 8;
+        if(lastLen == 6 && L == 5) return 9;
+        if(lastLen == 5 && L == 1) return 10;
+        if(lastLen == 1 && L == 8) return 0;
+        return -1;
     }
 
     /**
@@ -114,10 +122,8 @@ public class Canbus0 extends Channel {
      * @param message
      */
     public void parseMessage(String message) {
-        System.out.println(message);
         //String[] msg = Utils.split(message, " "); // Better performance split than String.split()
-        String[] msg = message.split(","); // etter performance split than String.split()
-        if(msg[0].length() < 1) return;
+        String[] msg = message.split("\\s+"); // Better performance split than String.split()
 
         // if (msg.length != 16){ // If it isn't CAN-type message
         //     System.out.println("Message is not CAN-type. Split length is not 16.");
@@ -126,70 +132,65 @@ public class Canbus0 extends Channel {
         // }
 
         // Parse HEX strings to byte data type, into local buffer
-        String s = msg[0].split(":")[1];
-        switch (s){
-            case "100":
-                this.sevcon_izq.valoresRealesActuales[0] = Double.parseDouble(msg[2].split(":")[1]);//v bat
-                this.sevcon_izq.valoresRealesActuales[1] = Double.parseDouble(msg[1].split(":")[1]); // current bat
-                this.sevcon_izq.valoresRealesActuales[2] = Double.parseDouble(msg[3].split(":")[1]); //temp inv
-                this.sevcon_izq.valoresRealesActuales[6] = Double.parseDouble(msg[4].split(":")[1]); // potin
+        int L = Character.getNumericValue(msg[3].charAt(1));
+        for(int i=0 ; i<L; i++){ //asume mensaje can de 8 bytes fijo, todo: hacer mas flexible en el futuro.
+            // atento a esto en la prueba, puede estar alrevez
+            data[i] = Integer.parseInt(msg[4+i], 16);
+        }
+
+        // if (msg.length != 16){ // If it isn't CAN-type message
+        //     System.out.println("Message is not CAN-type. Split length is not 16.");
+        //     System.out.println(message);
+        //     return;
+        // }
+        if(!found) {
+            currentMsg = searchMsg(lastLen, L);
+            if(currentMsg != -1) found = true;
+            if(msg[2] == "0CD") currentKelly = 1;
+            if(msg[2] == "069") currentKelly = 0;
+        }
+        // Ponerle las formulas de los kelly
+        switch (currentMsg){
+            case -1:
                 break;
-            case "200":
-                //'COB_ID:'+str(cod_id)+','+'motorC:'+str(motor_C)+','+'torque:'+str(motor_torque)+','+'KM/H:'+str(2*3.6*np.pi*0.3*RPM/60)+','+'RPM:'+str(RPM)+','+'POUT:'+str(motor_torque*RPM*2*np.pi/60)+'\n'
-                this.sevcon_izq.valoresRealesActuales[3] = Double.parseDouble(msg[2].split(":")[1]); // torque
-                this.sevcon_izq.valoresRealesActuales[4] = Double.parseDouble(msg[4].split(":")[1]); // rpm
-                this.sevcon_izq.valoresRealesActuales[5] = Double.parseDouble(msg[1].split(":")[1]);// corriente motor
-                this.sevcon_izq.valoresRealesActuales[7] = Double.parseDouble(msg[5].split(":")[1]); // potout
-                this.sevcon_izq.valoresRealesActuales[13] = Double.parseDouble(msg[3].split(":")[1]); // velocidad
-                
-                // this.lcd.valoresRealesActuales[0] = this.sevcon_izq.valoresRealesActuales[7]; // pot
-                // this.lcd.valoresRealesActuales[1] = this.sevcon_izq.valoresRealesActuales[3]; // torque
-                // this.lcd.valoresRealesActuales[2] = this.sevcon_izq.valoresRealesActuales[5]; // corriente
-                // this.lcd.valoresRealesActuales[3] = this.sevcon_izq.valoresRealesActuales[13]; // velocidad
+            case 0:
+                kelly.valoresRealesActuales[currentKelly*13+0] = data[0]; // ejemplo
                 break;
-            case "300":
-                this.sevcon_izq.valoresRealesActuales[10] = Double.parseDouble(msg[3].split(":")[1]); // torque_act
-                this.sevcon_izq.valoresRealesActuales[11] = Double.parseDouble(msg[1].split(":")[1]); // target lq
-                this.sevcon_izq.valoresRealesActuales[15] = Double.parseDouble(msg[4].split(":")[1]); // target lq_hex
-                this.sevcon_izq.valoresRealesActuales[12] = Double.parseDouble(msg[2].split(":")[1]); // lq
-                this.sevcon_izq.valoresRealesActuales[14] = Double.parseDouble(msg[5].split(":")[1]); // lq_hex
+            case 1:
                 break;
-            case "400":
-                this.sevcon_izq.valoresRealesActuales[8] = Double.parseDouble(msg[1].split(":")[1]);  // acelerador volt
-                this.sevcon_izq.valoresRealesActuales[9] =  Double.parseDouble(msg[3].split(":")[1]); // freno_volt
+            case 2:
                 break;
-            case "101":
-                this.sevcon_der.valoresRealesActuales[0] = Double.parseDouble(msg[2].split(":")[1]);//v bat
-                this.sevcon_der.valoresRealesActuales[1] = Double.parseDouble(msg[1].split(":")[1]); // current bat
-                this.sevcon_der.valoresRealesActuales[2] = Double.parseDouble(msg[3].split(":")[1]); //temp inv
-                this.sevcon_der.valoresRealesActuales[6] = Double.parseDouble(msg[4].split(":")[1]); // potin
+            case 3:
                 break;
-            case "201":
-                //'COB_ID:'+str(cod_id)+','+'motorC:'+str(motor_C)+','+'torque:'+str(motor_torque)+','+'KM/H:'+str(2*3.6*np.pi*0.3*RPM/60)+','+'RPM:'+str(RPM)+','+'POUT:'+str(motor_torque*RPM*2*np.pi/60)+'\n'
-                this.sevcon_der.valoresRealesActuales[3] = Double.parseDouble(msg[2].split(":")[1]); // torque
-                this.sevcon_der.valoresRealesActuales[4] = Double.parseDouble(msg[4].split(":")[1]); // rpm
-                this.sevcon_der.valoresRealesActuales[5] = Double.parseDouble(msg[1].split(":")[1]);// corriente motor
-                this.sevcon_der.valoresRealesActuales[7] = Double.parseDouble(msg[5].split(":")[1]); // potout
-                this.sevcon_der.valoresRealesActuales[13] = Double.parseDouble(msg[3].split(":")[1]); // velocidad
-                
-                // this.lcd.valoresRealesActuales[0] = this.sevcon_der.valoresRealesActuales[7]; // pot
-                // this.lcd.valoresRealesActuales[1] = this.sevcon_der.valoresRealesActuales[3]; // torque
-                // this.lcd.valoresRealesActuales[2] = this.sevcon_der.valoresRealesActuales[5]; // corriente
-                // this.lcd.valoresRealesActuales[3] = this.sevcon_der.valoresRealesActuales[13]; // velocidad
+            case 4:
                 break;
-            case "301":
-                this.sevcon_der.valoresRealesActuales[10] = Double.parseDouble(msg[3].split(":")[1]); // torque_act
-                this.sevcon_der.valoresRealesActuales[11] = Double.parseDouble(msg[1].split(":")[1]); // target lq
-                this.sevcon_der.valoresRealesActuales[15] = Double.parseDouble(msg[4].split(":")[1]); // target lq_hex
-                this.sevcon_der.valoresRealesActuales[12] = Double.parseDouble(msg[2].split(":")[1]); // lq
-                this.sevcon_der.valoresRealesActuales[14] = Double.parseDouble(msg[5].split(":")[1]); // lq_hex
+            case 5:
                 break;
-            case "401":
-                this.sevcon_der.valoresRealesActuales[8] = Double.parseDouble(msg[1].split(":")[1]);  // acelerador volt
-                this.sevcon_der.valoresRealesActuales[9] =  Double.parseDouble(msg[3].split(":")[1]); // freno_volt
+            case 6:
+                break;
+            case 7:
+                break;
+            case 8:
+                break;
+            case 9:
+                break;
+            case 10:
+                break;
+            case 11:
+                break;
+            case 12:
+                // procesar mensaje con la formula kelly.valoresRealesActuales[currentKelly*cantidad de datos + indice del campo]
                 break;
             default:
                 System.out.println("Trama "+msg[0]+" no procesada");
         } // switch
+        if(found) {
+            currentMsg++;
+            if(currentMsg == 13) {
+                currentMsg = 0;
+                currentKelly = currentKelly == 1 ? 0 : 1;
+            }
+        }
+        lastLen = L;
     } // parseMessage()
 }
