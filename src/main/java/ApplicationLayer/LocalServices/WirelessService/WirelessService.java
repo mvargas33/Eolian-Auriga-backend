@@ -83,6 +83,6 @@ public class WirelessService extends Service {
     }
 
     @Override
-    protected void serve(AppComponent c) {}
+    public void serve(AppComponent c) {}
 
 }

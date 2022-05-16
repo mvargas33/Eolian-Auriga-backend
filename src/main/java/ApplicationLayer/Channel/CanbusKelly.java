@@ -1,5 +1,6 @@
 package ApplicationLayer.Channel;
 
+import ApplicationLayer.Manager;
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.Utils.Utils;
@@ -7,6 +8,7 @@ import ApplicationLayer.Utils.Utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CanbusKelly extends Channel {
@@ -103,6 +105,12 @@ public class CanbusKelly extends Channel {
         // }
     }
 
+    public void launchManager() {
+        Manager manager = new Manager((ArrayList<Service>) myServices, sevcon_izq);
+        Thread t1 = new Thread(manager);
+        t1.start();
+    }
+
     /**
      * Parsing function. Transforms CANBUS message from console to double,
      * into AppComponent bms's double[] valoresRealesActuales, directly.
@@ -145,5 +153,6 @@ public class CanbusKelly extends Channel {
             default:
                 System.out.println("Trama "+msg[0]+" no procesada");
         } // switch
+        this.launchManager();
     } // parseMessage()
 }

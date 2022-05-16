@@ -48,7 +48,7 @@ public class WebSocketService extends Service{
      * @param c AppComponent a consumir
      */
     @Override
-    protected void serve(AppComponent c) {
+    public void serve(AppComponent c) {
         try {
             if (map.containsKey(c.getID())) {
                 //map.put(c.getID(), (JSONObject) map.get(c.getID()).put("data", c.getValoresRealesActuales()));

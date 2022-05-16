@@ -58,7 +58,7 @@ public class DatabaseService extends Service implements Runnable {
      * @param c AppComponent a guardar en la base de datos
      */
     @Override
-    protected void serve(AppComponent c) {
+    public void serve(AppComponent c) {
         if(c.getID().equals("lcd")) { //no tiene sentido logear los datos de la pantalla
             return;
         }

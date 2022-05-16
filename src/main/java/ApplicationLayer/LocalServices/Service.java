@@ -62,7 +62,7 @@ public abstract class Service implements Runnable{
      * Y por lo tanto deben implementar el método serve
      * @param c AppComponent a consumir
      */
-    protected abstract void serve(AppComponent c);
+    public abstract void serve(AppComponent c);
 
     /**
      * Debe sacar los componentes pendientes de su lista, si esta vacía no entra

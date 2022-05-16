@@ -71,7 +71,7 @@ public abstract class Channel implements Runnable {
             s.putListOfComponentsInQueue(myComponentList);
         }
     }
-
+    
     /**
      * Init the channel, and the loop.
      */

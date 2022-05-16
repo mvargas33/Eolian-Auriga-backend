@@ -18,7 +18,7 @@ public class PrintService extends Service{
         this.printPrefix = printPrefix;
     }
     @Override
-    protected void serve(AppComponent c) {
+    public void serve(AppComponent c) {
         //System.out.println(Arrays.toString(c.nombreParametros));
         //System.out.println(printPrefix + c.getID() + " : " + Arrays.toString(c.getValoresRealesActuales()));
         for(int i = 0; i < c.valoresRealesActuales.length; i++) {

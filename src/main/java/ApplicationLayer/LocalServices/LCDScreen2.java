@@ -38,7 +38,7 @@ public class LCDScreen2 extends Service {
     } 
 
     @Override
-    protected void serve(AppComponent c) {
+    public void serve(AppComponent c) {
         if(c.getID().equals("lcd")) {
             String l1 = String.format("%.3fN          ", c.valoresRealesActuales[1]); //To
             String l2 = String.format("%.3fKM/h        ", c.valoresRealesActuales[3]); //KM/h

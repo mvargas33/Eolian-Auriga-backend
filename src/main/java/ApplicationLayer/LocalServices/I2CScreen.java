@@ -34,7 +34,7 @@ public class I2CScreen extends Service {
     }
 
     @Override
-    protected void serve(AppComponent c) {
+    public void serve(AppComponent c) {
         // TODO Auto-generated method stub
         try {
             arduinoLCD.write((byte) 1);
