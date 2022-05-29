@@ -82,7 +82,7 @@ public class Canbus1 extends Channel {
                 try{
                     while ((line = reader.readLine()) != null) {
                         parseMessage(line);
-                        super.informServices(); // Call this just after all AppComponent in myComponentList were updated
+                        //super.informServices(); // Call this just after all AppComponent in myComponentList were updated
                     }
                 }catch (Exception exception){
                     exception.printStackTrace();
@@ -222,6 +222,7 @@ public class Canbus1 extends Channel {
                 this.bms.valoresRealesActuales[message_627_index + 2] = (int) data[3]; // min_temp_id
                 this.bms.valoresRealesActuales[message_627_index + 3] = (int) data[4]; // max_temp    [C] signed! [-127,127]
                 this.bms.valoresRealesActuales[message_627_index + 4] = (int) data[5]; // max_temp_id
+                this.launchManager();
                 break;
             case "508":
                 this.bms.valoresRealesActuales[message_628_index    ] = (((int) data[0] << 8) & (int) data[1])/10.0;    // pack_resistance    [100 micro-ohm][0,65525] -> [milli ohm] [0.0,6552.5]
@@ -278,6 +279,5 @@ public class Canbus1 extends Channel {
                     // }System.out.println("");
                 }
         } // switch
-        this.launchManager();
     } // parseMessage()
 }
