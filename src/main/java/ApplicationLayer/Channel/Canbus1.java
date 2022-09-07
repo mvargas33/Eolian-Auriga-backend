@@ -3,11 +3,11 @@ package ApplicationLayer.Channel;
 import ApplicationLayer.AppComponents.AppComponent;
 import ApplicationLayer.LocalServices.Service;
 import ApplicationLayer.Utils.Utils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import static Main.UtilsKt.twoComp;
 
 public class Canbus1 extends Channel {
     private int[] data = new int[8]; // Memory efficient buffer
@@ -118,6 +118,10 @@ public class Canbus1 extends Channel {
         catch(Exception e) {
             e.printStackTrace();
         }
+    }
+    public static void main(String[] argv) {
+        System.out.println(twoComp(0, 8)); // -> 0
+; // -> -1
     }
 
     /**
