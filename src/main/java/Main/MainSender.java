@@ -10,6 +10,7 @@ import ApplicationLayer.AppComponents.ExcelToAppComponent.CSVToAppComponent;
 import ApplicationLayer.Channel.Canbus0;
 import ApplicationLayer.Channel.Canbus0_real;
 import ApplicationLayer.Channel.Canbus1;
+import ApplicationLayer.Channel.CanbusKelly;
 import ApplicationLayer.Channel.GPSChannel;
 import ApplicationLayer.Channel.I2C;
 import ApplicationLayer.Channel.TestChannel;
@@ -51,8 +52,8 @@ public class MainSender {
         boolean dev = false;
         boolean encrypt = false;
         String xbeePort = "/dev/ttyUSB0";
-        String componentsPath = "/home/pi/Desktop/RPI/components/auriga/";
-        String databasePath = "/home/pi/Desktop/RPI/";
+        String componentsPath = "/home/pi/Desktop/components/auriga/";
+        String databasePath = "/home/pi/Desktop/";
         for(int i = 0; i < args.length; i++) {
             try {
                 if(args[i].equals("--dev")) {
@@ -96,31 +97,31 @@ public class MainSender {
         List<Service> ls = new ArrayList<>();
         WirelessSender ws = new WirelessSender(lac, xbeePort, encrypt);
         //PrintService ps = new PrintService("TX: ");
-        //--WebSocketService wss = new WebSocketService();
-        //DatabaseService dbs = new DatabaseService(lac, databasePath);
+        WebSocketService wss = new WebSocketService();
+        DatabaseService dbs = new DatabaseService(lac, databasePath);
 
         ls.add(ws);
         //ls.add(ps);
-        //ls.add(wss);
-        //ls.add(dbs);
+        ls.add(wss);
+        ls.add(dbs);
 
         // Channels
         Canbus1 can1 = new Canbus1(lac, ls, dev);
-        Canbus0_real can0 = new Canbus0_real(lac, ls, dev);
+        CanbusKelly can0 = new CanbusKelly(lac, ls);
         //Canbus0 can0 = new Canbus0(lac, ls, dev);
         // Main loops
         Thread t1 = new Thread(can1);
         Thread t5 = new Thread(can0);
         //Thread t2 = new Thread(ps);
         Thread t3 = new Thread(ws); 
-        //Thread t4 = new Thread(wss);
-        //Thread t9 = new Thread(dbs);
+        Thread t4 = new Thread(wss);
+        Thread t9 = new Thread(dbs);
         t1.start();
         t5.start();
         //t7.start();
         //t2.start();
         t3.start();
-        //t4.start(); 
-        //t9.start();
+        t4.start(); 
+        t9.start();
     }
 }

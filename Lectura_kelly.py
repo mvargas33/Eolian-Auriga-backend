@@ -1,13 +1,6 @@
-from ast import parse
 import can
 import time
 import os
-import threading
-import time
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from datetime import *
-import numpy as np
 
 # implementar lecturas del notepad, actualizar solo los valores actuales con esto
 # voltaje bateria -- CCP_A2D_BATCH_READ2/1
@@ -16,17 +9,16 @@ import numpy as np
 # rpm -- CCP_MONITOR2
 # corriente motor -- CCP_A2D_BATCH_READ2/1
 # velocidad -- rpm
-
+channel="can1"
+bitrate=1000000
 # commands
 ID=0x6B
-CCP_A2D_BATCH_READ1=can.Message(data=[0x1b], arbitration_id=ID)
-CCP_A2D_BATCH_READ2=can.Message(data=[0x1a], arbitration_id=ID)
-CCP_MONITOR1       =can.Message(data=[0x33], arbitration_id=ID)
-CCP_MONITOR2       =can.Message(data=[0x37], arbitration_id=ID)
+CCP_A2D_BATCH_READ1=can.Message(data=[0x1b], arbitration_id=ID, extended_id=False)
+CCP_A2D_BATCH_READ2=can.Message(data=[0x1a], arbitration_id=ID, extended_id=False)
+CCP_MONITOR1       =can.Message(data=[0x33], arbitration_id=ID, extended_id=False)
+CCP_MONITOR2       =can.Message(data=[0x37], arbitration_id=ID, extended_id=False)
 # si el dato es positivo --> 00 00 00 00 + dato leido
 # si el dato negativo --> FF FF FF FF - dato
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
 
 def send_message(bus, i):
     msg=0
@@ -58,13 +50,13 @@ def parse_msg(data, start, end):
     return twos_comp(int(msg, 16), (end-start)*8)
 
 def RPM2KMH(RPM):
-    return 2*3.6*np.pi*0.3*RPM/60
+    return 2*3.6*3.1415*0.3*RPM/60
 
 def P_in(V_bat, I_bat):
     return V_bat * I_bat    
 
 def P_out(Trq, Rpm):
-    rads = 2 * np.pi * Rpm / 60
+    rads = 2 * 3.1415 * Rpm / 60
     return Trq * rads
 
 # min max, minimo y maximo en valor de unidad de medida
@@ -82,17 +74,13 @@ def linear_map(value, min, max, o_min, o_max):
     real_value = percentage*1.0*(max-min)+min
     return real_value
 
-
-motor_torque = 0
 def V(volt):
     return volt/1.84
-bat_v = 1
-def read_messages(bus,TPDO,s, i):   
-    global bat_v
+
+def read_messages(bus,s, i):   
     for msg in bus: 
         data = msg.data
         msg = str(msg)
-        cod_id = int(msg[39:45])
         if i == 0:           
             freno_v=linear_map(data[0], 0, 5, 0, 255)
             acc_v=linear_map(data[1], 0, 5, 0, 255)
@@ -113,33 +101,30 @@ def read_messages(bus,TPDO,s, i):
             return 'rpm:{},velocidad:{}'.format(rpm, velocidad)
     return "N"
 
-
-
-TPDO = {"TPDO1_id": "0100","TPDO2_id": "0200","TPDO3_id": "0300","TPDO4_id": "0400","TPDO5_id": "0500"}
-sf = {"motor_RPM": 1,"motor_C": 1,"inverter_I": 1,"battery_V": 0.0625, "battery_C": 0.0625,"motor_torque": 0.0625,"throttle_V": 0.00390625}
-# sf1 = {"Torque actual value": 0.0625,"Velocity actual value - left motor RPM": 1,"Target Iq (Ia)": 0.0625,"battery_V": 0.0625, "battery_C": 0.0625,"motor_torque": 0.0625,"throttle_V": 0.00390625}
 print('\n\rCAN Rx test')
-print('Bring up CAN0....')
-os.system("sudo /sbin/ip link set can0 up type can bitrate 1000000")
+print('Bring up '+channel+'....')
+os.system("sudo /sbin/ip link set "+channel+" up type can bitrate "+str(bitrate))
 try:
-	bus = can.interface.Bus(channel='can0', bustype='socketcan_native')
+	bus = can.interface.Bus(channel=channel, bustype='socketcan')
 except OSError:
 	print('Cannot find PiCAN board.')
 	exit()
 print('Ready')
+
 i = 0
 try:
     while True:
+        time.sleep(0.3)
         send_message(bus, i)
         # 
-        d=read_messages(bus,TPDO,sf, i)
+        d=read_messages(bus, i)
         # ojo con esto de los mensajes, verificar si funciona o si tengo que poner un awaiit o algo asi
         print(d)
-        i = i+1 % 4
+        i = (i+1) % 4
 		#message = bus.recv()
 
 
 except KeyboardInterrupt:
 	#Catch keyboard interrupt
-	os.system("sudo /sbin/ip link set can0 down")
+	os.system("sudo /sbin/ip link set "+channel" down")
 	print('\n\rKeyboard interrtupt')

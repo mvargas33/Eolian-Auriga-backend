@@ -12,11 +12,7 @@ import java.util.List;
 public class CanbusKelly extends Channel {
     private int[] data = new int[8]; // Memory efficient buffer
 
-    private AppComponent sevcon_izq;
-    private AppComponent sevcon_der;
-    private AppComponent lcd;
-    private final int lenSevcon = 16; // Hardcoded, specific, actual values updated in this implementation for this Component
-
+    private AppComponent sevcon;
     /**
      * Each channel has predefined AppComponents
      *
@@ -25,33 +21,14 @@ public class CanbusKelly extends Channel {
      */
     public CanbusKelly(List<AppComponent> myComponentList, List<Service> myServices) {
         super(myComponentList, myServices);
-        // Check that a BMS AppComponent was supplied
-        // With the exact amount of double[] values as the implementation here
-        for(AppComponent ac : myComponentList) {
-            if(ac.getID().equals("sevcon_izq")) {
-                sevcon_izq = ac;
+        try{
+            this.sevcon = this.myComponentsMap.get("sevcon"); // Must match name in .xlsx file
+            if(sevcon == null){
+                throw new Exception("A Sevcon AppComponent was not supplied in Canbus1 channel");
             }
-            else if(ac.getID().equals("sevcon_der")) {
-                sevcon_der = ac;
-            }
-            else if(ac.getID().equals("lcd")) {
-                lcd = ac;
-            }
+        }catch(Exception e){
+            e.printStackTrace();
         }
-        // try{
-        //     this.sevcon = this.myComponentsMap.get("sevcon"); // Must match name in .xlsx file
-        //     if(sevcon != null){
-        //         int len = sevcon.len;
-        //         if(len != this.lenSevcon){
-        //             throw new Exception("Cantidad de valores del SEVCON en AppComponent != Cantidad de valores de lectura implementados");
-        //         }
-        //     }else{
-        //         throw new Exception("A Sevcon AppComponent was not supplied in Canbus1 channel");
-        //     }
-        // }catch(Exception e){
-        //     e.printStackTrace();
-        // }
-        //this.lcd = this.myComponentsMap.get("lcd");
     }
 
     /**
@@ -60,7 +37,7 @@ public class CanbusKelly extends Channel {
     @Override
     public void readingLoop() {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("bash", "-c", "python3 /home/pi/Desktop/lectura/Lectura_kelly.py");
+        processBuilder.command("bash", "-c", "python3 /home/pi/Desktop/Lectura_kelly.py");
         try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(
@@ -122,25 +99,25 @@ public class CanbusKelly extends Channel {
         // Parse HEX strings to byte data type, into local buffer
         switch (msg[0].split(":")[1]){
             case "freno_v":
-                this.sevcon_izq.valoresRealesActuales[9] = Double.parseDouble(msg[0].split(":")[1]);//v bat
-                this.sevcon_izq.valoresRealesActuales[8] = Double.parseDouble(msg[1].split(":")[1]);//v bat
-                this.sevcon_izq.valoresRealesActuales[0] = Double.parseDouble(msg[2].split(":")[1]);//v bat
+                this.sevcon.valoresRealesActuales[9] = Double.parseDouble(msg[0].split(":")[1]);//v bat
+                this.sevcon.valoresRealesActuales[8] = Double.parseDouble(msg[1].split(":")[1]);//v bat
+                this.sevcon.valoresRealesActuales[0] = Double.parseDouble(msg[2].split(":")[1]);//v bat
                 break;
             case "bat_c":
                 //'COB_ID:'+str(cod_id)+','+'motorC:'+str(motor_C)+','+'torque:'+str(motor_torque)+','+'KM/H:'+str(2*3.6*np.pi*0.3*RPM/60)+','+'RPM:'+str(RPM)+','+'POUT:'+str(motor_torque*RPM*2*np.pi/60)+'\n'
-                this.sevcon_izq.valoresRealesActuales[1] = Double.parseDouble(msg[0].split(":")[1]); // torque
+                this.sevcon.valoresRealesActuales[5] = Double.parseDouble(msg[0].split(":")[1]); // torque
                 
-                // this.lcd.valoresRealesActuales[0] = this.sevcon_izq.valoresRealesActuales[7]; // pot
-                // this.lcd.valoresRealesActuales[1] = this.sevcon_izq.valoresRealesActuales[3]; // torque
-                // this.lcd.valoresRealesActuales[2] = this.sevcon_izq.valoresRealesActuales[5]; // corriente
-                // this.lcd.valoresRealesActuales[3] = this.sevcon_izq.valoresRealesActuales[13]; // velocidad
+                // this.lcd.valoresRealesActuales[0] = this.sevcon.valoresRealesActuales[7]; // pot
+                // this.lcd.valoresRealesActuales[1] = this.sevcon.valoresRealesActuales[3]; // torque
+                // this.lcd.valoresRealesActuales[2] = this.sevcon.valoresRealesActuales[5]; // corriente
+                // this.lcd.valoresRealesActuales[3] = this.sevcon.valoresRealesActuales[13]; // velocidad
                 break;
-            case "motor_temp":
-                this.sevcon_izq.valoresRealesActuales[2] = Double.parseDouble(msg[0].split(":")[1]); // torque_act
-                break;
+            // case "motor_temp":
+            //     this.sevcon.valoresRealesActuales[2] = Double.parseDouble(msg[0].split(":")[1]); // torque_act
+            //     break;
             case "rpm":
-                this.sevcon_izq.valoresRealesActuales[4] = Double.parseDouble(msg[0].split(":")[1]);
-                this.sevcon_izq.valoresRealesActuales[13] = Double.parseDouble(msg[1].split(":")[1]);
+                this.sevcon.valoresRealesActuales[1] = Double.parseDouble(msg[0].split(":")[1]);
+                this.sevcon.valoresRealesActuales[2] = Double.parseDouble(msg[1].split(":")[1]);
                 break;
             default:
                 System.out.println("Trama "+msg[0]+" no procesada");
