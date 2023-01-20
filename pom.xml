@@ -107,7 +107,7 @@
                     <configuration>
                         <archive>
                             <manifest>
-                                <mainClass>Main.MainSender</mainClass>
+                                <mainClass>Main.Main</mainClass>
                             </manifest>
                         </archive>
                         <descriptorRefs>
