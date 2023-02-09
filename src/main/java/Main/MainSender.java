@@ -106,7 +106,7 @@ public class MainSender {
         ls.add(dbs);
 
         // Channels
-        Canbus1 can1 = new Canbus1(lac, ls, dev);
+        Canbus1 can1 = new Canbus1(lac, ls);
         CanbusKelly can0 = new CanbusKelly(lac, ls);
         //Canbus0 can0 = new Canbus0(lac, ls, dev);
         // Main loops

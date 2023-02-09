@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
+/**
+ Clase que representa el canal que guarda los datos en el bms.
+ */
 public class Canbus1 extends Channel {
-    private int[] data = new int[8]; // Memory efficient buffer
+    private final int[] data = new int[8]; // Memory efficient buffer
 
     private AppComponent bms;
     private final int lenBMS = 391; // Hardcoded, specific, actual values updated in this implementation for this Component
@@ -33,42 +36,41 @@ public class Canbus1 extends Channel {
     private final int temperature_sensor_fault_index = 307;       // 28 cells
     private final int resistance_calculation_fault_index = 335;   // 28 cells
     private final int load_fault_index = 363;                     // 28 cells
-    private boolean dev;
+    private final int idMessage = 502;
 
     /**
-     * Each channel has predefined AppComponents
+     * Constructor de clase, cada canal tiene componentes predefinidos
      *
-     * @param myComponentList List of AppComponent that this Channel update values to
-     * @param myServices Services to inform to whenever an AppComponents get updated
+     * @param myComponentList Lista de componentes a los que este canal actualiza los valores.
+     * @param myServices Servicios a informar cada vez que se actualiza un componente.
      */
-    public Canbus1(List<AppComponent> myComponentList, List<Service> myServices, boolean dev) {
+    public Canbus1(List<AppComponent> myComponentList, List<Service> myServices) {
         super(myComponentList, myServices);
-        this.dev = dev;
         // Check that a BMS AppComponent was supplied
         // With the exact amount of double[] values as the implementation here
-        try{
-            this.bms = this.myComponentsMap.get("bms"); // Must match name in .xlsx file
-            if(bms != null){
-                int len = bms.len;
-                if(len != this.lenBMS){
-                    throw new Exception("Cantidad de valores de BMS en AppComponent != Cantidad de valores de lectura implementados");
-                }
-            }else{
-                throw new Exception("A BMS AppComponent was not supplied in Canbus1 channel");
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        //try{
+          //  this.bms = this.myComponentsMap.get("bms"); // Must match name in .xlsx file
+            //if(bms != null){
+              //  int len = bms.len;
+                //if(len != this.lenBMS){
+                  //  throw new Exception("Cantidad de valores de BMS en AppComponent != Cantidad de valores de lectura implementados");
+                //}
+            //}else{
+              //  throw new Exception("A BMS AppComponent was not supplied in Canbus1 channel");
+            //}
+        //}catch(Exception e){
+          //  e.printStackTrace();
+        //}
     }
 
     /**
-     * Main reading and parsing loop
+     *  Comandos ejecutados de forma recurrente. Proceso de análisis.
+     *  Al final de cada lectura se ejecuta informServices()
      */
     @Override
     public void readingLoop() {
         ProcessBuilder processBuilder = new ProcessBuilder();
-        if(dev) processBuilder.command("bash", "-c", "candump vcan1");
-        else processBuilder.command("bash", "-c", "candump can1");
+        processBuilder.command("bash", "-c", "candump can1");
         try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(
@@ -91,7 +93,7 @@ public class Canbus1 extends Channel {
     }
 
     /**
-     * Commands executed once
+     * Comando que necesita ser ejecutado una sola vez.
      */
     @Override
     public void setUp() {
@@ -101,8 +103,7 @@ public class Canbus1 extends Channel {
         // (9600 es el baud rate)
         
         StringBuilder stringBuilder = new StringBuilder();
-        if(dev) stringBuilder.append("sudo /sbin/ip link add dev vcan1 type vcan;sudo /sbin/ip link set vcan1 up"); 
-        else stringBuilder.append("sudo /sbin/ip link set can1 up type can bitrate 500000");
+        stringBuilder.append("sudo /sbin/ip link set can1 up type can bitrate 500000");
         //stringBuilder.append("cd ./src/main/java/ApplicationLayer/SensorReading/CANReaders/linux-can-utils;");
         //stringBuilder.append("gcc candump.c lib.c -o candump;"); // Comment this on second execution, no need to recompile
         processBuilder.command("bash", "-c", stringBuilder.toString());
@@ -119,11 +120,11 @@ public class Canbus1 extends Channel {
         }
     }
     /**
-     * Interprets a value using two complement
+     * Transforma un entero a complemento de dos.
      *
-     * @param value The value to interpret
-     * @param sbits The amount of significant bits to be considered (1 indexed)
-     * @return value in Two's complement.
+     * @param value El valor a transformar
+     * @param sbits El número de bits significativos a ser considerado (1 indexado)
+     * @return value en complemento de dos.
      */
     public static int changeToTwoComp(int value, int sbits){
         if ((value & (1<<(sbits-1)))==0){ // sign bit is marked, return as it is
@@ -147,9 +148,10 @@ public class Canbus1 extends Channel {
     }
 
     /**
-     * Parsing function. Transforms CANBUS message from console to double,
-     * into AppComponent bms's double[] valoresRealesActuales, directly.
-     * @param message
+     * Función que recibe el mensaje del canbus y lo transforma y guarda en un arreglo de
+     * strings, y que de acuerdo al id del mensaaje guarda directamente los respectivos valores en
+     * en el appComponent BMS, especificamente en el arreglo de este último valoresRealesActuales.
+     * @param message recibido del canbus que queremos transformar.
      */
     public void parseMessage(String message) {
         //String[] msg = Utils.split(message, " "); // Better performance split than String.split()
@@ -167,9 +169,10 @@ public class Canbus1 extends Channel {
             // atento a esto en la prueba, puede estar alrevez
             data[i] = Integer.parseInt(msg[4+i], 16);
         }
+        int mensaje = Integer.parseInt(msg[2], 16);
 
-        switch (msg[2]){
-            case "502":
+        switch (mensaje){
+            case idMessage:
                 // State of system
                 this.bms.valoresRealesActuales[message_622_index    ]  =  data[0] & 0b00000001;        // fault_state
                 this.bms.valoresRealesActuales[message_622_index + 1] = (data[0] & 0b00000010) >> 1;  // K1_contactor
@@ -212,36 +215,36 @@ public class Canbus1 extends Channel {
                 this.bms.valoresRealesActuales[message_622_index + 29] = (data[6] & 0b01000000) >> 6; // low_SOH
                 this.bms.valoresRealesActuales[message_622_index + 30] = (data[6] & 0b10000000) >> 7; // isolateion_fault
                 break;
-            case "503":
+            case (idMessage+1):
                 this.bms.valoresRealesActuales[message_623_index    ] = ((data[0] << 8) | data[1]); // pack_voltage   [V]       [0,65535]
                 this.bms.valoresRealesActuales[message_623_index + 1] = data[2]/10.0;                     // min_voltage    [100mV]   [0, 255] -> [V] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_623_index + 2] = data[3];                          // min_voltage_id           [0,255]
                 this.bms.valoresRealesActuales[message_623_index + 3] = data[4]/10.0;                     // max_voltage    [100mV]   [0, 255] -> [V] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_623_index + 4] = data[5];                          // max_voltage_id [0,255]
                 break;
-            case "504":
+            case (idMessage+2):
                 this.bms.valoresRealesActuales[message_624_index    ] = changeToTwoComp(((data[0] << 8) | data[1]),16); // current          [A] signed! [-32764, 32764]
                 this.bms.valoresRealesActuales[message_624_index + 1] = ((data[2] << 8) | data[3]); // charge_limit     [A]         [0, 65535]
                 this.bms.valoresRealesActuales[message_624_index + 2] = ((data[4] << 8) | data[5]); // discharge_limit  [A]
                 break;
-            case "505":
+            case (idMessage+3):
                 this.bms.valoresRealesActuales[message_625_index    ] = (data[0] << 8*3) | (data[1] << 8*2) | (data[2] << 8) | data[3]; // batt_energy_in  [kWh][0,4294967295]
                 this.bms.valoresRealesActuales[message_625_index + 1] = (data[4] << 8*3) | (data[5] << 8*2) | (data[6] << 8) | data[7]; // batt_energy_out [kWh][0,4294967295]
                 break;
-            case "506":
+            case (idMessage+4):
                 this.bms.valoresRealesActuales[message_626_index    ] = data[0];                          // SOC      [%]  [0,100]
                 this.bms.valoresRealesActuales[message_626_index + 1] = ((data[1] << 8) | data[2]); // DOD      [AH] [0,65535]
                 this.bms.valoresRealesActuales[message_626_index + 2] = ((data[3] << 8) | data[4]); // capacity [AH] [0,65535]
                 this.bms.valoresRealesActuales[message_626_index + 3] = data[6];                          // SOH      [%]  [0,100]
                 break;
-            case "507":
+            case (idMessage+5):
                 this.bms.valoresRealesActuales[message_627_index    ] = changeToTwoComp(data[0],8); // temperature [C] signed! [-127,127]
                 this.bms.valoresRealesActuales[message_627_index + 1] = changeToTwoComp(data[2],8); // min_temp    [C] signed! [-127,127]
                 this.bms.valoresRealesActuales[message_627_index + 2] = data[3]; // min_temp_id
                 this.bms.valoresRealesActuales[message_627_index + 3] = changeToTwoComp(data[4],8); // max_temp    [C] signed! [-127,127]
                 this.bms.valoresRealesActuales[message_627_index + 4] = data[5]; // max_temp_id
                 break;
-            case "508":
+            case(idMessage+6):
                 this.bms.valoresRealesActuales[message_628_index    ] = ((data[0] << 8) | data[1])/10.0;    // pack_resistance    [100 micro-ohm][0,65525] -> [milli ohm] [0.0,6552.5]
                 this.bms.valoresRealesActuales[message_628_index + 1] = (data[2])/10.0;                           // min_resistance     [100 micro-ohm][0,255]   -> [milli ohm] [0.0,25.5]
                 this.bms.valoresRealesActuales[message_628_index + 2] = data[3];                                  // min_resistance_id
