@@ -78,10 +78,14 @@ public class Canbus1 extends Channel {
             String line;
             while(true){
                 try{
+                    reader.mark(0);
                     while ((line = reader.readLine()) != null) {
                         parseMessage(line);
+                        reader.reset();
                         super.informServices(); // Call this just after all AppComponent in myComponentList were updated
+                        reader.mark(0);
                     }
+                    reader.reset();
                 }catch (Exception exception){
                     exception.printStackTrace();
                 }

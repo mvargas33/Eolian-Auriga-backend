@@ -1,9 +1,6 @@
 import can
 import os
 import time
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-import numpy as np
 
 # implementar lecturas del notepad, actualizar solo los valores actuales con esto
 # voltaje bateria -- CCP_A2D_BATCH_READ2/1
@@ -13,26 +10,26 @@ import numpy as np
 # corriente motor -- CCP_A2D_BATCH_READ2/1
 # velocidad -- rpm
 def RPM2KMH(RPM):
-    return 2*3.6*np.pi*0.3*RPM/60
+    return 2*3.6*3.1415926535897932384626433832795028*0.3*RPM/60
 
 def P_in(V_bat, I_bat):
     return V_bat * I_bat    
 
 def P_out(Trq, Rpm):
-    rads = 2 * np.pi * Rpm / 60
+    rads = 2 * 3.1415926535897932384626433832795028 * Rpm / 60
     return Trq * rads
     
 # commands
 IZQ = 0xc8
 DER = 0x64
-CCP_A2D_BATCH_READ1_DER=can.Message(data=[0x1b], arbitration_id=DER, extended_id=False)
-CCP_A2D_BATCH_READ2_DER=can.Message(data=[0x1a], arbitration_id=DER,extended_id=False)
-CCP_MONITOR1_DER       =can.Message(data=[0x33], arbitration_id=DER,extended_id=False)
-CCP_MONITOR2_DER       =can.Message(data=[0x37], arbitration_id=DER,extended_id=False)
-CCP_A2D_BATCH_READ1_IZQ=can.Message(data=[0x1b], arbitration_id=IZQ,extended_id=False)
-CCP_A2D_BATCH_READ2_IZQ=can.Message(data=[0x1a], arbitration_id=IZQ,extended_id=False)
-CCP_MONITOR1_IZQ       =can.Message(data=[0x33], arbitration_id=IZQ,extended_id=False)
-CCP_MONITOR2_IZQ       =can.Message(data=[0x37], arbitration_id=IZQ,extended_id=False)
+CCP_A2D_BATCH_READ1_DER=can.Message(data=[0x1b], arbitration_id=DER)
+CCP_A2D_BATCH_READ2_DER=can.Message(data=[0x1a], arbitration_id=DER)
+CCP_MONITOR1_DER       =can.Message(data=[0x33], arbitration_id=DER)
+CCP_MONITOR2_DER       =can.Message(data=[0x37], arbitration_id=DER)
+CCP_A2D_BATCH_READ1_IZQ=can.Message(data=[0x1b], arbitration_id=IZQ)
+CCP_A2D_BATCH_READ2_IZQ=can.Message(data=[0x1a], arbitration_id=IZQ)
+CCP_MONITOR1_IZQ       =can.Message(data=[0x33], arbitration_id=IZQ)
+CCP_MONITOR2_IZQ       =can.Message(data=[0x37], arbitration_id=IZQ)
 cmds = [CCP_MONITOR1_DER, CCP_MONITOR2_DER, CCP_MONITOR1_IZQ, CCP_MONITOR2_IZQ]
 i = 0
 
@@ -40,7 +37,7 @@ i = 0
 #print('Bring up CAN0....')
 os.system("sudo /sbin/ip link set can0 up type can bitrate 1000000")
 try:
-	bus = can.interface.Bus(channel='can0', bustype='socketcan_native', bitrate=1000000)
+	bus = can.interface.Bus(channel='can0', interface='socketcan', bitrate=1000000)
 except OSError:
 	#print('Cannot find PiCAN board.')
 	exit()

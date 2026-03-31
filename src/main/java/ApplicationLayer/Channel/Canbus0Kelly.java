@@ -54,10 +54,10 @@ public class Canbus0Kelly extends Channel {
     public void readingLoop() {
         ProcessBuilder processBuilder = new ProcessBuilder();
         if(dev) {
-            processBuilder.command("bash", "-c", "python3 /home/pi/Desktop/lectura/lector_kelly.py --dev");
+            processBuilder.command("bash", "-c", "python3 /home/pi/backend/lector_kelly.py --dev");
         }
         else {
-            processBuilder.command("bash", "-c", "python3 /home/pi/Desktop/lectura/lector_kelly.py");
+            processBuilder.command("bash", "-c", "python3 /home/pi/backend/lector_kelly.py");
         }try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(
@@ -66,9 +66,12 @@ public class Canbus0Kelly extends Channel {
             String line;
             while(true){
                 try{
-                    while ((line = reader.readLine()) != null) {
+                    while (reader.ready()) {
+                        reader.mark(0);
+                        line = reader.readLine();
                         parseMessage(line);
                         super.informServices(); // Call this just after all AppComponent in myComponentList were updated
+                        reader.reset();
                     }
                 }catch (Exception exception){
                     exception.printStackTrace();
